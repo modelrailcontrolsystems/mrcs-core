@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+"""
+Created on 26 Oct 2025
+
+@author: Bruno Beloff (bbeloff@me.com)
+
+source repo: mrcs-core
+
+DESCRIPTION
+The test utility is used to test the runtime environment.
+
+SYNOPSIS
+test
+
+EXAMPLES
+./test
+
+SEE ALSO
+"""
+
+print("test output")
