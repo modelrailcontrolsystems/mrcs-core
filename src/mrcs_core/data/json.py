@@ -1,7 +1,7 @@
 """
 Created on 13 Aug 2016
 
-@author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+@author: Bruno Beloff (bbeloff@me.com)
 
 JSONify must handle **kw because the standard JSONEncoder does not.
 
@@ -274,7 +274,6 @@ class AbstractPersistentJSONable(JSONable, ABC):
 
     __AWS_DIR =             "aws"                               # hard-coded rel path
     __CONF_DIR =            "conf"                              # hard-coded rel path
-    __HUE_DIR =             "hue"                               # hard-coded rel path
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -286,11 +285,6 @@ class AbstractPersistentJSONable(JSONable, ABC):
     @classmethod
     def conf_dir(cls):
         return cls.__CONF_DIR
-
-
-    @classmethod
-    def hue_dir(cls):
-        return cls.__HUE_DIR
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -372,8 +366,7 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
     @classmethod
     @abstractmethod
     def construct_from_jdict(cls, jdict, skeleton=False):
-        return PersistentJSONable()
-
+        pass
 
     @classmethod
     @abstractmethod
@@ -465,7 +458,7 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
     @classmethod
     @abstractmethod
     def construct_from_jdict(cls, jdict, name=None, skeleton=False):
-        return PersistentJSONable()
+        pass
 
 
     @classmethod

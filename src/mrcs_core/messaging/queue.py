@@ -8,90 +8,15 @@ Created on 1 Nov 2025
 A queue hosted by RabbitMQ
 
 {
-  "arguments": {
-    "x-queue-type": "classic"
-  },
-  "auto_delete": false,
-  "consumer_capacity": 1,
-  "consumer_utilisation": 1,
-  "consumers": 1,
-  "durable": false,
-  "effective_policy_definition": {},
-  "exclusive": true,
-  "internal": false,
-  "internal_owner": false,
-  "memory": 14240,
-  "message_bytes": 0,
-  "message_bytes_paged_out": 0,
-  "message_bytes_persistent": 0,
-  "message_bytes_ram": 0,
-  "message_bytes_ready": 0,
-  "message_bytes_unacknowledged": 0,
-  "message_stats": {
-    "ack": 0,
-    "ack_details": {
-      "rate": 0
-    },
-    "deliver": 0,
-    "deliver_details": {
-      "rate": 0
-    },
-    "deliver_get": 2,
-    "deliver_get_details": {
-      "rate": 0
-    },
-    "deliver_no_ack": 2,
-    "deliver_no_ack_details": {
-      "rate": 0
-    },
-    "get": 0,
-    "get_details": {
-      "rate": 0
-    },
-    "get_empty": 0,
-    "get_empty_details": {
-      "rate": 0
-    },
-    "get_no_ack": 0,
-    "get_no_ack_details": {
-      "rate": 0
-    },
-    "publish": 2,
-    "publish_details": {
-      "rate": 0
-    },
-    "redeliver": 0,
-    "redeliver_details": {
-      "rate": 0
-    }
-  },
-  "messages": 0,
-  "messages_details": {
-    "rate": 0
-  },
-  "messages_paged_out": 0,
-  "messages_persistent": 0,
-  "messages_ram": 0,
-  "messages_ready": 0,
-  "messages_ready_details": {
-    "rate": 0
-  },
-  "messages_ready_ram": 0,
-  "messages_unacknowledged": 0,
-  "messages_unacknowledged_details": {
-    "rate": 0
-  },
-  "messages_unacknowledged_ram": 0,
-  "name": "log_receiver_695",
-  "node": "rabbit@localhost",
-  "reductions": 12310,
-  "reductions_details": {
-    "rate": 0
-  },
-  "state": "running",
-  "storage_version": 2,
-  "type": "classic",
-  "vhost": "/"
+    "name": "log_receiver_695",
+    "type": "classic",
+    "durable": false,
+    "exclusive": true,
+    "state": "running",
+    "consumers": 1,
+    "messages": 0,
+    "messages_ready": 0,
+    "messages_unacknowledged": 0
 }
 
 https://www.rabbitmq.com/docs/http-api-reference
@@ -152,8 +77,16 @@ class Queue(JSONable):
         self.__messages_unacknowledged = messages_unacknowledged            # int
 
 
+    def __eq__(self, other):
+        return (self.name == other.name and self.queue_type == other.queue_type and self.durable == other.durable and
+                self.exclusive == other.exclusive and
+                self.state == other.state and self.consumers == other.consumers and
+                self.messages == other.messages and self.messages_ready == other.messages_ready and
+                self.messages_unacknowledged == other.messages_unacknowledged)
+
+
     def __lt__(self, other):
-        return self.name < other.name
+        return self.name < other.name           # names are unique within an exchange
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -1,26 +1,29 @@
 #!/usr/bin/env python
-from pyexpat.errors import messages
+import logging
 
-from mrcs_core.data.json import JSONify
+from mrcs_core.messaging.message import Message
 from mrcs_core.messaging.publisher import Publisher
-from mrcs_core.messaging.routing_key import RoutingKey
+from mrcs_core.sys.logging import Logging
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
+Logging.config('publisher_test', level=logging.WARNING)
+logger = Logging.getLogger()
+
 publisher = Publisher('test_exchange')
-print(publisher)
 
-publisher.connect()
-print(publisher)
+try:
+    publisher.connect()
+    print(publisher)
 
-routing_key = RoutingKey.construct('src1.seg1.dev1')
-print(routing_key)
+    message = Message.construct('src2.seg1.dev1', 'hello')
 
-message = "hello"
-publisher.publish(routing_key, message)
+    publisher.publish(message)
+    logger.warning(f'sent {message}')
 
-print(f" [x] Sent {routing_key}:{message}")
+except RuntimeError as ex:
+    print(ex)
 
-publisher.close()
-
+finally:
+    publisher.close()

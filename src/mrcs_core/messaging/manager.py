@@ -4,7 +4,7 @@ Created on 1 Nov 2025
 @author: Bruno Beloff (bbeloff@me.com)
 
 A utility for listing message queues
-Note that queues should be deleted using messaging clients.
+Note that queues should only be deleted using messaging clients.
 
 https://www.rabbitmq.com/docs/http-api-reference
 https://stackoverflow.com/questions/4287941/how-can-i-list-or-discover-queues-on-a-rabbitmq-exchange-using-python

@@ -1,7 +1,7 @@
 """
 Created on 24 Sep 2016
 
-@author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+@author: Bruno Beloff (bbeloff@me.com)
 
 https://docs.python.org/3/library/struct.html
 https://stackoverflow.com/questions/8022530/how-to-check-for-valid-email-address
@@ -147,7 +147,7 @@ class Datum(object):
             return default
 
         try:
-            number = int(float(value))              # because int('123.000') raises ValueError!!
+            number = int(float(value))              # because int('123.000') raises a ValueError!
         except ValueError:
             return default
 

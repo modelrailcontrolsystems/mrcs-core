@@ -3,15 +3,15 @@ Created on 1 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A RabbitMQ peer that publishes on a given exchange
+A RabbitMQ peer that publishes with a routing on a given exchange
 
 https://www.rabbitmq.com/tutorials/tutorial-four-python
 """
 
 import pika
 
-from mrcs_core.data.json import JSONable, JSONify
-from mrcs_core.messaging.routing_key import RoutingKey
+from mrcs_core.data.json import JSONify
+from mrcs_core.messaging.message import Message
 from mrcs_core.sys.logging import Logging
 
 
@@ -27,13 +27,13 @@ class Publisher(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, exchange, channel=None):
+    def __init__(self, exchange):
         """
         Constructor
         """
         self.__exchange = exchange
 
-        self.__channel = channel
+        self.__channel = None
         self.__logger = Logging.getLogger()
 
 
@@ -48,23 +48,24 @@ class Publisher(object):
         self.channel.exchange_declare(exchange=self.exchange, exchange_type=self.__EXCHANGE_TYPE)   # durable=True
 
 
-    def publish(self, routing_key: RoutingKey, message):
+    def publish(self, message: Message):
         if self.channel is None:
             raise RuntimeError('publish: no channel')
 
         self.channel.basic_publish(
             exchange=self.exchange,
-            routing_key=str(routing_key),
-            body=JSONify.dumps(message),
+            routing_key=str(message.routing_key),
+            body=JSONify.dumps(message.body),
             # properties=pika.BasicProperties(delivery_mode=pika.DeliveryMode.Persistent)
         )
 
 
     def close(self):
         if self.channel is None:
-            return
+            return False
 
         self.channel.close()
+        return True
 
 
     # ----------------------------------------------------------------------------------------------------------------
