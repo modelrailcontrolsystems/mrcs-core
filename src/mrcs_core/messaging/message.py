@@ -64,7 +64,7 @@ class Message(JSONable):
         super().__init__()
 
         self.__routing_key = routing_key                # RoutingKey
-        self.__body = body                              # JSONable
+        self.__body = body                              # JSONable (jdict when constructed by a subscriber)
 
 
     def __eq__(self, other):

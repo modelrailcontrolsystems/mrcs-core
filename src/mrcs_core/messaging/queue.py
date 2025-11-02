@@ -1,6 +1,4 @@
 """
-Created on 22 Dec 2020
-
 Created on 1 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)

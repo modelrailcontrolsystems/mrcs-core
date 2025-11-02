@@ -6,7 +6,7 @@ Created on 1 Nov 2025
 A structured representation of a messaging topic
 
 VIS001.SEC001.SIG001
-6
+
 https://www.rabbitmq.com/tutorials/tutorial-five-python
 """
 

@@ -1,21 +1,26 @@
 #!/usr/bin/env python
+
 import logging
 
 from mrcs_core.messaging.message import Message
-from mrcs_core.messaging.publisher import Publisher
+from mrcs_core.messaging.client import Publisher
 from mrcs_core.sys.logging import Logging
 
+
+# --------------------------------------------------------------------------------------------------------------------
+
+EXCHANGE_NAME = 'mrcs_test_exchange'
 
 # --------------------------------------------------------------------------------------------------------------------
 
 Logging.config('publisher_test', level=logging.WARNING)
 logger = Logging.getLogger()
 
-publisher = Publisher('test_exchange')
+publisher = Publisher(EXCHANGE_NAME)
 
 try:
     publisher.connect()
-    print(publisher)
+    logger.warning(publisher)
 
     message = Message.construct('src2.seg1.dev1', 'hello')
 
@@ -23,7 +28,7 @@ try:
     logger.warning(f'sent {message}')
 
 except RuntimeError as ex:
-    print(ex)
+    logger.error(ex)
 
 finally:
     publisher.close()
