@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from mrcs_core.data.json import JSONify
 from mrcs_core.messaging.routing_key import RoutingKey
 

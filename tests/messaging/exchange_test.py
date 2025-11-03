@@ -8,7 +8,7 @@ from mrcs_core.messaging.exchange import Exchange
 
 # --------------------------------------------------------------------------------------------------------------------
 
-with open('rabbitmq_exchange.json') as fp:
+with open('data/rabbitmq_exchange.json') as fp:
     jdict = json.load(fp)
 
 print(jdict)

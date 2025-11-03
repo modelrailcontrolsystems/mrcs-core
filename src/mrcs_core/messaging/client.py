@@ -3,9 +3,11 @@ Created on 1 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-* Client - an abstract RabbitMQ peer
-* Publisher - a RabbitMQ peer that publishes with a routing on a given exchange
-* Subscriber - a RabbitMQ peer that subscribes to routings on a given exchange
+* Client - an abstract RabbitMQ client
+* Manager - a Client that can perform broker management tasks
+* Endpoint - an abstract RabbitMQ peer
+* Publisher - an Endpoint that publishes with a routing on a given exchange
+* Subscriber - an Endpoint that subscribes to routings on a given exchange
 
 https://www.rabbitmq.com/tutorials/tutorial-four-python
 https://github.com/aiidateam/aiida-core/issues/1142
@@ -26,7 +28,7 @@ from mrcs_core.sys.logging import Logging
 
 class Client(ABC):
     """
-    classdocs
+    An abstract RabbitMQ client
     """
 
     __DEFAULT_HOST = '127.0.0.1'        # do not use localhost - IPv6 issues
@@ -77,7 +79,7 @@ class Client(ABC):
 
 class Manager(Client):
     """
-    classdocs
+    A Client that can perform broker management tasks
     """
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -115,7 +117,7 @@ class Manager(Client):
 
 class Endpoint(Client):
     """
-    classdocs
+    An abstract RabbitMQ peer
     """
 
     __EXCHANGE_TYPE = 'topic'
@@ -154,7 +156,7 @@ class Endpoint(Client):
 
 class Publisher(Endpoint):
     """
-    classdocs
+    An Endpoint that publishes with a routing on a given exchange
     """
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -190,7 +192,7 @@ class Publisher(Endpoint):
 
 class Subscriber(Endpoint):
     """
-    classdocs
+    An Endpoint that subscribes to routings on a given exchange
     """
 
     # ----------------------------------------------------------------------------------------------------------------

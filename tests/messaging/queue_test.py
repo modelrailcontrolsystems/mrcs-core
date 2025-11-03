@@ -8,7 +8,7 @@ from mrcs_core.messaging.queue import Queue
 
 # --------------------------------------------------------------------------------------------------------------------
 
-with open('rabbitmq_queue.json') as fp:
+with open('data/rabbitmq_queue.json') as fp:
     jdict = json.load(fp)
 
 print(jdict)
