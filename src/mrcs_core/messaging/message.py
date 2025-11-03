@@ -11,6 +11,7 @@ A structured representation of a message
 }
 """
 
+import json
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable, JSONify
@@ -49,6 +50,13 @@ class Message(JSONable):
 
 
     @classmethod
+    def construct_from_callback(cls, routing_key, body_str):
+        body = json.loads(body_str.decode())
+
+        return cls(routing_key, body)
+
+
+    @classmethod
     def construct(cls, routing, body):
         routing_key = RoutingKey.construct(routing)
 
@@ -64,7 +72,7 @@ class Message(JSONable):
         super().__init__()
 
         self.__routing_key = routing_key                # RoutingKey
-        self.__body = body                              # JSONable (jdict when constructed by a subscriber)
+        self.__body = body                              # JSONable (jdict when constructed from callback)
 
 
     def __eq__(self, other):
