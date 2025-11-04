@@ -34,7 +34,7 @@ def test_callback(message: Message):
 Logging.config(f'endpoint_test_{IDENTITY}', level=logging.WARNING)
 logger = Logging.getLogger()
 
-endpoint = Endpoint(EXCHANGE_NAME, identity=IDENTITY, queue=QUEUE_NAME, callback=test_callback)
+endpoint = Endpoint(EXCHANGE_NAME, IDENTITY, QUEUE_NAME, test_callback)
 endpoint.connect()
 logger.warning(endpoint)
 

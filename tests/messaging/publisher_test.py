@@ -11,6 +11,7 @@ from mrcs_core.sys.logging import Logging
 
 EXCHANGE_NAME = 'mrcs_test_exchange'
 
+
 # --------------------------------------------------------------------------------------------------------------------
 
 Logging.config('publisher_test', level=logging.WARNING)
@@ -22,7 +23,7 @@ try:
     publisher.connect()
     logger.warning(publisher)
 
-    message = Message.construct('src0.seg1.dev1', 'hello')
+    message = Message.construct('pub0.seg1.dev1', 'hello')
 
     publisher.publish(message)
     logger.warning(f'sent {message}')

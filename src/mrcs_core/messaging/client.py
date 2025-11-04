@@ -5,7 +5,7 @@ Created on 1 Nov 2025
 
 * Client - an abstract RabbitMQ client
 * Manager - a Client that can perform broker management tasks
-* Endpoint - a RabbitMQ peer that can act as a publisher only or a publisher / subscriber
+* Endpoint - a RabbitMQ peer that can act as a publisher only or as a publisher / subscriber
 
 https://www.rabbitmq.com/tutorials/tutorial-four-python
 https://github.com/aiidateam/aiida-core/issues/1142
@@ -191,7 +191,7 @@ class Endpoint(Client):
 
         routing_key = RoutingKey.construct_from_jdict(method.routing_key)
         if routing_key.source == self.identity:
-            return
+            return                                          # do not send message to self
 
         self.callback(Message.construct_from_callback(routing_key, body))
 
