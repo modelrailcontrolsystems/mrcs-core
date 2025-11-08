@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Delete queues before deleting exchanges
+
 import logging
 
 from pika.exceptions import AMQPError
@@ -28,7 +30,7 @@ logger.warning('-')
 
 try:
     for queue in broker.list_queues():
-        if queue.name.startswith('test_') or queue.name.startswith('mrcs_') or queue.name.startswith('hello'):
+        if queue.name.startswith(Manager.Mode.OPERATIONS) or queue.name.startswith(Manager.Mode.TEST):
             logger.warning(queue)
             manager.queue_delete(queue.name)
 

@@ -12,6 +12,7 @@ https://github.com/aiidateam/aiida-core/issues/1142
 """
 
 from abc import ABC
+from enum import StrEnum
 
 import pika
 
@@ -29,7 +30,13 @@ class Client(ABC):
     An abstract RabbitMQ client
     """
 
-    __DEFAULT_HOST = '127.0.0.1'        # do not use localhost - IPv6 issues
+    class Mode(StrEnum):
+        TEST = 'mrcs.test'                      # block occupancy sensor
+        OPERATIONS = 'mrcs.operations'          # control router
+
+
+    __DEFAULT_HOST = '127.0.0.1'                # do not use localhost - IPv6 issues
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -120,9 +127,22 @@ class Endpoint(Client):
 
     __EXCHANGE_TYPE = 'topic'
 
+
+    @classmethod
+    def construct_pub(cls, mode: Client.Mode):
+        return cls(mode, None, None, None)
+
+
+    @classmethod
+    def construct_sub(cls, mode: Client.Mode, identity: EquipmentIdentifier, callback):
+        queue = '.'.join([mode, identity.as_json()])
+
+        return cls(mode, identity, queue, callback)
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, exchange: str, identity: EquipmentIdentifier | None, queue, callback):
+    def __init__(self, exchange, identity, queue, callback):
         """
         Constructor
         """

@@ -168,14 +168,6 @@ class EquipmentIdentifier(EquipmentSpecification, JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def queue_name(self):
-        equipment_type = self.equipment_type
-        sector_number = '*' if self.sector_number is None else f'{self.sector_number:03d}'
-        serial_number = f'{self.serial_number:03d}'
-
-        return f'{equipment_type}_{sector_number}_{serial_number}'
-
-
     def as_json(self, **kwargs):
         equipment_type = self.equipment_type
         sector_number = '*' if self.sector_number is None else f'{self.sector_number:03d}'
