@@ -1,0 +1,166 @@
+"""
+Created on 1 Nov 2025
+
+@author: Bruno Beloff (bbeloff@me.com)
+
+A queue hosted by RabbitMQ
+
+{
+    "name": "log_receiver_695",
+    "type": "classic",
+    "durable": false,
+    "exclusive": true,
+    "state": "running",
+    "consumers": 1,
+    "messages": 0,
+    "messages_ready": 0,
+    "messages_unacknowledged": 0
+}
+
+https://www.rabbitmq.com/docs/http-api-reference
+"""
+
+from collections import OrderedDict
+
+from mrcs_core.data.json import JSONable
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class Queue(JSONable):
+    """
+    classdocs
+    """
+
+    @classmethod
+    def construct_from_jdict(cls, jdict):
+        if not jdict:
+            return None
+
+        name = jdict.get('name')
+        queue_type = jdict.get('type')
+        durable = jdict.get('durable')
+        exclusive = jdict.get('exclusive')
+
+        state = jdict.get('state')
+        consumers = jdict.get('consumers')
+
+        messages = jdict.get('messages')
+        messages_ready = jdict.get('messages_ready')
+        messages_unacknowledged = jdict.get('messages_unacknowledged')
+
+        return cls(name, queue_type, durable, exclusive, state, consumers,
+                   messages, messages_ready, messages_unacknowledged)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __init__(self, name, queue_type, durable, exclusive, state, consumers,
+                 messages, messages_ready, messages_unacknowledged):
+        """
+        Constructor
+        """
+        super().__init__()
+
+        self.__name = name                                                  # string
+        self.__queue_type = queue_type                                      # string
+        self.__durable = durable                                            # bool
+        self.__exclusive = exclusive                                        # bool
+
+        self.__state = state                                                # string
+        self.__consumers = consumers                                        # int
+
+        self.__messages = messages                                          # int
+        self.__messages_ready = messages_ready                              # int
+        self.__messages_unacknowledged = messages_unacknowledged            # int
+
+
+    def __eq__(self, other):
+        try:
+            return (self.name == other.name and self.queue_type == other.queue_type and
+                    self.durable == other.durable and self.exclusive == other.exclusive and
+                    self.state == other.state and self.consumers == other.consumers and
+                    self.messages == other.messages and self.messages_ready == other.messages_ready and
+                    self.messages_unacknowledged == other.messages_unacknowledged)
+        except (AttributeError, TypeError):
+            return False
+
+
+    def __lt__(self, other):
+        return self.name < other.name           # names are unique within an exchange
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        jdict = OrderedDict()
+
+        jdict['name'] = self.name
+        jdict['type'] = self.queue_type
+        jdict['durable'] = self.durable
+        jdict['exclusive'] = self.exclusive
+
+        jdict['state'] = self.state
+        jdict['consumers'] = self.consumers
+
+        jdict['messages'] = self.messages
+        jdict['messages_ready'] = self.messages_ready
+        jdict['messages_unacknowledged'] = self.messages_unacknowledged
+
+        return jdict
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def name(self):
+        return self.__name
+
+
+    @property
+    def queue_type(self):
+        return self.__queue_type
+
+
+    @property
+    def durable(self):
+        return self.__durable
+
+
+    @property
+    def exclusive(self):
+        return self.__exclusive
+
+
+    @property
+    def state(self):
+        return self.__state
+
+
+    @property
+    def consumers(self):
+        return self.__consumers
+
+
+    @property
+    def messages(self):
+        return self.__messages
+
+
+    @property
+    def messages_ready(self):
+        return self.__messages_ready
+
+
+    @property
+    def messages_unacknowledged(self):
+        return self.__messages_unacknowledged
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return (f'Queue:{{name:{self.name}, queue_type:{self.queue_type}, durable:{self.durable}, '
+                f'exclusive:{self.exclusive}, state:{self.state}, consumers:{self.consumers}, '
+                f'messages:{self.messages}, messages_ready:{self.messages_ready}, '
+                f'messages_unacknowledged:{self.messages_unacknowledged}}}')

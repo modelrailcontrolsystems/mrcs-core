@@ -1,0 +1,20 @@
+{
+  "arguments": {},
+  "auto_delete": false,
+  "durable": false,
+  "internal": false,
+  "message_stats": {
+    "publish_in": 7,
+    "publish_in_details": {
+      "rate": 0
+    },
+    "publish_out": 10,
+    "publish_out_details": {
+      "rate": 0
+    }
+  },
+  "name": "topic_logs",
+  "type": "topic",
+  "user_who_performed_action": "guest",
+  "vhost": "/"
+}
