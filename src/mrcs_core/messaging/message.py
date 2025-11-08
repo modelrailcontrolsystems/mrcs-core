@@ -6,7 +6,7 @@ Created on 2 Nov 2025
 A structured representation of a message
 
 {
-    "routing": "src1.sec1.dev1",
+    "routing": "TST.001.002.MPU.001.100",
     "body": "hello"
 }
 """
@@ -15,7 +15,7 @@ import json
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable, JSONify
-from mrcs_core.messaging.routing_key import RoutingKey
+from mrcs_core.messaging.routing_key import RoutingKey, SubscriptionRoutingKey
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ class Message(JSONable):
         if not jdict:
             return None
 
-        routing_key = RoutingKey.construct_from_jdict(jdict.get('routing'))
+        routing_key = SubscriptionRoutingKey.construct_from_jdict(jdict.get('routing'))
         body = jdict.get('body')
 
         return cls(routing_key, body)
@@ -52,13 +52,6 @@ class Message(JSONable):
     @classmethod
     def construct_from_callback(cls, routing_key, body_str):
         body = json.loads(body_str.decode())
-
-        return cls(routing_key, body)
-
-
-    @classmethod
-    def construct(cls, routing, body):
-        routing_key = RoutingKey.construct(routing)
 
         return cls(routing_key, body)
 
@@ -76,7 +69,10 @@ class Message(JSONable):
 
 
     def __eq__(self, other):
-        return self.routing_key == other.routing_key and self.body == other.body
+        try:
+            return self.routing_key == other.routing_key and self.body == other.body
+        except (AttributeError, TypeError):
+            return False
 
 
     def __lt__(self, other):
@@ -86,10 +82,7 @@ class Message(JSONable):
         if self.routing_key > other.routing_key:
             return False
 
-        if self.body < other.body:
-            return True
-
-        return False
+        return self.body < other.body
 
 
     # ----------------------------------------------------------------------------------------------------------------

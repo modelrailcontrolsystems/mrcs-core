@@ -26,7 +26,7 @@ class Datum(object):
     # formatting...
 
     @classmethod
-    def format(cls, value, leading_zeroes=False):
+    def format(cls, value, leading_zeroes=False):       # TODO: re-write for new formatting
         # string or bool...
         if not cls.is_numeric(value):
             return "%s"

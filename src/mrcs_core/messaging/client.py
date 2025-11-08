@@ -15,9 +15,10 @@ from abc import ABC
 
 import pika
 
+from mrcs_core.data.equipment_identity import EquipmentIdentifier
 from mrcs_core.data.json import JSONify
 from mrcs_core.messaging.message import Message
-from mrcs_core.messaging.routing_key import RoutingKey
+from mrcs_core.messaging.routing_key import RoutingKey, PublicationRoutingKey
 from mrcs_core.sys.logging import Logging
 
 
@@ -90,18 +91,18 @@ class Manager(Client):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def exchange_delete(self, exchange, callback):
+    def exchange_delete(self, exchange):
         if self.channel is None:
             raise RuntimeError('exchange_delete: no channel')
 
-        self.channel.exchange_delete(self, exchange=exchange, if_unused=True, callback=callback)
+        self.channel.exchange_delete(exchange=exchange, if_unused=True)
 
 
-    def queue_delete(self, queue, callback):
+    def queue_delete(self, queue):
         if self.channel is None:
             raise RuntimeError('queue_delete: no channel')
 
-        self.channel.queue_delete(self, queue, if_unused=True, if_empty=False, callback=callback)
+        self.channel.queue_delete(queue, if_unused=True, if_empty=False)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -114,14 +115,14 @@ class Manager(Client):
 
 class Endpoint(Client):
     """
-    A RabbitMQ peer that can act as a publisher only or a publisher / subscriber
+    A RabbitMQ peer that can act as a publisher only or as a publisher / subscriber
     """
 
     __EXCHANGE_TYPE = 'topic'
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, exchange, identity, queue, callback):
+    def __init__(self, exchange: str, identity: EquipmentIdentifier | None, queue, callback):
         """
         Constructor
         """
@@ -129,7 +130,7 @@ class Endpoint(Client):
 
         self.__exchange = exchange                      # string
 
-        self.__identity = identity                      # string
+        self.__identity = identity                      # EquipmentIdentifier | None
         self.__queue = queue                            # string
         self.__callback = callback                      # string
 
@@ -147,7 +148,7 @@ class Endpoint(Client):
 
         self.channel.basic_publish(
             exchange=self.exchange,
-            routing_key=str(message.routing_key),
+            routing_key=message.routing_key.as_json(),
             body=JSONify.dumps(message.body),
             properties=pika.BasicProperties(delivery_mode=pika.DeliveryMode.Persistent)
         )
@@ -169,13 +170,13 @@ class Endpoint(Client):
         if not routing_keys:
             raise RuntimeError('subscribe: no routing keys')
 
-        self.channel.queue_declare(queue=self.queue, durable=True, exclusive=True)
+        self.channel.queue_declare(self.queue, durable=True, exclusive=False)   # durables may not be exclusive
 
         for routing_key in routing_keys:
             self.channel.queue_bind(
                 exchange=self.exchange,
                 queue=self.queue,
-                routing_key=str(routing_key),
+                routing_key=routing_key.as_json(),
             )
 
         self.channel.basic_consume(
@@ -189,7 +190,7 @@ class Endpoint(Client):
     def on_message_callback(self, ch, method, _properties, body):
         self._logger.warning(f'on_message_callback - routing:{method.routing_key}, delivery_tag:{method.delivery_tag}')
 
-        routing_key = RoutingKey.construct_from_jdict(method.routing_key)
+        routing_key = PublicationRoutingKey.construct_from_jdict(method.routing_key)
         if routing_key.source == self.identity:
             return                                          # do not send message to self
 

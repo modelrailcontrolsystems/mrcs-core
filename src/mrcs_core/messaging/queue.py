@@ -76,11 +76,14 @@ class Queue(JSONable):
 
 
     def __eq__(self, other):
-        return (self.name == other.name and self.queue_type == other.queue_type and self.durable == other.durable and
-                self.exclusive == other.exclusive and
-                self.state == other.state and self.consumers == other.consumers and
-                self.messages == other.messages and self.messages_ready == other.messages_ready and
-                self.messages_unacknowledged == other.messages_unacknowledged)
+        try:
+            return (self.name == other.name and self.queue_type == other.queue_type and
+                    self.durable == other.durable and self.exclusive == other.exclusive and
+                    self.state == other.state and self.consumers == other.consumers and
+                    self.messages == other.messages and self.messages_ready == other.messages_ready and
+                    self.messages_unacknowledged == other.messages_unacknowledged)
+        except (AttributeError, TypeError):
+            return False
 
 
     def __lt__(self, other):

@@ -66,9 +66,12 @@ class Exchange(JSONable):
 
 
     def __eq__(self, other):
-        return (self.name == other.name and self.exchange_type == other.exchange_type and
-                self.durable == other.durable and self.internal == other.internal and
-                self.auto_delete == other.auto_delete and self.message_stats == other.message_stats)
+        try:
+            return (self.name == other.name and self.exchange_type == other.exchange_type and
+                    self.durable == other.durable and self.internal == other.internal and
+                    self.auto_delete == other.auto_delete and self.message_stats == other.message_stats)
+        except (AttributeError, TypeError):
+            return False
 
 
     def __lt__(self, other):
@@ -161,7 +164,10 @@ class MessageStats(JSONable):
 
 
     def __eq__(self, other):
-        return self.publish_in == other.publish_in and self.publish_out == other.publish_out
+        try:
+            return self.publish_in == other.publish_in and self.publish_out == other.publish_out
+        except (AttributeError, TypeError):
+            return False
 
 
     # ----------------------------------------------------------------------------------------------------------------

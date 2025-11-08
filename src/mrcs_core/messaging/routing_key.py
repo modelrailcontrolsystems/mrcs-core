@@ -3,82 +3,45 @@ Created on 1 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A structured representation of a messaging topic
+A structured representation of a message routing key, with source and target
 
-VIS001.SEC001.SIG001
-
-https://www.rabbitmq.com/tutorials/tutorial-five-python
+VIS.001.001.MPU.001.*
 """
 
+import re
+from abc import ABC
+
+from mrcs_core.data.equipment_identity import EquipmentIdentifier, EquipmentFilter, EquipmentSpecification
 from mrcs_core.data.json import JSONable
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class RoutingKey(JSONable):
+class RoutingKey(JSONable, ABC):
     """
-    classdocs
+    An abstract routing key
     """
+
 
     @staticmethod
     def is_valid(routing):
-        pieces = routing.split('.')
-
-        if len(pieces) != 3:
-            return False
-
-        for piece in pieces:
-            if len(piece) < 1:
-                return False
-
-        return True
-
-
-    @classmethod
-    def construct_from_jdict(cls, jdict):
-        if not jdict:
-            return None
-
-        return cls.construct(jdict)
-
-
-    @classmethod
-    def construct(cls, routing):
-        if not routing:
-            return None
-
-        if not cls.is_valid(routing):
-            raise ValueError(routing)
-
-        pieces = routing.split('.')
-
-        source = pieces[0]
-        sector = pieces[1]
-        device = pieces[2]
-
-        return cls(source, sector, device)
-
-
-    @classmethod
-    def construct_for_all(cls):
-        return cls('*', '*', '*')
+        return re.match(r'[A-Z*]+\.[0-9*\-]+\.[0-9*]+.[A-Z*]+\.[0-9*\-]+\.[0-9*]+', routing)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, source, sector, device):
-        """
-        Constructor
-        """
+    def __init__(self, source: EquipmentSpecification, target: EquipmentSpecification):
         super().__init__()
 
-        self.__source = source                          # string
-        self.__sector = sector                          # string
-        self.__device = device                          # string
+        self.__source = source  # EquipmentIdentifier | EquipmentFilter
+        self.__target = target  # EquipmentFilter
 
 
     def __eq__(self, other):
-        return self.source == other.source and self.sector == other.sector and self.device == other.device
+        try:
+            return self.source == other.source and self.target == other.target
+        except (AttributeError, TypeError):
+            return False
 
 
     def __lt__(self, other):
@@ -88,22 +51,22 @@ class RoutingKey(JSONable):
         if self.source > other.source:
             return False
 
-        if self.sector < other.sector:
-            return True
+        return self.target < other.target
 
-        if self.sector > other.sector:
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def matches(self, other):
+        try:
+            return self.source.matches(other.source) and self.target.matches(other.target)
+        except (AttributeError, TypeError):
             return False
-
-        if self.device < other.device:
-            return True
-
-        return False
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):
-        return str(self)
+        return '.'.join([self.source.as_json(**kwargs), self.target.as_json(**kwargs)])
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -114,16 +77,58 @@ class RoutingKey(JSONable):
 
 
     @property
-    def sector(self):
-        return self.__sector
-
-
-    @property
-    def device(self):
-        return self.__device
+    def target(self):
+        return self.__target
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'{self.source}.{self.sector}.{self.device}'
+        return f'{self.__class__.__name__}:{{source:{self.source}, target:{self.target}}}'
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class PublicationRoutingKey(RoutingKey):
+    """
+    A routing key for a publisher, with a fully-specified source
+    """
+
+    @classmethod
+    def construct_from_jdict(cls, jdict):
+        if not jdict:
+            return None
+
+        if not cls.is_valid(jdict):
+            raise ValueError(jdict)
+
+        pieces = jdict.split('.')
+
+        source = EquipmentIdentifier.construct_from_jdict('.'.join(pieces[:3]))
+        target = EquipmentFilter.construct_from_jdict('.'.join(pieces[3:]))
+
+        return cls(source, target)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class SubscriptionRoutingKey(RoutingKey):
+    """
+    A routing key for a subscriber, with a partially-specified source
+    """
+
+
+    @classmethod
+    def construct_from_jdict(cls, jdict):
+        if not jdict:
+            return None
+
+        if not cls.is_valid(jdict):
+            raise ValueError(jdict)
+
+        pieces = jdict.split('.')
+
+        source = EquipmentFilter.construct_from_jdict('.'.join(pieces[:3]))
+        target = EquipmentFilter.construct_from_jdict('.'.join(pieces[3:]))
+
+        return cls(source, target)

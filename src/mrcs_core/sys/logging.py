@@ -1,7 +1,7 @@
 """
 Created on 20 Jan 2021
 
-@author: Bruno Beloff (bruno.beloff@southcoastscience.com)
+@author: Bruno Beloff (bbeloff@me.com)
 
 https://realpython.com/python-logging/
 """
@@ -47,7 +47,6 @@ class LoggingSpecification(object):
 
 # --------------------------------------------------------------------------------------------------------------------
 
-# noinspection PyPep8Naming
 class Logging(object):
     """
     classdocs
