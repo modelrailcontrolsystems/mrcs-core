@@ -31,8 +31,8 @@ class Client(ABC):
     """
 
     class Mode(StrEnum):
-        TEST = 'mrcs.test'                      # block occupancy sensor
-        OPERATIONS = 'mrcs.operations'          # control router
+        TEST = 'mrcs.test'                      # test mode
+        OPERATIONS = 'mrcs.operations'          # production mode
 
 
     __DEFAULT_HOST = '127.0.0.1'                # do not use localhost - IPv6 issues
