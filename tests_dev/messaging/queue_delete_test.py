@@ -7,31 +7,32 @@ import logging
 from pika.exceptions import AMQPError
 
 from mrcs_core.messaging.broker import Broker
-from mrcs_core.messaging.client import Manager
+from mrcs_core.messaging.mqclient import MQManager
 from mrcs_core.sys.logging import Logging
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-Logging.config('exchange_delete_test', level=logging.WARNING)
+Logging.config('queue_delete_test', level=logging.WARNING)
 logger = Logging.getLogger()
 
 broker = Broker.construct()
 logger.warning(broker)
 
-manager = Manager()
+manager = MQManager()
 manager.connect()
 logger.warning(manager)
+
 logger.warning('-')
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 try:
-    for exchange in broker.list_exchanges():
-        if exchange.name.startswith(Manager.Mode.OPERATIONS) or exchange.name.startswith(Manager.Mode.TEST):
-            logger.warning(exchange)
-            manager.exchange_delete(exchange.name)
+    for queue in broker.list_queues():
+        if queue.name.startswith(MQManager.Mode.OPERATIONS) or queue.name.startswith(MQManager.Mode.TEST):
+            logger.warning(queue)
+            manager.queue_delete(queue.name)
 
     manager.close()         # connection is closed automatically on error
 

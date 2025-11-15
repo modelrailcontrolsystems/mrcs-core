@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import json
 
 from mrcs_core.data.equipment_identity import EquipmentFilter, EquipmentIdentifier, EquipmentType

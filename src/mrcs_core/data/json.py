@@ -368,6 +368,7 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
     def construct_from_jdict(cls, jdict, skeleton=False):
         pass
 
+
     @classmethod
     @abstractmethod
     def persistence_location(cls):

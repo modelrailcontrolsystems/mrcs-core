@@ -110,13 +110,22 @@ class PublicationRoutingKey(RoutingKey):
         return cls(source, target)
 
 
+    @classmethod
+    def construct_from_db(cls, field):
+        pieces = field.split('.')
+
+        source = EquipmentIdentifier.construct_from_jdict('.'.join(pieces[:3]))
+        target = EquipmentFilter.construct_from_jdict('.'.join(pieces[3:]))
+
+        return cls(source, target)
+
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class SubscriptionRoutingKey(RoutingKey):
     """
     A routing key for a subscriber, with a partially-specified source
     """
-
 
     @classmethod
     def construct_from_jdict(cls, jdict):

@@ -5,7 +5,8 @@ Created on 1 Nov 2025
 
 * Client - an abstract RabbitMQ client
 * Manager - a Client that can perform broker management tasks
-* Endpoint - a RabbitMQ peer that can act as a publisher only or as a publisher / subscriber
+* Publisher - a RabbitMQ peer that can act as a publisher only
+* Subscriber - a RabbitMQ peer that can act as a publisher and / or subscriber
 
 https://www.rabbitmq.com/tutorials/tutorial-four-python
 https://github.com/aiidateam/aiida-core/issues/1142
@@ -25,7 +26,7 @@ from mrcs_core.sys.logging import Logging
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Client(ABC):
+class MQClient(ABC):
     """
     An abstract RabbitMQ client
     """
@@ -82,7 +83,7 @@ class Client(ABC):
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Manager(Client):
+class MQManager(MQClient):
     """
     A Client that can perform broker management tasks
     """
@@ -120,39 +121,28 @@ class Manager(Client):
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Endpoint(Client):
+class Publisher(MQClient):
     """
-    A RabbitMQ peer that can act as a publisher only or as a publisher / subscriber
+    A RabbitMQ peer that can act as a publisher and / or subscriber
     """
 
     __EXCHANGE_TYPE = 'topic'
 
 
     @classmethod
-    def construct_pub(cls, mode: Client.Mode):
-        return cls(mode, None, None, None)
-
-
-    @classmethod
-    def construct_sub(cls, mode: Client.Mode, identity: EquipmentIdentifier, callback):
-        queue = '.'.join([mode, identity.as_json()])
-
-        return cls(mode, identity, queue, callback)
+    def construct_pub(cls, mode: MQClient.Mode):
+        return cls(mode)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, exchange, identity, queue, callback):
+    def __init__(self, exchange):
         """
         Constructor
         """
         super().__init__()
 
         self.__exchange = exchange                      # string
-
-        self.__identity = identity                      # EquipmentIdentifier | None
-        self.__queue = queue                            # string
-        self.__callback = callback                      # string
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -173,6 +163,48 @@ class Endpoint(Client):
             properties=pika.BasicProperties(delivery_mode=pika.DeliveryMode.Persistent)
         )
 
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def exchange(self):
+        return self.__exchange
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return f'Publisher:{{exchange:{self.exchange}, channel:{self.channel}}}'
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class Subscriber(Publisher):
+    """
+    A RabbitMQ peer that can act as a publisher only or as a publisher / subscriber
+    """
+
+    @classmethod
+    def construct_sub(cls, mode: MQClient.Mode, identity: EquipmentIdentifier, callback):
+        queue = '.'.join([mode, identity.as_json()])
+
+        return cls(mode, identity, queue, callback)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __init__(self, exchange, identity, queue, callback):
+        """
+        Constructor
+        """
+        super().__init__(exchange)
+
+        self.__identity = identity                      # EquipmentIdentifier
+        self.__queue = queue                            # string
+        self.__callback = callback                      # string
+
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     def subscribe(self, *routing_keys: RoutingKey):
         if self.channel is None:
@@ -222,11 +254,6 @@ class Endpoint(Client):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def exchange(self):
-        return self.__exchange
-
-
-    @property
     def identity(self):
         return self.__identity
 
@@ -244,5 +271,5 @@ class Endpoint(Client):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'Endpoint:{{exchange:{self.exchange}, identity:{self.identity}, queue:{self.queue}, '
+        return (f'Subscriber:{{exchange:{self.exchange}, identity:{self.identity}, queue:{self.queue}, '
                 f'callback:{self.callback}, channel:{self.channel}}}')
