@@ -54,5 +54,5 @@ class PersistentObject(PersistenceManager, ABC):
 
 
     @abstractmethod
-    def as_db_fields(self):
+    def as_db(self):
         pass

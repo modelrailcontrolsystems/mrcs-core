@@ -114,7 +114,7 @@ class MessagePersistence(PersistentObject, ABC):
         client = DBClient.instance(cls.__DATABASE)
 
         sql = 'INSERT INTO messages (routing, body) VALUES (?,?)'
-        client.execute(sql, data=entry.as_db_fields())
+        client.execute(sql, data=entry.as_db())
 
         sql = 'SELECT last_insert_rowid()'
         client.execute(sql)
@@ -130,7 +130,7 @@ class MessagePersistence(PersistentObject, ABC):
         client = DBClient.instance(cls.__DATABASE)
 
         sql = 'INSERT INTO messages (rec, routing, body) VALUES (?,?,?)'
-        client.execute(sql, data=(rec,) + entry.as_db_fields())
+        client.execute(sql, data=(rec,) + entry.as_db())
 
         sql = 'SELECT last_insert_rowid()'
         client.execute(sql)

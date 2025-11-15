@@ -59,7 +59,7 @@ class Message(MessagePersistence, PersistentObject, JSONable):
 
     @classmethod
     def construct_from_db(cls, *fields):
-        raise NotImplementedError
+        raise NotImplementedError('use MessageRecord class instead')
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ class Message(MessagePersistence, PersistentObject, JSONable):
         return jdict
 
 
-    def as_db_fields(self):
+    def as_db(self):
         return self.routing_key.as_json(), JSONify.dumps(self.body)
 
 
