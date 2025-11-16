@@ -11,22 +11,54 @@ https://forum.xojo.com/t/sqlite-return-id-of-record-inserted/37896
 
 import os
 import sqlite3
+from enum import unique, StrEnum
 
 from mrcs_core.sys.host import Host
 from mrcs_core.sys.logging import Logging
 
+
+# --------------------------------------------------------------------------------------------------------------------
+
+@unique
+class DBMode(StrEnum):
+    """
+    An enumeration of all the possible database modes
+    """
+
+    TEST = 'test'         # testing
+    LIVE = 'live'         # live operations
+
+
+# --------------------------------------------------------------------------------------------------------------------
 
 class DBClient(object):
     """
     An SQLite database client
     """
 
+    __client_db_mode = DBMode.LIVE
+
+    @classmethod
+    def client_db_mode(cls):
+        return cls.__client_db_mode
+
+
+    @classmethod
+    def set_client_db_mode(cls, db_mode: DBMode):
+        if cls.__clients:
+            raise RuntimeError('client_db_mode cannot be set while there are existing clients')
+
+        cls.__client_db_mode = db_mode
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     __clients = {}
 
     @classmethod
     def instance(cls, db_name):
         if db_name not in cls.__clients:
-            cls.__clients[db_name] = DBClient(db_name)
+            cls.__clients[db_name] = DBClient(cls.__client_db_mode, db_name)
             cls.__clients[db_name].__open()
 
         return cls.__clients[db_name]
@@ -47,7 +79,8 @@ class DBClient(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, db_name):
+    def __init__(self, db_mode, db_name):
+        self.__db_mode = db_mode
         self.__db_name = db_name
 
         self.__connection = None
@@ -57,7 +90,7 @@ class DBClient(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def execute(self, statement, data=None):    # TODO: {statement, data} is maybe a class?
+    def execute(self, statement, data=None):
         if self.connection is None:
             raise RuntimeError('execute: no connection')
 
@@ -81,8 +114,8 @@ class DBClient(object):
     def __open(self):
         filename = '.'.join([self.db_name, 'db'])
 
-        os.makedirs(Host.mrcs_db_abs_dir(), exist_ok=True)
-        self.__connection = sqlite3.connect(Host.mrcs_db_abs_file(filename))
+        os.makedirs(Host.mrcs_db_abs_dir(self.db_mode), exist_ok=True)
+        self.__connection = sqlite3.connect(Host.mrcs_db_abs_file(self.db_mode, filename))
         self.__cursor = self.connection.cursor()
 
 
@@ -94,6 +127,11 @@ class DBClient(object):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def db_mode(self):
+        return self.__db_mode
+
 
     @property
     def db_name(self):
@@ -113,4 +151,5 @@ class DBClient(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'Client:{{db_name:{self.db_name}, connection:{self.connection}, cursor:{self.cursor}}}'
+        return (f'DBClient:{{db_mode:{self.db_mode}, db_name:{self.db_name}, '
+                f'connection:{self.connection}, cursor:{self.cursor}}}')

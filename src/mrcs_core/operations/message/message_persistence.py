@@ -28,7 +28,7 @@ class MessagePersistence(PersistentObject, ABC):
     classdocs
     """
 
-    __DATABASE = 'Logging'
+    __DATABASE = 'MessageLog'
 
     @classmethod
     def create_tables(cls):

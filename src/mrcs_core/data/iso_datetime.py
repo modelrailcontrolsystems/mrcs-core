@@ -28,8 +28,13 @@ class ISODatetime(JSONable, datetime):
 
     __DB_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
+    # ----------------------------------------------------------------------------------------------------------------
+
     @classmethod
     def construct_from_jdict(cls, iso_string):
+        if not iso_string:
+            return None
+
         iso = super().fromisoformat(iso_string)
 
         return iso.astimezone(cls.__LOCAL_ZONE)

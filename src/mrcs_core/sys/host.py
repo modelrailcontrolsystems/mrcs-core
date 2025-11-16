@@ -29,12 +29,12 @@ class Host(object):
 
 
     @classmethod
-    def mrcs_db_abs_dir(cls):
-        return os.path.join(cls.mrcs_abs_dir(), cls.__DB_DIR)
+    def mrcs_db_abs_dir(cls, db_mode):
+        return os.path.join(cls.mrcs_abs_dir(), cls.__DB_DIR, db_mode)
 
 
     @classmethod
-    def mrcs_db_abs_file(cls, filename):
-        return os.path.join(cls.mrcs_db_abs_dir(), filename)
+    def mrcs_db_abs_file(cls, db_mode, filename):
+        return os.path.join(cls.mrcs_db_abs_dir(db_mode), filename)
 
 

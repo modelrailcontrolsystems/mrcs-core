@@ -36,7 +36,7 @@ class MessageRecord(Message):
             return None
 
         uid = jdict.get('uid')
-        rec = jdict.get('rec')
+        rec = ISODatetime.construct_from_jdict(jdict.get('rec'))
         routing_key = PublicationRoutingKey.construct_from_jdict(jdict.get('routing'))
         body = jdict.get('body')
 
