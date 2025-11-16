@@ -26,8 +26,9 @@ class EquipmentType(StrEnum):
     CTL = 'CTL'         # control router
     DCP = 'DCP'         # decoupler
     LCR = 'LCR'         # level crossing
-    LTG = 'LTG'         # lighting group
     LDS = 'LDS'         # LiDAR sensor
+    LTG = 'LTG'         # lighting group
+    MLG = 'MLG'         # message logger
     MPU = 'MPU'         # motive power unit
     PNT = 'PNT'         # point
     SCH = 'SCH'         # schedule controller

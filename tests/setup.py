@@ -1,9 +1,23 @@
+"""
+Created on 16 Nov 2025
+
+@author: Bruno Beloff (bbeloff@me.com)
+
+Set up tests to use the test DB
+"""
+
 import sys
 
 from mrcs_core.db.dbclient import DBClient, DBMode
 
 
+# --------------------------------------------------------------------------------------------------------------------
+
 class Setup(object):
+    """
+    Set up tests to use the test DB
+    """
+
     @classmethod
     def dbSetup(cls):
         if DBClient.client_db_mode() == DBMode.TEST:

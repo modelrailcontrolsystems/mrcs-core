@@ -51,9 +51,6 @@ class Exchange(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, name, exchange_type, durable, internal, auto_delete, message_stats):
-        """
-        Constructor
-        """
         super().__init__()
 
         self.__name = name                                          # string
@@ -154,9 +151,6 @@ class MessageStats(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, publish_in, publish_out):
-        """
-        Constructor
-        """
         super().__init__()
 
         self.__publish_in = publish_in                      # int
