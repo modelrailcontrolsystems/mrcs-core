@@ -56,9 +56,6 @@ class MessageRecord(Message):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, uid: int, rec: ISODatetime, routing_key: RoutingKey, body):
-        """
-        Constructor
-        """
         super().__init__(routing_key, body)
 
         self.__uid = uid

@@ -65,9 +65,6 @@ class Message(MessagePersistence, PersistentObject, JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, routing_key: RoutingKey, body):
-        """
-        Constructor
-        """
         super().__init__()
 
         self.__routing_key = routing_key                # RoutingKey

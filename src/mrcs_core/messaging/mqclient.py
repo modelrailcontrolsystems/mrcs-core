@@ -13,12 +13,12 @@ https://github.com/aiidateam/aiida-core/issues/1142
 """
 
 from abc import ABC
-from enum import StrEnum
 
 import pika
 
 from mrcs_core.data.equipment_identity import EquipmentIdentifier
 from mrcs_core.data.json import JSONify
+from mrcs_core.messaging.broker import Broker
 from mrcs_core.messaging.message import Message
 from mrcs_core.messaging.routing_key import RoutingKey, PublicationRoutingKey
 from mrcs_core.sys.logging import Logging
@@ -31,20 +31,11 @@ class MQClient(ABC):
     An abstract RabbitMQ client
     """
 
-    class Mode(StrEnum):
-        TEST = 'mrcs.test'                      # test mode
-        OPERATIONS = 'mrcs.operations'          # production mode
-
-
     __DEFAULT_HOST = '127.0.0.1'                # do not use localhost - IPv6 issues
-
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self):
-        """
-        Constructor
-        """
         self.__channel = None
         self._logger = Logging.getLogger()
 
@@ -91,9 +82,6 @@ class MQManager(MQClient):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self):
-        """
-        Constructor
-        """
         super().__init__()
 
 
@@ -130,26 +118,23 @@ class Publisher(MQClient):
 
 
     @classmethod
-    def construct_pub(cls, mode: MQClient.Mode):
-        return cls(mode)
+    def construct_pub(cls, exchange_name: Broker.Exchange):
+        return cls(exchange_name)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, exchange):
-        """
-        Constructor
-        """
+    def __init__(self, exchange_name):
         super().__init__()
 
-        self.__exchange = exchange                      # string
+        self.__exchange_name = exchange_name                      # string
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def connect(self):
         super().connect()
-        self.channel.exchange_declare(exchange=self.exchange, exchange_type=self.__EXCHANGE_TYPE, durable=True)
+        self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.__EXCHANGE_TYPE, durable=True)
 
 
     def publish(self, message: Message):
@@ -157,7 +142,7 @@ class Publisher(MQClient):
             raise RuntimeError('publish: no channel')
 
         self.channel.basic_publish(
-            exchange=self.exchange,
+            exchange=self.exchange_name,
             routing_key=message.routing_key.as_json(),
             body=JSONify.dumps(message.body),
             properties=pika.BasicProperties(delivery_mode=pika.DeliveryMode.Persistent)
@@ -167,14 +152,14 @@ class Publisher(MQClient):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def exchange(self):
-        return self.__exchange
+    def exchange_name(self):
+        return self.__exchange_name
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'Publisher:{{exchange:{self.exchange}, channel:{self.channel}}}'
+        return f'Publisher:{{exchange_name:{self.exchange_name}, channel:{self.channel}}}'
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -185,19 +170,16 @@ class Subscriber(Publisher):
     """
 
     @classmethod
-    def construct_sub(cls, mode: MQClient.Mode, identity: EquipmentIdentifier, callback):
-        queue = '.'.join([mode, identity.as_json()])
+    def construct_sub(cls, exchange_name: Broker.Exchange, identity: EquipmentIdentifier, callback):
+        queue = '.'.join([exchange_name, identity.as_json()])
 
-        return cls(mode, identity, queue, callback)
+        return cls(exchange_name, identity, queue, callback)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, exchange, identity, queue, callback):
-        """
-        Constructor
-        """
-        super().__init__(exchange)
+    def __init__(self, exchange_name, identity, queue, callback):
+        super().__init__(exchange_name)
 
         self.__identity = identity                      # EquipmentIdentifier
         self.__queue = queue                            # string
@@ -226,7 +208,7 @@ class Subscriber(Publisher):
 
         for routing_key in routing_keys:
             self.channel.queue_bind(
-                exchange=self.exchange,
+                exchange=self.exchange_name,
                 queue=self.queue,
                 routing_key=routing_key.as_json(),
             )
@@ -240,8 +222,6 @@ class Subscriber(Publisher):
 
 
     def on_message_callback(self, ch, method, _properties, body):
-        self._logger.warning(f'on_message_callback - routing:{method.routing_key}, delivery_tag:{method.delivery_tag}')
-
         routing_key = PublicationRoutingKey.construct_from_jdict(method.routing_key)
         if routing_key.source == self.identity:
             return                                          # do not send message to self
@@ -271,5 +251,5 @@ class Subscriber(Publisher):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'Subscriber:{{exchange:{self.exchange}, identity:{self.identity}, queue:{self.queue}, '
+        return (f'Subscriber:{{exchange_name:{self.exchange_name}, identity:{self.identity}, queue:{self.queue}, '
                 f'callback:{self.callback}, channel:{self.channel}}}')

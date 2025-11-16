@@ -11,9 +11,8 @@ https://www.jetbrains.com/help/pycharm/creating-tests.html
 
 import unittest
 
-from setup import Setup
-
 from mrcs_core.db.dbclient import DBClient
+from setup import Setup
 
 
 # --------------------------------------------------------------------------------------------------------------------

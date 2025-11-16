@@ -20,9 +20,6 @@ class LoggingSpecification(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, name, level):
-        """
-        Constructor
-        """
         self.__name = name                              # string
         self.__level = level                            # int or string
 

@@ -3,7 +3,7 @@ Created on 9 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-An SQLite database client, guaranteeing one connection per database
+An SQLite database client, guaranteeing one connection per database, per process
 
 https://www.sqlitetutorial.net/sqlite-python/
 https://forum.xojo.com/t/sqlite-return-id-of-record-inserted/37896
@@ -25,8 +25,8 @@ class DBMode(StrEnum):
     An enumeration of all the possible database modes
     """
 
-    TEST = 'test'         # testing
-    LIVE = 'live'         # live operations
+    TEST = 'test'         # test
+    LIVE = 'live'         # production
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -45,6 +45,9 @@ class DBClient(object):
 
     @classmethod
     def set_client_db_mode(cls, db_mode: DBMode):
+        if cls.__client_db_mode == db_mode:
+            return
+
         if cls.__clients:
             raise RuntimeError('client_db_mode cannot be set while there are existing clients')
 

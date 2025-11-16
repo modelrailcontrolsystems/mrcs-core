@@ -57,9 +57,6 @@ class Queue(JSONable):
 
     def __init__(self, name, queue_type, durable, exclusive, state, consumers,
                  messages, messages_ready, messages_unacknowledged):
-        """
-        Constructor
-        """
         super().__init__()
 
         self.__name = name                                                  # string
