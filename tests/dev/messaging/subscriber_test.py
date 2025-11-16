@@ -5,7 +5,7 @@ import sys
 
 from mrcs_core.data.equipment_identity import EquipmentIdentifier, EquipmentFilter, EquipmentType
 from mrcs_core.data.json import JSONify
-from mrcs_core.messaging.client import Endpoint
+from mrcs_core.messaging.mqclient import Subscriber
 from mrcs_core.messaging.message import Message
 from mrcs_core.messaging.routing_key import SubscriptionRoutingKey
 from mrcs_core.sys.logging import Logging
@@ -44,7 +44,7 @@ logger = Logging.getLogger()
 queue_suffix = sys.argv[1]
 logger.warning(f'queue_suffix:{queue_suffix}')
 
-endpoint = Endpoint.construct_sub(Endpoint.Mode.TEST, identity, test_callback)
+endpoint = Subscriber.construct_sub(Subscriber.Mode.TEST, identity, test_callback)
 endpoint.connect()
 logger.warning(endpoint)
 

@@ -1,5 +1,5 @@
 """
-Created on 2 Nov 2025
+Created on 9 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
@@ -9,92 +9,78 @@ A structured representation of a message
     "routing": "TST.001.002.MPU.001.100",
     "body": "hello"
 }
+
+https://www.geeksforgeeks.org/python/python-sqlite-working-with-date-and-datetime/
+https://stackoverflow.com/questions/17574784/sqlite-current-timestamp-with-milliseconds
+https://forum.xojo.com/t/sqlite-return-id-of-record-inserted/37896/3
 """
 
 import json
-
 from collections import OrderedDict
 
-from mrcs_core.data.json import JSONable, JSONify
-from mrcs_core.data.persistence import PersistentObject
+from mrcs_core.data.iso_datetime import ISODatetime
+from mrcs_core.messaging.message import Message
 from mrcs_core.messaging.routing_key import RoutingKey, PublicationRoutingKey
-from mrcs_core.operations.message.message_persistence import MessagePersistence
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Message(MessagePersistence, PersistentObject, JSONable):
+class MessageRecord(Message):
     """
     classdocs
     """
-
-    @staticmethod
-    def is_valid(message: Message):
-        if not RoutingKey.is_valid(message.routing_key):
-            return False
-
-        try:
-            JSONify.dumps(message)
-        except RuntimeError:
-            return False
-
-        return True
-
 
     @classmethod
     def construct_from_jdict(cls, jdict):
         if not jdict:
             return None
 
+        uid = jdict.get('uid')
+        rec = ISODatetime.construct_from_jdict(jdict.get('rec'))
         routing_key = PublicationRoutingKey.construct_from_jdict(jdict.get('routing'))
         body = jdict.get('body')
 
-        return cls(routing_key, body)
+        return cls(uid, rec, routing_key, body)
 
 
     @classmethod
-    def construct_from_callback(cls, routing_key, body_str):
-        return cls(routing_key, json.loads(body_str.decode()))
+    def construct_from_db(cls, uid_field, rec_field, routing_key_field, body_field):
+        uid = int(uid_field)
+        rec = ISODatetime.construct_from_db(rec_field)
+        routing_key = PublicationRoutingKey.construct_from_db(routing_key_field)
+        body = json.loads(body_field)
 
-
-    @classmethod
-    def construct_from_db(cls, *fields):
-        raise NotImplementedError('use MessageRecord class instead')
+        return cls(uid, rec, routing_key, body)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, routing_key: RoutingKey, body):
+    def __init__(self, uid: int, rec: ISODatetime, routing_key: RoutingKey, body):
         """
         Constructor
         """
-        super().__init__()
+        super().__init__(routing_key, body)
 
-        self.__routing_key = routing_key                # RoutingKey
-        self.__body = body                              # JSONable (jdict when constructed from callback)
+        self.__uid = uid
+        self.__rec = rec
 
 
     def __eq__(self, other):
         try:
-            return self.routing_key == other.routing_key and self.body == other.body
+            return (self.uid == other.uid and self.rec == other.rec and
+                    self.routing_key == other.routing_key and self.body == other.body)
         except (AttributeError, TypeError):
             return False
 
 
     def __lt__(self, other):
-        if self.routing_key < other.routing_key:
-            return True
-
-        if self.routing_key > other.routing_key:
-            return False
-
-        return self.body < other.body
+        return self.uid < other.uid
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def save(self):
-        return super().insert(self)
+        raise NotImplementedError('use Message class instead')
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -102,29 +88,27 @@ class Message(MessagePersistence, PersistentObject, JSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
+        jdict['uid'] = self.uid
+        jdict['rec'] = self.rec
         jdict['routing'] = self.routing_key
         jdict['body'] = self.body
 
         return jdict
 
 
-    def as_db(self):
-        return self.routing_key.as_json(), JSONify.dumps(self.body)
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def routing_key(self):
-        return self.__routing_key
+    def uid(self):
+        return self.__uid
 
 
     @property
-    def body(self):
-        return self.__body
+    def rec(self):
+        return self.__rec
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'Message:{{routing_key:{self.routing_key}, body:{self.body}}}'
+        return f'MessageRecord:{{uid:{self.uid}, rec:{self.rec}, routing_key:{self.routing_key}, body:{self.body}}}'
