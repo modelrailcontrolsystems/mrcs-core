@@ -11,7 +11,7 @@ from mrcs_core.db.dbclient import DBClient
 from mrcs_core.messaging.message import Message
 from mrcs_core.messaging.mqclient import Subscriber
 from mrcs_core.messaging.routing_key import SubscriptionRoutingKey
-from mrcs_core.operations.message.message_record import MessageRecord
+from mrcs_core.operations.recorder.message_record import MessageRecord
 from mrcs_core.operations.operation_mode import OperationMode, OperationService
 from mrcs_core.sys.logging import Logging
 
@@ -48,6 +48,11 @@ class MessageRecorder(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def clean(self):
+        DBClient.set_client_db_mode(self.ops.db_mode)
+        MessageRecord.recreate_tables()
+
+
     def subscribe(self):
         DBClient.set_client_db_mode(self.ops.db_mode)
         MessageRecord.create_tables()
@@ -82,4 +87,3 @@ class MessageRecorder(object):
 
     def __str__(self, *args, **kwargs):
         return f'MessageRecorder:{{identity:{self.identity}, routing_key:{self.routing_key}, ops:{self.ops}}}'
-

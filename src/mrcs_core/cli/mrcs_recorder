@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+"""
+Created on 17 Nov 2025
+
+@author: Bruno Beloff (bbeloff@me.com)
+
+source repo: mrcs_core
+
+DESCRIPTION
+
+SYNOPSIS
+
+EXAMPLES
+
+RESOURCES
+"""
+
+import sys
+
+from mrcs_core.cli.args.recorder_args import RecorderArgs
+from mrcs_core.operations.recorder.message_recorder import MessageRecorder
+from mrcs_core.sys.logging import Logging
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == '__main__':
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    args = RecorderArgs('records all inter-process messages')
+
+    Logging.config('mrcs_recorder', verbose=args.verbose)
+    logger = Logging.getLogger()
+    logger.info(args)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    try:
+        recorder = MessageRecorder.construct(args.mode)
+        logger.info(recorder)
+
+        if args.clean:
+            recorder.clean()
+
+        if args.subscribe:
+            recorder.subscribe()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    except KeyboardInterrupt:
+        print(file=sys.stderr)

@@ -169,6 +169,8 @@ class Subscriber(Publisher):
     A RabbitMQ peer that can act as a publisher only or as a publisher / subscriber
     """
 
+    # TODO: should the queue name depend on the ops mode??
+
     @classmethod
     def construct_sub(cls, exchange_name: Broker.Exchange, identity: EquipmentIdentifier, callback):
         queue = '.'.join([exchange_name, identity.as_json()])
