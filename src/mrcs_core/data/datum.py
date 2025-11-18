@@ -7,9 +7,7 @@ https://docs.python.org/3/library/struct.html
 https://stackoverflow.com/questions/8022530/how-to-check-for-valid-email-address
 """
 
-import math
 import re
-import struct
 
 from datetime import date
 from urllib.parse import urlparse
@@ -185,98 +183,3 @@ class Datum(object):
             return None
 
         return date(year, month, day)
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
-class Encode(object):
-    """
-    classdocs
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-    # encode byte array...
-
-    @staticmethod
-    def bool(value):
-        return 1 if value else 0
-
-
-    @staticmethod
-    def int(value, order):
-        unpacked = struct.unpack('BB', struct.pack(order + 'h', int(value)))
-
-        return unpacked
-
-
-    @staticmethod
-    def unsigned_int(value, order):
-        unpacked = struct.unpack('BB', struct.pack(order + 'H', int(value)))
-
-        return unpacked
-
-
-    @staticmethod
-    def unsigned_long(value, order):
-        unpacked = struct.unpack('BBBB', struct.pack(order + 'L', int(value)))
-
-        return unpacked
-
-
-    @staticmethod
-    def float(value, order):
-        unpacked = struct.unpack('BBBB', struct.pack(order + 'f', float(value)))
-
-        return unpacked
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
-class Decode(object):
-    """
-    classdocs
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-    # decode byte array...
-
-    @staticmethod
-    def int(byte_values, order):
-        packed = struct.unpack(order + 'h', struct.pack('BB', *byte_values))
-
-        return packed[0]
-
-
-    @staticmethod
-    def unsigned_int(byte_values, order):
-        packed = struct.unpack(order + 'H', struct.pack('BB', *byte_values))
-
-        return packed[0]
-
-
-    @staticmethod
-    def long(byte_values, order):
-        packed = struct.unpack(order + 'l', struct.pack('BBBB', *byte_values))
-
-        return packed[0]
-
-
-    @staticmethod
-    def unsigned_long(byte_values, order):
-        packed = struct.unpack(order + 'L', struct.pack('BBBB', *byte_values))
-
-        return packed[0]
-
-
-    @staticmethod
-    def float(byte_values, order):
-        packed = struct.unpack(order + 'f', struct.pack('BBBB', *byte_values))
-
-        return None if math.isnan(packed[0]) else packed[0]
-
-
-    @staticmethod
-    def double(byte_values, order):
-        packed = struct.unpack(order + 'd', struct.pack('BBBBBBBB', *byte_values))
-
-        return None if math.isnan(packed[0]) else packed[0]

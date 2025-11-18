@@ -54,3 +54,8 @@ class OperationMode(Enum):
 
     TEST = OperationService(DBMode.TEST, Broker.Exchange.TEST)
     LIVE = OperationService(DBMode.LIVE, Broker.Exchange.OPERATIONS)
+
+    @classmethod
+    def keys(cls):
+        return cls.__members__.keys()
+

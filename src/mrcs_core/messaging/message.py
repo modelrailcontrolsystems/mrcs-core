@@ -18,7 +18,7 @@ from collections import OrderedDict
 from mrcs_core.data.json import JSONable, JSONify
 from mrcs_core.data.persistence import PersistentObject
 from mrcs_core.messaging.routing_key import RoutingKey, PublicationRoutingKey
-from mrcs_core.operations.message.message_persistence import MessagePersistence
+from mrcs_core.operations.recorder.message_persistence import MessagePersistence
 
 
 # --------------------------------------------------------------------------------------------------------------------

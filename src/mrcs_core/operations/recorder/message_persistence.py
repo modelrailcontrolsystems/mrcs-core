@@ -3,15 +3,8 @@ Created on 9 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A structured representation of a message
+SQLite database management for messages
 
-{
-    "routing": "TST.001.002.MPU.001.100",
-    "body": "hello"
-}
-
-https://www.geeksforgeeks.org/python/python-sqlite-working-with-date-and-datetime/
-https://stackoverflow.com/questions/17574784/sqlite-current-timestamp-with-milliseconds
 https://forum.xojo.com/t/sqlite-return-id-of-record-inserted/37896/3
 """
 
@@ -25,33 +18,34 @@ from mrcs_core.db.dbclient import DBClient
 
 class MessagePersistence(PersistentObject, ABC):
     """
-    classdocs
+    SQLite database management for messages
     """
 
     __DATABASE = 'MessageLog'
+
+    __TABLE_NAME = 'messages'
+    __TABLE_VERSION = 1
+
+    @classmethod
+    def table(cls):
+        return f'{cls.__TABLE_NAME}_v{cls.__TABLE_VERSION}'
+
+
+    @classmethod
+    def recreate_tables(cls):
+        client = DBClient.instance(cls.__DATABASE)
+
+        client.begin()
+        cls.__drop_tables(client)
+        cls.__create_tables(client)
+        client.commit()
+
 
     @classmethod
     def create_tables(cls):
         client = DBClient.instance(cls.__DATABASE)
 
-        sql = '''
-            CREATE TABLE IF NOT EXISTS messages (
-            id INTEGER PRIMARY KEY, 
-            rec TIMESTAMP NOT NULL DEFAULT(datetime('subsec')), 
-            routing TEXT NOT NULL, 
-            body TEXT NOT NULL 
-        )'''
-        client.execute(sql)
-
-        sql = 'CREATE INDEX IF NOT EXISTS messages_id ON messages(id)'
-        client.execute(sql)
-
-        sql = 'CREATE INDEX IF NOT EXISTS messages_rec ON messages(rec)'
-        client.execute(sql)
-
-        sql = 'CREATE INDEX IF NOT EXISTS messages_routing ON messages(routing)'
-        client.execute(sql)
-
+        cls.__create_tables(client)
         client.commit()
 
 
@@ -59,19 +53,48 @@ class MessagePersistence(PersistentObject, ABC):
     def drop_tables(cls):
         client = DBClient.instance(cls.__DATABASE)
 
-        sql = 'DROP INDEX IF EXISTS messages_id'
-        client.execute(sql)
-
-        sql = 'DROP INDEX IF EXISTS messages_rec'
-        client.execute(sql)
-
-        sql = 'DROP INDEX IF EXISTS messages_routing'
-        client.execute(sql)
-
-        sql = 'DROP TABLE IF EXISTS messages'
-        client.execute(sql)
-
+        cls.__drop_tables(client)
         client.commit()
+
+
+    @classmethod
+    def __create_tables(cls, client):
+        table = cls.table()
+
+        sql = f'''
+            CREATE TABLE IF NOT EXISTS {table} (
+            id INTEGER PRIMARY KEY, 
+            rec TIMESTAMP NOT NULL DEFAULT(datetime('subsec')), 
+            routing TEXT NOT NULL, 
+            body TEXT NOT NULL 
+        )'''
+        client.execute(sql)
+
+        sql = f'CREATE INDEX IF NOT EXISTS {table}_id ON {table}(id)'
+        client.execute(sql)
+
+        sql = f'CREATE INDEX IF NOT EXISTS {table}_rec ON {table}(rec)'
+        client.execute(sql)
+
+        sql = f'CREATE INDEX IF NOT EXISTS {table}_routing ON {table}(routing)'
+        client.execute(sql)
+
+
+    @classmethod
+    def __drop_tables(cls, client):
+        table = cls.table()
+
+        sql = f'DROP INDEX IF EXISTS {table}_id'
+        client.execute(sql)
+
+        sql = f'DROP INDEX IF EXISTS {table}_rec'
+        client.execute(sql)
+
+        sql = f'DROP INDEX IF EXISTS {table}_routing'
+        client.execute(sql)
+
+        sql = f'DROP TABLE IF EXISTS {table}'
+        client.execute(sql)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -79,8 +102,10 @@ class MessagePersistence(PersistentObject, ABC):
     @classmethod
     def find_all(cls):
         client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
 
-        sql = 'SELECT * FROM messages'
+        client.begin()
+        sql = f'SELECT * FROM {table}'
         client.execute(sql)
         client.commit()
 
@@ -92,10 +117,11 @@ class MessagePersistence(PersistentObject, ABC):
     @classmethod
     def find(cls, id: int):      # TODO: not needed here?
         client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
 
-        sql = 'SELECT * FROM messages WHERE id = ?'
-        data = (id,)
-        client.execute(sql, data=data)
+        client.begin()
+        sql = f'SELECT * FROM {table} WHERE id = ?'
+        client.execute(sql, data=(id,))
         client.commit()
 
         rows = client.fetchall()
@@ -107,15 +133,17 @@ class MessagePersistence(PersistentObject, ABC):
 
     # TODO: find most recent N messages
 
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
     def insert(cls, entry: PersistentObject):
         client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
 
-        sql = 'INSERT INTO messages (routing, body) VALUES (?,?)'
+        client.begin()
+        sql = f'INSERT INTO {table} (routing, body) VALUES (?,?)'
         client.execute(sql, data=entry.as_db())
-
         sql = 'SELECT last_insert_rowid()'
         client.execute(sql)
         client.commit()
@@ -128,10 +156,11 @@ class MessagePersistence(PersistentObject, ABC):
     @classmethod
     def test_insert(cls, rec, entry: PersistentObject):
         client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
 
-        sql = 'INSERT INTO messages (rec, routing, body) VALUES (?,?,?)'
+        client.begin()
+        sql = f'INSERT INTO {table} (rec, routing, body) VALUES (?,?,?)'
         client.execute(sql, data=(rec,) + entry.as_db())
-
         sql = 'SELECT last_insert_rowid()'
         client.execute(sql)
         client.commit()

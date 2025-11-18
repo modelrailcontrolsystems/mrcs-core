@@ -16,7 +16,7 @@ from mrcs_core.data.equipment_identity import EquipmentIdentifier, EquipmentFilt
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONify
 from mrcs_core.messaging.routing_key import PublicationRoutingKey
-from mrcs_core.operations.message.message_record import MessageRecord
+from mrcs_core.operations.recorder.message_record import MessageRecord
 
 
 # --------------------------------------------------------------------------------------------------------------------

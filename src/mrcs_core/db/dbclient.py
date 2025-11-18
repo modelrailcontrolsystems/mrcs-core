@@ -7,6 +7,7 @@ An SQLite database client, guaranteeing one connection per database, per process
 
 https://www.sqlitetutorial.net/sqlite-python/
 https://forum.xojo.com/t/sqlite-return-id-of-record-inserted/37896
+https://iafisher.com/blog/2021/10/using-sqlite-effectively-in-python
 """
 
 import os
@@ -59,7 +60,7 @@ class DBClient(object):
     __clients = {}
 
     @classmethod
-    def instance(cls, db_name):
+    def instance(cls, db_name) -> DBClient:
         if db_name not in cls.__clients:
             cls.__clients[db_name] = DBClient(cls.__client_db_mode, db_name)
             cls.__clients[db_name].__open()
@@ -104,6 +105,11 @@ class DBClient(object):
             self.cursor.execute(statement, data)
         else:
             self.cursor.execute(statement)
+
+
+    def begin(self):
+        # TODO: use BEGIN / COMMIT throughout: https://iafisher.com/blog/2021/10/using-sqlite-effectively-in-python
+        pass
 
 
     def commit(self):
