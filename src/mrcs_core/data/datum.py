@@ -21,6 +21,20 @@ class Datum(object):
     """
 
     # ----------------------------------------------------------------------------------------------------------------
+    # effective input...
+
+    @classmethod
+    def effective_lines(cls, source):
+        for line in source:
+            stripped = line.strip()
+
+            if not stripped:
+                continue
+
+            yield stripped
+
+
+    # ----------------------------------------------------------------------------------------------------------------
     # formatting...
 
     @classmethod

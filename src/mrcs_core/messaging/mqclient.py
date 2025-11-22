@@ -74,7 +74,7 @@ class MQClient(ABC):
             return True
 
         except AMQPError:
-            pass
+            return False
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -186,8 +186,6 @@ class Subscriber(Publisher):
     """
     A RabbitMQ peer that can act as a publisher only or as a publisher / subscriber
     """
-
-    # TODO: should the queue name depend on the ops mode??
 
     @classmethod
     def construct_sub(cls, exchange_name: MQMode, identity: EquipmentIdentifier, callback):
