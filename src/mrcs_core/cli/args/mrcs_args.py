@@ -23,7 +23,7 @@ class MRCSArgs(ABC):
 
         self._parser.add_argument("-t", "--test", action="store_true", help='use TEST operations mode')
 
-        self._parser.add_argument("--indent", "-i", action="store", type=int,
+        self._parser.add_argument("-i", "--indent", action="store", type=int,
                                   help="pretty-print the output with INDENT")
 
         self._parser.add_argument("-v", "--verbose", action="store_true",
