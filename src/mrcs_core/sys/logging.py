@@ -4,6 +4,7 @@ Created on 20 Jan 2021
 @author: Bruno Beloff (bbeloff@me.com)
 
 https://realpython.com/python-logging/
+https://stackoverflow.com/questions/35325042/python-logging-disable-logging-from-imported-modules
 """
 
 import logging
@@ -61,7 +62,7 @@ class Logging(object):
         cls.__NAME = name
         cls.__LEVEL = logging.INFO if verbose else level
 
-        logging.basicConfig(format=cls.__MULTI_FORMAT, level=cls.__LEVEL, stream=stream)
+        logging.basicConfig(format=cls.__MULTI_FORMAT, level=logging.CRITICAL, stream=stream)
 
 
     @classmethod
@@ -69,7 +70,7 @@ class Logging(object):
         cls.__NAME = specification.name
         cls.__LEVEL = specification.level
 
-        logging.basicConfig(format=cls.__MULTI_FORMAT, level=cls.__LEVEL, stream=stream)
+        logging.basicConfig(format=cls.__MULTI_FORMAT, level=logging.CRITICAL, stream=stream)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -78,7 +79,10 @@ class Logging(object):
     def getLogger(cls, name=None):
         logger_name = cls.__NAME if cls.__NAME else name
 
-        return logging.getLogger(name=logger_name)
+        logger = logging.getLogger(name=logger_name)
+        logger.setLevel(cls.__LEVEL)
+
+        return logger
 
 
     @classmethod

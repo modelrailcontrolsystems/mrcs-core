@@ -12,12 +12,13 @@ from abc import ABC
 from enum import unique, StrEnum
 
 from mrcs_core.data.json import JSONable
+from mrcs_core.data.meta_enum import MetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class EquipmentType(StrEnum):
+class EquipmentType(StrEnum, metaclass=MetaEnum):
     """
     An enumeration of all the possible equipment types
     """
@@ -197,6 +198,18 @@ class EquipmentFilter(EquipmentSpecification):
             serial_number = None if pieces[2] == '*' else int(pieces[2])
         except ValueError:
             raise ValueError(jdict)
+
+        return cls(equipment_type, sector_number, serial_number)
+
+    @classmethod
+    def construct(cls, equipment_type_spec: str | None, sector_number_spec: int | None, serial_number_spec: int | None):
+        try:
+            equipment_type = None if equipment_type_spec is None else EquipmentType(equipment_type_spec)
+        except ValueError:
+            raise ValueError(f'{equipment_type_spec} not in {list(EquipmentType.keys())}')
+
+        sector_number = None if sector_number_spec is None else int(sector_number_spec)
+        serial_number = None if serial_number_spec is None else int(serial_number_spec)
 
         return cls(equipment_type, sector_number, serial_number)
 

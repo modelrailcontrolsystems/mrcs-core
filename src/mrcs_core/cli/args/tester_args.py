@@ -1,0 +1,63 @@
+"""
+Created on 22 Nov 2025
+
+@author: Bruno Beloff (bbeloff@me.com)
+
+https://realpython.com/command-line-interfaces-python-argparse/
+https://stackoverflow.com/questions/34988908/argparse-with-two-values-for-one-argument
+"""
+
+from mrcs_core.cli.args.mrcs_args import MRCSArgs
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class TesterArgs(MRCSArgs):
+    """unix command line handler"""
+
+    def __init__(self, description):
+        super().__init__(description)
+
+        self._parser.add_argument("-s", "--source_serial", action="store", type=int, default=1,
+                                  help='the serial number of this tool (default 1)')
+
+        self._parser.add_argument("-e", "--target_equipment", action="store", type=str,
+                                  help='target equipment type')
+
+        self._parser.add_argument("-b", "--target_block", action="store", type=int,
+                                  help='target equipment block')
+
+        self._parser.add_argument("-n", "--target_serial", action="store", type=int,
+                                  help='target equipment serial number')
+
+        self._args = self._parser.parse_args()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def source_serial(self):
+        return self._args.source_serial
+
+
+    @property
+    def target_equipment(self):
+        return self._args.target_equipment
+
+
+    @property
+    def target_block(self):
+        return self._args.target_block
+
+
+    @property
+    def target_serial(self):
+        return self._args.target_serial
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return (f'TesterArgs:{{test:{self.test}, source_serial:{self.source_serial}, '
+                f'target_equipment:{self.target_equipment}, target_block:{self.target_block}, '
+                f'target_serial:{self.target_serial}, indent:{self.indent}, verbose:{self.verbose}}}')

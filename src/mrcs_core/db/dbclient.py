@@ -12,8 +12,10 @@ https://iafisher.com/blog/2021/10/using-sqlite-effectively-in-python
 
 import os
 import sqlite3
+
 from enum import unique, StrEnum
 
+from mrcs_core.data.meta_enum import MetaEnum
 from mrcs_core.sys.host import Host
 from mrcs_core.sys.logging import Logging
 
@@ -21,7 +23,7 @@ from mrcs_core.sys.logging import Logging
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class DBMode(StrEnum):
+class DBMode(StrEnum, metaclass=MetaEnum):
     """
     An enumeration of all the possible database modes
     """

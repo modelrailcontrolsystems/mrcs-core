@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+
+"""
+Created on 22 Nov 2025
+
+@author: Bruno Beloff (bbeloff@me.com)
+
+source repo: mrcs_core
+
+DESCRIPTION
+A tool for publishing messages.
+Message bodies are read from stdin and published with source and target routing specified by command-line arguments.
+
+SYNOPSIS
+usage: mrcs_tester [-h] [-t] [--indent INDENT] [-v] [--version] [-s SOURCE_SERIAL]
+[-e TARGET_EQUIPMENT] [-b TARGET_BLOCK] [-n TARGET_SERIAL]
+
+EXAMPLES
+mrcs_tester -t -v -e MPU -b 1 -n 2
+
+RESOURCES
+"""
+import json
+import sys
+from json import JSONDecodeError
+
+from pika.exceptions import AMQPError
+
+from mrcs_core.cli.args.tester_args import TesterArgs
+from mrcs_core.data.equipment_identity import EquipmentType, EquipmentIdentifier, EquipmentFilter
+from mrcs_core.data.json import JSONify
+from mrcs_core.messaging.message import Message
+from mrcs_core.messaging.mqclient import Publisher
+from mrcs_core.messaging.routing_key import PublicationRoutingKey
+from mrcs_core.sys.logging import Logging
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == '__main__':
+
+    publisher = None
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    args = TesterArgs('a tool for publishing messages')
+
+    Logging.config('mrcs_tester', verbose=args.verbose)
+    logger = Logging.getLogger()
+    logger.info(f'args: {args}')
+    logger.info(f'mode: {args.mode.value}')
+
+    try:
+        target = EquipmentFilter.construct(args.target_equipment, args.target_block, args.target_serial)
+    except ValueError as ex:
+        logger.error(ex)
+        exit(2)
+
+    logger.info(f'target: {target}')
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    try:
+        source = EquipmentIdentifier(EquipmentType.TST, None, args.source_serial)
+        routing_key = PublicationRoutingKey(source, target)
+
+        publisher = Publisher.construct_pub(args.mode.value.mq_mode)
+
+        publisher.connect()
+        logger.info(f'publisher: {publisher}')
+
+        for line in sys.stdin:
+            jstr = line.strip()
+
+            if not jstr:
+                continue
+
+            try:
+                body = json.loads(line)
+            except JSONDecodeError as ex:
+                logger.error(f'{ex.__class__.__name__}: {jstr}')
+                continue
+
+            message = Message(routing_key, body)
+            publisher.publish(message)
+
+            logger.info(JSONify.dumps(message, indent=args.indent))
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    except AMQPError as ex:
+        logger.error(ex)
+        exit(1)
+
+    except KeyboardInterrupt:
+        print(file=sys.stderr)
+
+    finally:
+        if publisher:
+            publisher.close()
