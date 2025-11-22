@@ -24,11 +24,6 @@ class MessageRecorder(object):
     """
 
     @classmethod
-    def callback(cls, message: Message):
-        message.save()
-
-
-    @classmethod
     def construct(cls, ops_mode: OperationMode):
         identity = EquipmentIdentifier(EquipmentType.MLG, None, 1)
         routing_key = SubscriptionRoutingKey(EquipmentFilter.all(), EquipmentFilter.all())
@@ -48,16 +43,28 @@ class MessageRecorder(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def callback(self, message: Message):
+        self.__logger.info(message)
+        message.save()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def clean(self):
         DBClient.set_client_db_mode(self.ops.db_mode)
         MessageRecord.recreate_tables()
+
+
+    def find_latest(self, limit):
+        DBClient.set_client_db_mode(self.ops.db_mode)
+        return MessageRecord.find_latest(limit)
 
 
     def subscribe(self):
         DBClient.set_client_db_mode(self.ops.db_mode)
         MessageRecord.create_tables()
 
-        endpoint = Subscriber.construct_sub(self.ops.broker_exchange, self.identity, self.callback)
+        endpoint = Subscriber.construct_sub(self.ops.mq_mode, self.identity, self.callback)
         endpoint.connect()
 
         try:

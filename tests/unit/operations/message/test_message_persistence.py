@@ -29,7 +29,7 @@ class TestMessagePersistence(unittest.TestCase):
         MessageRecord.drop_tables()
         MessageRecord.create_tables()
 
-        records = list(MessageRecord.find_all())
+        records = list(MessageRecord.find_latest(limit=10))
         self.assertEqual(len(records), 0)
 
     def test_construct(self):
@@ -39,7 +39,7 @@ class TestMessagePersistence(unittest.TestCase):
         obj1 = Message.construct_from_jdict(json.loads('{"routing": "TST.001.002.MPU.001.100", "body": "hello"}'))
         obj1.save()
 
-        records = list(MessageRecord.find_all())
+        records = list(MessageRecord.find_latest(limit=10))
         obj2 = records[0]
 
         self.assertEqual(obj2.routing_key, obj1.routing_key)

@@ -13,15 +13,29 @@ https://github.com/aiidateam/aiida-core/issues/1142
 """
 
 from abc import ABC
+from enum import unique, StrEnum
 
 import pika
+from pika.exceptions import AMQPError
 
 from mrcs_core.data.equipment_identity import EquipmentIdentifier
 from mrcs_core.data.json import JSONify
-from mrcs_core.messaging.broker import Broker
+from mrcs_core.data.meta_enum import MetaEnum
 from mrcs_core.messaging.message import Message
 from mrcs_core.messaging.routing_key import RoutingKey, PublicationRoutingKey
 from mrcs_core.sys.logging import Logging
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+@unique
+class MQMode(StrEnum, metaclass=MetaEnum):
+    """
+    An enumeration of all the possible broker exchanges
+    """
+
+    TEST = 'mrcs.test'  # test mode
+    LIVE = 'mrcs.live'  # production mode
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -51,12 +65,16 @@ class MQClient(ABC):
 
 
     def close(self):
-        if self.channel is None:
-            return False
+        try:
+            if self.channel is None:
+                return False
 
-        self.channel.close()
-        self.__channel = None
-        return True
+            self.channel.close()
+            self.__channel = None
+            return True
+
+        except AMQPError:
+            pass
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -118,7 +136,7 @@ class Publisher(MQClient):
 
 
     @classmethod
-    def construct_pub(cls, exchange_name: Broker.Exchange):
+    def construct_pub(cls, exchange_name: MQMode):
         return cls(exchange_name)
 
 
@@ -172,7 +190,7 @@ class Subscriber(Publisher):
     # TODO: should the queue name depend on the ops mode??
 
     @classmethod
-    def construct_sub(cls, exchange_name: Broker.Exchange, identity: EquipmentIdentifier, callback):
+    def construct_sub(cls, exchange_name: MQMode, identity: EquipmentIdentifier, callback):
         queue = '.'.join([exchange_name, identity.as_json()])
 
         return cls(exchange_name, identity, queue, callback)

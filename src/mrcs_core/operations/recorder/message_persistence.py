@@ -100,38 +100,18 @@ class MessagePersistence(PersistentObject, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def find_all(cls):
+    def find_latest(cls, limit):
         client = DBClient.instance(cls.__DATABASE)
         table = cls.table()
 
         client.begin()
-        sql = f'SELECT * FROM {table}'
+        sql = f'SELECT * FROM {table} WHERE id IN (SELECT id FROM {table} ORDER BY id DESC LIMIT {limit})'
         client.execute(sql)
         client.commit()
 
         rows = client.fetchall()
 
         return (cls.construct_from_db(*fields) for fields in rows)
-
-
-    @classmethod
-    def find(cls, id: int):      # TODO: not needed here?
-        client = DBClient.instance(cls.__DATABASE)
-        table = cls.table()
-
-        client.begin()
-        sql = f'SELECT * FROM {table} WHERE id = ?'
-        client.execute(sql, data=(id,))
-        client.commit()
-
-        rows = client.fetchall()
-
-        if not rows:
-            return None
-
-        return cls.construct_from_db(*rows[0])
-
-    # TODO: find most recent N messages
 
 
     # ----------------------------------------------------------------------------------------------------------------

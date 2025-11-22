@@ -10,8 +10,6 @@ https://www.rabbitmq.com/docs/http-api-reference
 https://stackoverflow.com/questions/4287941/how-can-i-list-or-discover-queues-on-a-rabbitmq-exchange-using-python
 """
 
-from enum import StrEnum, unique
-
 import requests
 
 from mrcs_core.messaging.exchange import Exchange
@@ -32,18 +30,6 @@ class Broker(object):
     __DEFAULT_PASSWORD = 'guest'
 
     __DEFAULT_VIRTUAL_HOST = ''
-
-
-    # --------------------------------------------------------------------------------------------------------------------
-
-    @unique
-    class Exchange(StrEnum):
-        """
-        An enumeration of all the possible broker exchanges
-        """
-
-        TEST = 'mrcs.test'  # test mode
-        OPERATIONS = 'mrcs.operations'  # production mode
 
 
     # ----------------------------------------------------------------------------------------------------------------
