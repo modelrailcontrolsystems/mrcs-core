@@ -7,8 +7,11 @@ An SQLite database client
 
 https://docs.python.org/3/howto/enum.html
 """
+
 import os.path
 
+
+# --------------------------------------------------------------------------------------------------------------------
 
 class Host(object):
     """

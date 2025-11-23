@@ -6,7 +6,7 @@ Created on 1 Nov 2025
 * Client - an abstract RabbitMQ client
 * Manager - a Client that can perform broker management tasks
 * Publisher - a RabbitMQ peer that can act as a publisher only
-* Subscriber - a RabbitMQ peer that can act as a publisher and / or subscriber
+* Subscriber - a RabbitMQ peer that can act as a publisher and subscriber
 
 https://www.rabbitmq.com/tutorials/tutorial-four-python
 https://github.com/aiidateam/aiida-core/issues/1142
@@ -129,7 +129,7 @@ class MQManager(MQClient):
 
 class Publisher(MQClient):
     """
-    A RabbitMQ peer that can act as a publisher and / or subscriber
+    A RabbitMQ peer that can act as a publisher only
     """
 
     __EXCHANGE_TYPE = 'topic'
@@ -184,7 +184,7 @@ class Publisher(MQClient):
 
 class Subscriber(Publisher):
     """
-    A RabbitMQ peer that can act as a publisher only or as a publisher / subscriber
+    A RabbitMQ peer that can act as a publisher and subscriber
     """
 
     @classmethod

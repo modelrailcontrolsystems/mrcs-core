@@ -76,7 +76,7 @@ class Broker(object):
 
 
     def __base_url(self):
-        return f'http://127.0.0.1:{self.port}'
+        return f'http://127.0.0.1:{self.port}'          # host literal to prevent security warning
 
 
     # ----------------------------------------------------------------------------------------------------------------
