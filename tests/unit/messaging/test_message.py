@@ -27,6 +27,10 @@ class TestMessage(unittest.TestCase):
                          'target:EquipmentFilter:{equipment_type:MPU, sector_number:1, serial_number:100}}, '
                          'body:hello}', str(obj1))
 
+    def test_jdict(self):
+        obj1 = Message.construct_from_jdict(json.loads('{"routing": "TST.001.002.MPU.001.100", "body": [1, 2]}'))
+        self.assertEqual({'routing': 'TST.001.002.MPU.001.100', 'body': (1, 2)}, obj1.as_jdict())
+
     def test_eq(self):
         obj1 = Message.construct_from_jdict(json.loads('{"routing": "TST.001.002.MPU.001.100", "body": "hello"}'))
         obj2 = Message.construct_from_jdict(json.loads('{"routing": "TST.001.002.MPU.001.100", "body": "hello"}'))

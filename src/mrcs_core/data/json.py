@@ -120,10 +120,6 @@ class JSONable(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def as_dynamo_json(self, **kwargs):
-        return JSONify.as_dynamo_json(self, **kwargs)
-
-
     def as_jdict(self, **kwargs):
         return JSONify.as_jdict(self, **kwargs)
 
