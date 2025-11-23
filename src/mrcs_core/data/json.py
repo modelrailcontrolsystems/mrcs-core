@@ -26,18 +26,15 @@ class JSONify(json.JSONEncoder):
     """
 
     @classmethod
-    def as_dynamo_json(cls, obj, **kwargs):
+    def as_jdict(cls, obj, **kwargs):
         if isinstance(obj, JSONable):
-            return cls.as_dynamo_json(obj.as_json(**kwargs))
+            return cls.as_jdict(obj.as_json(**kwargs))
 
         if isinstance(obj, dict):
-            return {key: cls.as_dynamo_json(value, **kwargs) for key, value in obj.items()}
+            return {key: cls.as_jdict(value, **kwargs) for key, value in obj.items()}
 
         if isinstance(obj, list):
-            return tuple(cls.as_dynamo_json(value, **kwargs) for value in obj)
-
-        if Datum.is_numeric(obj):
-            return Decimal(str(obj))
+            return tuple(cls.as_jdict(value, **kwargs) for value in obj)
 
         return obj
 
@@ -123,8 +120,8 @@ class JSONable(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def as_dynamo_json(self, **kwargs):
-        return JSONify.as_dynamo_json(self, **kwargs)
+    def as_jdict(self, **kwargs):
+        return JSONify.as_jdict(self, **kwargs)
 
 
     @abstractmethod

@@ -16,6 +16,7 @@ https://forum.xojo.com/t/sqlite-return-id-of-record-inserted/37896/3
 """
 
 import json
+
 from collections import OrderedDict
 
 from mrcs_core.data.iso_datetime import ISODatetime
