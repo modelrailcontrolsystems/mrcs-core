@@ -31,10 +31,10 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     LTG = 'LTG'         # lighting group
     MLG = 'MLG'         # message logger
     MPU = 'MPU'         # motive power unit
-    PNT = 'PNT'         # point
     SCH = 'SCH'         # schedule controller
     SIG = 'SIG'         # signal
-    TRN = 'TRN'         # train (may be multi-headed)
+    PNT = 'TRN'         # turnout (point)
+    TRN = 'TRS'         # train set (may be multi-headed)
     TST = 'TST'         # test equipment
     VIS = 'VIS'         # vision sensor
 
