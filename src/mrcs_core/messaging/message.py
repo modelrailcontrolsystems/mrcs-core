@@ -105,8 +105,12 @@ class Message(MessagePersistence, PersistentObject, JSONable):
         return jdict
 
 
-    def as_db(self):
+    def as_db_insert(self):
         return self.routing_key.as_json(), JSONify.dumps(self.body)
+
+
+    def as_db_update(self):
+        raise NotImplementedError('messages are immutable')
 
 
     # ----------------------------------------------------------------------------------------------------------------

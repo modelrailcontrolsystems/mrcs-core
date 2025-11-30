@@ -1,0 +1,243 @@
+"""
+Created on 29 Nov 2025
+
+@author: Bruno Beloff (bbeloff@me.com)
+
+SQLite database management for users
+
+https://www.geeksforgeeks.org/python/how-to-hash-passwords-in-python/
+"""
+
+import hashlib
+import uuid
+from abc import ABC
+
+from mrcs_core.data.iso_datetime import ISODatetime
+from mrcs_core.data.persistence import PersistentObject
+from mrcs_core.db.dbclient import DBClient
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class UserPersistence(PersistentObject, ABC):
+    """
+    SQLite database management for users
+    """
+
+    @classmethod
+    def hash_password(cls, password):
+        salt = 'MRCS'
+        password_salt = password + salt
+
+        return hashlib.sha256(password_salt.encode()).hexdigest()
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    __DATABASE = 'Admin'
+
+    __TABLE_NAME = 'users'
+    __TABLE_VERSION = 1
+
+    @classmethod
+    def table(cls):
+        return f'{cls.__TABLE_NAME}_v{cls.__TABLE_VERSION}'
+
+
+    @classmethod
+    def recreate_tables(cls):
+        client = DBClient.instance(cls.__DATABASE)
+
+        client.begin()
+        cls.__drop_tables(client)
+        cls.__create_tables(client)
+        client.commit()
+
+
+    @classmethod
+    def create_tables(cls):
+        client = DBClient.instance(cls.__DATABASE)
+
+        cls.__create_tables(client)
+        client.commit()
+
+
+    @classmethod
+    def drop_tables(cls):
+        client = DBClient.instance(cls.__DATABASE)
+
+        cls.__drop_tables(client)
+        client.commit()
+
+
+    @classmethod
+    def __create_tables(cls, client):
+        table = cls.table()
+
+        sql = f'''
+            CREATE TABLE IF NOT EXISTS {table} (
+            uid TEXT PRIMARY KEY , 
+            email TEXT UNIQUE, 
+            password TEXT, 
+            role TEXT, 
+            must_set_password INTEGER, 
+            given_name TEXT, 
+            family_name TEXT, 
+            created TIMESTAMP NOT NULL DEFAULT(datetime('subsec')), 
+            latest_login TIMESTAMP)
+            '''
+        client.execute(sql)
+
+        sql = f'CREATE INDEX IF NOT EXISTS {table}_password ON {table}(password)'
+        client.execute(sql)
+
+        sql = f'CREATE INDEX IF NOT EXISTS {table}_given_name ON {table}(given_name)'
+        client.execute(sql)
+
+        sql = f'CREATE INDEX IF NOT EXISTS {table}_family_name ON {table}(family_name)'
+        client.execute(sql)
+
+
+    @classmethod
+    def __drop_tables(cls, client):
+        table = cls.table()
+
+        sql = f'DROP INDEX IF EXISTS {table}_password'
+        client.execute(sql)
+
+        sql = f'DROP INDEX IF EXISTS {table}_given_name'
+        client.execute(sql)
+
+        sql = f'DROP INDEX IF EXISTS {table}_family_name'
+        client.execute(sql)
+
+        sql = f'DROP TABLE IF EXISTS {table}'
+        client.execute(sql)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @classmethod
+    def find_all(cls):
+        client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
+
+        sql = (f'SELECT uid, email, role, must_set_password, given_name, family_name, created, latest_login '
+               f'FROM {table} ORDER BY family_name, given_name, email')
+        client.execute(sql)
+        rows = client.fetchall()
+
+        return (cls.construct_from_db(*fields) for fields in rows)
+
+
+    @classmethod
+    def find(cls, uid):
+        client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
+
+        sql = (f'SELECT uid, email, role, must_set_password, given_name, family_name, created, latest_login '
+               f'FROM {table} WHERE uid == ?')
+        client.execute(sql, data=(uid, ))
+        rows = client.fetchall()
+
+        return None if not rows else cls.construct_from_db(*rows[0])
+
+
+    @classmethod
+    def email_in_use(cls, email):
+        client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
+
+        sql = f'SELECT COUNT(uid) FROM {table} WHERE email == ?'
+        client.execute(sql, data=(email, ))
+        rows = client.fetchall()
+
+        return bool(rows[0][0])
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @classmethod
+    def insert(cls, item: PersistentObject, password=None):
+        client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
+
+        uid = str(uuid.uuid4())
+        hashed_password = cls.hash_password(password)
+        data = [uid, hashed_password] + list(item.as_db_insert())
+
+        client.begin()
+        sql = (f'INSERT INTO {table} (uid, password, email, role, must_set_password, given_name, family_name) '
+               f'VALUES (?, ?, ?, ?, ?, ?, ?)')
+        client.execute(sql, data=data)
+        client.commit()
+
+        sql = (f'SELECT uid, email, role, must_set_password, given_name, family_name, created, latest_login '
+               f'FROM {table} WHERE uid == ?')
+        client.execute(sql, data=(uid, ))
+        rows = client.fetchall()
+
+        return cls.construct_from_db(*rows[0])
+
+
+    @classmethod
+    def update(cls, item: PersistentObject):
+        client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
+
+        client.begin()
+        sql = f'UPDATE {table} SET email = ?, given_name = ?, family_name = ? WHERE uid = ?'
+        client.execute(sql, data=(item.as_db_update()))
+        client.commit()
+
+
+    @classmethod
+    def delete(cls, uid: str):
+        client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
+
+        # TODO: check that there will be at least one ADMIN user
+
+        client.begin()
+        sql = f'DELETE FROM {table} WHERE uid = ?'
+        client.execute(sql, data=(uid, ))
+        client.commit()
+
+
+    @classmethod
+    def log_in(cls, email, password):
+        client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
+
+        hashed_password = cls.hash_password(password)
+
+        try:
+            client.begin()
+            sql = f'SELECT uid FROM {table} WHERE email == ? AND password == ?'
+            client.execute(sql, data=(email, hashed_password))
+
+            rows = client.fetchall()
+
+            if not rows:
+                return False
+
+            sql = f'UPDATE {table} SET latest_login = ? WHERE uid = ?'
+            client.execute(sql, data=(ISODatetime.now().dbformat(), rows[0][0]))
+
+        finally:
+            client.commit()
+
+        return True
+
+
+    @classmethod
+    def set_password(cls, uid, password):
+        client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
+
+        hashed_password = cls.hash_password(password)
+
+        client.begin()
+        sql = f'UPDATE {table} SET password = ?, must_set_password = 0  WHERE uid = ?'
+        client.execute(sql, data=(hashed_password, uid))
+        client.commit()

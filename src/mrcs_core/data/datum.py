@@ -26,12 +26,12 @@ class Datum(object):
     @classmethod
     def effective_lines(cls, source):
         for line in source:
-            stripped = line.strip()
+            stripped_line = line.strip()
 
-            if not stripped:
+            if not stripped_line:
                 continue
 
-            yield stripped
+            yield stripped_line
 
 
     # ----------------------------------------------------------------------------------------------------------------

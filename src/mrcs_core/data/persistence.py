@@ -35,6 +35,12 @@ class PersistenceManager(ABC):
         pass
 
 
+    @classmethod
+    @abstractmethod
+    def update(cls, entry: PersistentObject):
+        pass
+
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class PersistentObject(PersistenceManager, ABC):
@@ -54,5 +60,10 @@ class PersistentObject(PersistenceManager, ABC):
 
 
     @abstractmethod
-    def as_db(self):
+    def as_db_insert(self):
+        pass
+
+
+    @abstractmethod
+    def as_db_update(self):
         pass

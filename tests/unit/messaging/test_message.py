@@ -53,7 +53,7 @@ class TestMessage(unittest.TestCase):
 
     def test_as_db(self):
         obj1 = Message.construct_from_jdict(json.loads('{"routing": "TST.001.002.MPU.001.100", "body": "hello"}'))
-        self.assertEqual(('TST.001.002.MPU.001.100', '"hello"'), obj1.as_db())
+        self.assertEqual(('TST.001.002.MPU.001.100', '"hello"'), obj1.as_db_insert())
 
     def test_as_json(self):
         obj1 = Message.construct_from_jdict(json.loads('{"routing": "TST.001.002.MPU.001.100", "body": "hello"}'))

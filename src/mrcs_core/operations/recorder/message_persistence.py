@@ -104,10 +104,8 @@ class MessagePersistence(PersistentObject, ABC):
         client = DBClient.instance(cls.__DATABASE)
         table = cls.table()
 
-        client.begin()
         sql = f'SELECT * FROM {table} WHERE id IN (SELECT id FROM {table} ORDER BY id DESC LIMIT {limit})'
         client.execute(sql)
-        client.commit()
 
         rows = client.fetchall()
 
@@ -123,7 +121,7 @@ class MessagePersistence(PersistentObject, ABC):
 
         client.begin()
         sql = f'INSERT INTO {table} (routing, body) VALUES (?,?)'
-        client.execute(sql, data=entry.as_db())
+        client.execute(sql, data=entry.as_db_insert())
         sql = 'SELECT last_insert_rowid()'
         client.execute(sql)
         client.commit()
@@ -140,7 +138,7 @@ class MessagePersistence(PersistentObject, ABC):
 
         client.begin()
         sql = f'INSERT INTO {table} (rec, routing, body) VALUES (?,?,?)'
-        client.execute(sql, data=(rec,) + entry.as_db())
+        client.execute(sql, data=(rec,) + entry.as_db_insert())
         sql = 'SELECT last_insert_rowid()'
         client.execute(sql)
         client.commit()
@@ -148,3 +146,8 @@ class MessagePersistence(PersistentObject, ABC):
         rows = client.fetchall()
 
         return int(rows[0][0])
+
+
+    @classmethod
+    def update(cls, entry: PersistentObject):
+        raise NotImplementedError('messages are immutable')
