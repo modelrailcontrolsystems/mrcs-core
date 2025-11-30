@@ -26,15 +26,13 @@ class TestMessagePersistence(unittest.TestCase):
         Setup.dbSetup()
 
     def test_recreate(self):
-        MessageRecord.drop_tables()
-        MessageRecord.create_tables()
+        MessageRecord.recreate_tables()
 
         records = list(MessageRecord.find_latest(limit=10))
         self.assertEqual(len(records), 0)
 
     def test_construct(self):
-        MessageRecord.drop_tables()
-        MessageRecord.create_tables()
+        MessageRecord.recreate_tables()
 
         obj1 = Message.construct_from_jdict(json.loads('{"routing": "TST.001.002.MPU.001.100", "body": "hello"}'))
         obj1.save()

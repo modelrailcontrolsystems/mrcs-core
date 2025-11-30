@@ -8,6 +8,9 @@ An SQLite database client, guaranteeing one connection per database, per process
 https://www.sqlitetutorial.net/sqlite-python/
 https://forum.xojo.com/t/sqlite-return-id-of-record-inserted/37896
 https://iafisher.com/blog/2021/10/using-sqlite-effectively-in-python
+
+use BEGIN / COMMIT throughout?
+https://iafisher.com/blog/2021/10/using-sqlite-effectively-in-python
 """
 
 import os
@@ -110,7 +113,6 @@ class DBClient(object):
 
 
     def begin(self):
-        # TODO: use BEGIN / COMMIT throughout: https://iafisher.com/blog/2021/10/using-sqlite-effectively-in-python
         pass
 
 

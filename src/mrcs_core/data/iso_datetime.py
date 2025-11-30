@@ -42,6 +42,9 @@ class ISODatetime(JSONable, datetime):
 
     @classmethod
     def construct_from_db(cls, field):
+        if field is None:
+            return None
+
         db_naive = cls.strptime(field, cls.__DB_FORMAT)
         db_utc = db_naive.replace(tzinfo=cls.__UTC_ZONE)
 
