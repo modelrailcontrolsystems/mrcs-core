@@ -6,8 +6,14 @@ Created on 29 Nov 2025
 A structured representation of a user
 
 {
-    "routing": "TST.001.002.MPU.001.100",
-    "body": "hello"
+  "uid": "c69a665c-11b5-4755-a903-97095f9dc915",
+  "email": "bbeloff@me.com",
+  "role": "ADMIN",
+  "must_set_password": true,
+  "given_name": "Bruno",
+  "family_name": "Beloff",
+  "created": "2025-11-30T09:36:23.553+00:00",
+  "latest_login": null
 }
 """
 

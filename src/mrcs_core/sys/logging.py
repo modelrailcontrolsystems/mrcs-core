@@ -40,7 +40,7 @@ class LoggingSpecification(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "LoggingSpecification:{name:%s, level:%s}" %   (self.name, self.level)
+        return f'LoggingSpecification:{{name:{self.name}, level:{self.level}}}'
 
 
 # --------------------------------------------------------------------------------------------------------------------

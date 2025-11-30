@@ -3,9 +3,7 @@ Created on 9 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-An SQLite database client
-
-https://docs.python.org/3/howto/enum.html
+Abstractions over the system host and its file system
 """
 
 import os.path

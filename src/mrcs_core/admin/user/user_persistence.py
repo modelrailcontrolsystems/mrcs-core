@@ -196,6 +196,8 @@ class UserPersistence(PersistentObject, ABC):
         client = DBClient.instance(cls.__DATABASE)
         table = cls.table()
 
+        # TODO: check that there will be at least one ADMIN user
+
         client.begin()
         sql = f'DELETE FROM {table} WHERE uid = ?'
         client.execute(sql, data=(uid, ))

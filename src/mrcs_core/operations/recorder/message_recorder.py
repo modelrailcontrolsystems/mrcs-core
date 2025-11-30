@@ -56,6 +56,7 @@ class MessageRecorder(object):
 
 
     def find_latest(self, limit):
+        self.__logger.warning("find_latest")
         DBClient.set_client_db_mode(self.ops.db_mode)
         return MessageRecord.find_latest(limit)
 
