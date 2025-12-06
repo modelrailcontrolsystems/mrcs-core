@@ -10,7 +10,7 @@ https://www.rabbitmq.com/docs/http-api-reference
 https://stackoverflow.com/questions/4287941/how-can-i-list-or-discover-queues-on-a-rabbitmq-exchange-using-python
 """
 
-import requests
+import httpx
 
 from mrcs_core.messaging.exchange import Exchange
 from mrcs_core.messaging.queue import Queue
@@ -59,7 +59,7 @@ class Broker(object):
 
     def list_exchanges(self):
         url = f'{self.__base_url()}/api/exchanges/{self.__DEFAULT_VIRTUAL_HOST}'
-        response = requests.get(url, auth=(self.username, self.password))
+        response = httpx.get(url, auth=(self.username, self.password))
 
         exchanges = [Exchange.construct_from_jdict(q) for q in response.json()]
 
@@ -68,7 +68,7 @@ class Broker(object):
 
     def list_queues(self):
         url = f'{self.__base_url()}/api/queues/{self.__DEFAULT_VIRTUAL_HOST}'
-        response = requests.get(url, auth=(self.username, self.password))
+        response = httpx.get(url, auth=(self.username, self.password))
 
         queues = [Queue.construct_from_jdict(q) for q in response.json()]
 

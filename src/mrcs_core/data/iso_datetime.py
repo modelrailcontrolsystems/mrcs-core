@@ -52,6 +52,13 @@ class ISODatetime(JSONable, datetime):
 
 
     @classmethod
+    def construct_from_timestamp(cls, t, tz=None):
+        tzinfo = cls.__LOCAL_ZONE if tz is None else tz
+
+        return super().fromtimestamp(t, tzinfo)
+
+
+    @classmethod
     def now(cls, tz=None):
         tzinfo = cls.__LOCAL_ZONE if tz is None else tz
 
