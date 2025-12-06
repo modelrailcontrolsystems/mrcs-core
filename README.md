@@ -1,11 +1,13 @@
 # mrcs-core
 Core functionality and common data structures for the Model Rail Control Systems (MRCS) environment
 
-## RabbitMQ
+---
+
+### RabbitMQ
 
 [The Homebrew RabbitMQ Formula](https://www.rabbitmq.com/docs/install-homebrew)
 
-### Operations
+#### Operations
 `
 brew services restart rabbitmq
 `
@@ -26,7 +28,7 @@ def rest_queue_list ...
 `
 
 
-### Monitoring
+#### Monitoring
 `
 rabbitmqctl list_queues name messages_ready messages_unacknowledged
 `
