@@ -20,6 +20,7 @@ A structured representation of a user
 from collections import OrderedDict
 from enum import unique, StrEnum
 
+from mrcs_core.data.datum import Datum
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONable
 from mrcs_core.data.meta_enum import MetaEnum
@@ -52,8 +53,13 @@ class User(UserPersistence, PersistentObject, JSONable):
         if not jdict:
             return None
 
-        uid = jdict.get('uid')
         email = jdict.get('email')
+
+        if not Datum.is_email_address(email):
+            raise ValueError(f'{email} is not a valid email')
+
+        uid = jdict.get('uid')
+        email = email
         role = UserRole(jdict.get('role'))                      # may raise ValueError
         must_set_password = jdict.get('must_set_password')
         given_name = jdict.get('given_name')
