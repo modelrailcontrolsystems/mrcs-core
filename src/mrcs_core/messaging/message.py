@@ -128,4 +128,5 @@ class Message(MessagePersistence, PersistentObject, JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'Message:{{routing_key:{self.routing_key}, body:{self.body}}}'
+        return (f'{self.__class__.__name__}:'
+                f'{{routing_key:{self.routing_key}, body:{self.body}}}')

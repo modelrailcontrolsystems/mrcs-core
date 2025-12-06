@@ -54,7 +54,7 @@ class User(UserPersistence, PersistentObject, JSONable):
 
         uid = jdict.get('uid')
         email = jdict.get('email')
-        role = UserRole(jdict.get('role'))
+        role = UserRole(jdict.get('role'))                      # may raise ValueError
         must_set_password = jdict.get('must_set_password')
         given_name = jdict.get('given_name')
         family_name = jdict.get('family_name')

@@ -28,7 +28,7 @@ from json import JSONDecodeError
 
 from pika.exceptions import AMQPError
 
-from mrcs_core.cli.args.tester_args import TesterArgs
+from mrcs_core.cli.args.publisher_args import PublisherArgs
 from mrcs_core.data.datum import Datum
 from mrcs_core.data.equipment_identity import EquipmentType, EquipmentIdentifier, EquipmentFilter
 from mrcs_core.data.json import JSONify
@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    args = TesterArgs('a tool for publishing messages')
+    args = PublisherArgs('a tool for publishing messages')
 
     Logging.config('mrcs_tester', verbose=args.verbose)
     logger = Logging.getLogger()

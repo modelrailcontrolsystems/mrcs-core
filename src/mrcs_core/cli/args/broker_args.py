@@ -18,10 +18,10 @@ class BrokerArgs(MRCSArgs):
         super().__init__(description)
 
         group = self._parser.add_mutually_exclusive_group(required=True)
-        group.add_argument("-e", "--exchange", action="store_true", help='manage exchanges')
-        group.add_argument("-q", "--queue", action="store_true", help='manage queues')
+        group.add_argument('-e', '--exchange', action='store_true', help='manage exchanges')
+        group.add_argument('-q', '--queue', action='store_true', help='manage queues')
 
-        self._parser.add_argument("-d", "--delete", action="store", type=str, help='delete')
+        self._parser.add_argument('-d', '--delete', action='store', type=str, help='delete')
 
         self._args = self._parser.parse_args()
 
