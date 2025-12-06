@@ -13,7 +13,6 @@ import json
 import os
 import unittest
 
-from mrcs_core.data.json import JSONify
 from mrcs_core.db.dbclient import DBClient, DBMode
 from setup import Setup
 
@@ -26,7 +25,6 @@ class TestUserPersistence(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print('setUpClass')
         DBClient.set_client_db_mode(DBMode.TEST)
         Setup.dbSetup()
 
@@ -77,7 +75,6 @@ class TestUserPersistence(unittest.TestCase):
 
     def test_email(self):
         obj1 = self.__setup_db()
-        print(JSONify.dumps(obj1))
         self.assertEqual(User.email_in_use(obj1.email), True)
         self.assertEqual(User.email_in_use('xbeloff@me.com'), False)
 

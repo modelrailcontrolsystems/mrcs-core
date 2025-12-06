@@ -158,6 +158,7 @@ class JSONReport(JSONable, ABC):
         os.remove(filename)
 
 
+    # noinspection PyUnusedLocal
     @classmethod
     @abstractmethod
     def construct_from_jdict(cls, jdict, skeleton=False):
