@@ -21,15 +21,15 @@ class MRCSArgs(ABC):
     def __init__(self, description):
         self._parser = argparse.ArgumentParser(description=description)
 
-        self._parser.add_argument("-t", "--test", action="store_true", help='use TEST operations mode')
+        self._parser.add_argument('-t', '--test', action='store_true', help='use TEST operations mode')
 
-        self._parser.add_argument("-i", "--indent", action="store", type=int,
-                                  help="pretty-print the output with INDENT")
+        self._parser.add_argument('-i', '--indent', action='store', type=int,
+                                  help='pretty-print the output with INDENT')
 
-        self._parser.add_argument("-v", "--verbose", action="store_true",
+        self._parser.add_argument('-v', '--verbose', action='store_true',
                                   help='report narrative to stderr')
 
-        self._parser.add_argument("--version", action="version",
+        self._parser.add_argument('--version', action='version',
                                   version=f'{self._parser.prog} {version()}')
 
         self._args = None

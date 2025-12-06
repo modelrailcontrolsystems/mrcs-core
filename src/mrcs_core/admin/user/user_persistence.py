@@ -155,6 +155,18 @@ class UserPersistence(PersistentObject, ABC):
         return bool(rows[0][0])
 
 
+    @classmethod
+    def exists(cls, uid):
+        client = DBClient.instance(cls.__DATABASE)
+        table = cls.table()
+
+        sql = f'SELECT COUNT(uid) FROM {table} WHERE uid == ?'
+        client.execute(sql, data=(uid, ))
+        rows = client.fetchall()
+
+        return bool(rows[0][0])
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod

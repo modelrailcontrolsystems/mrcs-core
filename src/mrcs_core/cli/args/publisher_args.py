@@ -12,25 +12,25 @@ from mrcs_core.cli.args.mrcs_args import MRCSArgs
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class TesterArgs(MRCSArgs):
+class PublisherArgs(MRCSArgs):
     """unix command line handler"""
 
     def __init__(self, description):
         super().__init__(description)
 
-        self._parser.add_argument("-s", "--source_serial", action="store", type=int, default=1,
+        self._parser.add_argument('-s', '--source_serial', action='store', type=int, default=1,
                                   help='TST source serial number (default 1)')
 
-        self._parser.add_argument("-e", "--target_equipment", action="store", type=str,
+        self._parser.add_argument('-e', '--target_equipment', action='store', type=str,
                                   help='target equipment type')
 
-        self._parser.add_argument("-b", "--target_block", action="store", type=int,
+        self._parser.add_argument('-b', '--target_block', action='store', type=int,
                                   help='target equipment block')
 
-        self._parser.add_argument("-n", "--target_serial", action="store", type=int,
+        self._parser.add_argument('-n', '--target_serial', action='store', type=int,
                                   help='target equipment serial number')
 
-        self._parser.add_argument("-m", "--message_body", action="store",
+        self._parser.add_argument('-m', '--message_body', action='store',
                                   help='use this body instead of stdin')
 
         self._args = self._parser.parse_args()
@@ -66,7 +66,7 @@ class TesterArgs(MRCSArgs):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'TesterArgs:{{test:{self.test}, source_serial:{self.source_serial}, '
+        return (f'PublisherArgs:{{test:{self.test}, source_serial:{self.source_serial}, '
                 f'target_equipment:{self.target_equipment}, target_block:{self.target_block}, '
                 f'target_serial:{self.target_serial}, message_body:{self.message_body}, '
                 f'indent:{self.indent}, verbose:{self.verbose}}}')

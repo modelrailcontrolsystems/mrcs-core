@@ -66,6 +66,7 @@ class RoutingKey(JSONable, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):
+        # TODO: provide dict of from: to: ?
         return '.'.join([self.source.as_json(**kwargs), self.target.as_json(**kwargs)])
 
 
