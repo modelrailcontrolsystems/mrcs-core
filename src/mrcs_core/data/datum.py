@@ -38,25 +38,6 @@ class Datum(object):
     # formatting...
 
     @classmethod
-    def format(cls, value, leading_zeroes=False):       # TODO: re-write for new formatting
-        # string or bool...
-        if not cls.is_numeric(value):
-            return "%s"
-
-        # numeric...
-        prefix = "0" if leading_zeroes else ""
-        length = str(len((str(value))))
-
-        if cls.is_int(value):
-            return "%" + prefix + length + "d"
-
-        # float...
-        precision = str(cls.precision(value))
-
-        return "%" + prefix + length + "." + precision + "f"
-
-
-    @classmethod
     def is_email_address(cls, value):
         try:
             return bool(re.match(r'[^@\s]+@[^@\s]+\.[^@\s]+', value))

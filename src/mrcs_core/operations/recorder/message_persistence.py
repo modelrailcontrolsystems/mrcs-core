@@ -126,9 +126,9 @@ class MessagePersistence(PersistentObject, ABC):
         client.execute(sql)
         client.commit()
 
-        rows = client.fetchall()
+        row = client.fetchone()
 
-        return int(rows[0][0])
+        return int(row[0])
 
 
     @classmethod
@@ -143,9 +143,9 @@ class MessagePersistence(PersistentObject, ABC):
         client.execute(sql)
         client.commit()
 
-        rows = client.fetchall()
+        row = client.fetchone()
 
-        return int(rows[0][0])
+        return int(row[0])
 
 
     @classmethod

@@ -3,15 +3,17 @@ Created on 9 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-Abstractions over the system host and its file system
+Abstractions over the system host and its filesystem
 """
 
 import os.path
 
+from mrcs_core.sys.persistence_manager import FilesystemPersistenceManager
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Host(object):
+class Host(FilesystemPersistenceManager):
     """
     An abstraction over the host system
     """
