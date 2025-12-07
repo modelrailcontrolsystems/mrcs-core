@@ -153,7 +153,7 @@ class UserPersistence(PersistentObject, ABC):
         client.execute(sql, data=(email, ))
         row = client.fetchone()
 
-        return bool(row[0]) # TODO: return uid of user - so that updates don't grab another user's email address
+        return bool(row[0])     # TODO: return uid of user - so that updates don't grab another user's email address
 
 
     @classmethod
