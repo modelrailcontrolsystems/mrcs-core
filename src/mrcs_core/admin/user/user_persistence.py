@@ -10,6 +10,7 @@ https://www.geeksforgeeks.org/python/how-to-hash-passwords-in-python/
 
 import hashlib
 import uuid
+
 from abc import ABC
 
 from mrcs_core.data.iso_datetime import ISODatetime
@@ -138,9 +139,9 @@ class UserPersistence(PersistentObject, ABC):
         sql = (f'SELECT uid, email, role, must_set_password, given_name, family_name, created, latest_login '
                f'FROM {table} WHERE uid == ?')
         client.execute(sql, data=(uid, ))
-        rows = client.fetchall()
+        row = client.fetchone()
 
-        return None if not rows else cls.construct_from_db(*rows[0])
+        return None if not row else cls.construct_from_db(*row)
 
 
     @classmethod
@@ -150,9 +151,9 @@ class UserPersistence(PersistentObject, ABC):
 
         sql = f'SELECT COUNT(uid) FROM {table} WHERE email == ?'
         client.execute(sql, data=(email, ))
-        rows = client.fetchall()
+        row = client.fetchone()
 
-        return bool(rows[0][0])
+        return bool(row[0]) # TODO: return uid of user - so that updates don't grab another user's email address
 
 
     @classmethod
@@ -162,9 +163,9 @@ class UserPersistence(PersistentObject, ABC):
 
         sql = f'SELECT COUNT(uid) FROM {table} WHERE uid == ?'
         client.execute(sql, data=(uid, ))
-        rows = client.fetchall()
+        row = client.fetchone()
 
-        return bool(rows[0][0])
+        return bool(row[0])
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -187,9 +188,9 @@ class UserPersistence(PersistentObject, ABC):
         sql = (f'SELECT uid, email, role, must_set_password, given_name, family_name, created, latest_login '
                f'FROM {table} WHERE uid == ?')
         client.execute(sql, data=(uid, ))
-        rows = client.fetchall()
+        row = client.fetchone()
 
-        return cls.construct_from_db(*rows[0])
+        return cls.construct_from_db(*row)
 
 
     @classmethod
@@ -198,7 +199,7 @@ class UserPersistence(PersistentObject, ABC):
         table = cls.table()
 
         client.begin()
-        sql = f'UPDATE {table} SET email = ?, given_name = ?, family_name = ? WHERE uid = ?'
+        sql = f'UPDATE {table} SET email = ?, given_name = ?, family_name = ? WHERE uid = ?'   # TODO: set role also
         client.execute(sql, data=(item.as_db_update()))
         client.commit()
 
@@ -227,14 +228,13 @@ class UserPersistence(PersistentObject, ABC):
             client.begin()
             sql = f'SELECT uid FROM {table} WHERE email == ? AND password == ?'
             client.execute(sql, data=(email, hashed_password))
+            row = client.fetchone()
 
-            rows = client.fetchall()
-
-            if not rows:
+            if not row:
                 return False
 
             sql = f'UPDATE {table} SET latest_login = ? WHERE uid = ?'
-            client.execute(sql, data=(ISODatetime.now().dbformat(), rows[0][0]))
+            client.execute(sql, data=(ISODatetime.now().dbformat(), row[0]))
 
         finally:
             client.commit()

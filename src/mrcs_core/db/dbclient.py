@@ -124,6 +124,10 @@ class DBClient(object):
         return self.cursor.fetchall()
 
 
+    def fetchone(self):
+        return self.cursor.fetchone()
+
+
     def __open(self):
         filename = '.'.join([self.db_name, 'db'])
 
