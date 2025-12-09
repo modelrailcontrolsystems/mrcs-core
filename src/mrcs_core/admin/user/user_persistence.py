@@ -209,12 +209,25 @@ class UserPersistence(PersistentObject, ABC):
         client = DBClient.instance(cls.__DATABASE)
         table = cls.table()
 
-        # TODO: check that there will be at least one ADMIN user
+        try:
+            client.begin()
+            sql = f'SELECT role FROM {table} WHERE uid == ?'
+            client.execute(sql, data=(uid,))
+            row = client.fetchone()
 
-        client.begin()
-        sql = f'DELETE FROM {table} WHERE uid = ?'
-        client.execute(sql, data=(uid, ))
-        client.commit()
+            if row[0] == 'ADMIN':
+                sql = f'SELECT COUNT(uid) FROM {table} WHERE role == "ADMIN"'
+                client.execute(sql)
+                row = client.fetchone()
+
+                if int(row[0]) < 2:
+                    raise RuntimeError('there must be at least one ADMIN user')
+
+            sql = f'DELETE FROM {table} WHERE uid = ?'
+            client.execute(sql, data=(uid, ))
+
+        finally:
+            client.commit()
 
 
     @classmethod

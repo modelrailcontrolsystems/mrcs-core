@@ -17,6 +17,7 @@ import os
 import sqlite3
 
 from enum import unique, StrEnum
+from sqlite3 import ProgrammingError
 
 from mrcs_core.data.meta_enum import MetaEnum
 from mrcs_core.sys.host import Host
@@ -74,16 +75,21 @@ class DBClient(object):
 
 
     @classmethod
-    def drop(cls, db_name):
+    def kill(cls, db_name):
         if db_name in list(cls.__clients):
-            cls.__clients[db_name].__close()
+            try:
+                cls.__clients[db_name].__close()
+            except ProgrammingError:
+                # being dropped by another thread?
+                pass
+
             del cls.__clients[db_name]
 
 
     @classmethod
-    def drop_all(cls):
+    def kill_all(cls):
         for db_name in list(cls.__clients):
-            cls.drop(db_name)
+            cls.kill(db_name)
 
 
     # ----------------------------------------------------------------------------------------------------------------

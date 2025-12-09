@@ -25,26 +25,26 @@ class TestUser(unittest.TestCase):
         self.assertEqual(None, obj1)
 
     def test_construct_from_jdict(self):
-        obj1 = self.__load_user('new_user.json')
-        self.assertEqual('User:{uid:None, email:bbeloff@me.com, role:ADMIN, must_set_password:True, '
+        obj1 = self.__load_user('new_user1.json')
+        self.assertEqual('User:{uid:None, email:bbeloff1@me.com, role:ADMIN, must_set_password:True, '
                          'given_name:Bruno, family_name:Beloff, created:None, latest_login:None}', str(obj1))
 
     def test_eq(self):
-        obj1 = self.__load_user('new_user.json')
+        obj1 = self.__load_user('new_user1.json')
         self.assertEqual(True, obj1 == obj1)
 
     def test_neq(self):
-        obj1 = self.__load_user('new_user.json')
+        obj1 = self.__load_user('new_user1.json')
         obj2 = self.__load_user('saved_user.json')
         self.assertEqual(False, obj1 == obj2)
 
     def test_lt(self):
-        obj1 = self.__load_user('new_user.json')
+        obj1 = self.__load_user('new_user1.json')
         obj2 = self.__load_user('gt_user.json')
         self.assertEqual(True, obj1 < obj2)
 
     def test_nlt(self):
-        obj1 = self.__load_user('new_user.json')
+        obj1 = self.__load_user('new_user1.json')
         obj2 = self.__load_user('gt_user.json')
         self.assertEqual(False, obj2 < obj1)
 
