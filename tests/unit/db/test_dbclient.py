@@ -30,14 +30,14 @@ class TestDB(unittest.TestCase):
 
     def test_drop_all(self):
         obj1 = DBClient.instance('Test')
-        DBClient.drop_all()
+        DBClient.kill_all()
         self.assertEqual('Test', obj1.db_name)
         self.assertIsNone(obj1.connection)
         self.assertIsNone(obj1.cursor)
 
     def test_str(self):
         obj1 = DBClient.instance('Test')
-        DBClient.drop_all()
+        DBClient.kill_all()
         self.assertEqual('DBClient:{db_mode:test, db_name:Test, connection:None, cursor:None}', str(obj1))
 
 

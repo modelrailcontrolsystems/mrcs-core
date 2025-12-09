@@ -29,20 +29,20 @@ class TestUserPersistence(unittest.TestCase):
         Setup.dbSetup()
 
     def test_insert(self):
-        obj1 = self.__setup_db()
+        obj1, _ = self.__setup_db()
         records = list(User.find_all())
         obj2 = records[0]
 
         self.assertEqual(obj2.email, obj1.email)
 
     def test_find(self):
-        obj1 = self.__setup_db()
+        obj1, _ = self.__setup_db()
         obj2 = User.find(obj1.uid)
 
         self.assertEqual(obj2.email, obj1.email)
 
     def test_update(self):
-        obj1 = self.__setup_db()
+        obj1, _ = self.__setup_db()
         obj2 = User(obj1.uid, obj1.email, obj1.role, obj1.must_set_password, 'Mickey', 'Mouse',
                     obj1.created, obj1.latest_login)
         obj2.save()
@@ -52,14 +52,14 @@ class TestUserPersistence(unittest.TestCase):
         self.assertEqual(obj3.family_name, 'Mouse')
 
     def test_delete(self):
-        obj1 = self.__setup_db()
-        User.delete(obj1.uid)
-        obj2 = User.find(obj1.uid)
+        _, obj2 = self.__setup_db()
+        User.delete(obj2.uid)
+        obj3 = User.find(obj2.uid)
 
-        self.assertEqual(obj2, None)
+        self.assertEqual(obj3, None)
 
     def test_log_in(self):
-        obj1 = self.__setup_db()
+        obj1, _ = self.__setup_db()
         success = obj1.log_in(obj1.email, 'password')
         self.assertEqual(success, True)
 
@@ -67,14 +67,14 @@ class TestUserPersistence(unittest.TestCase):
         self.assertEqual(success, False)
 
     def test_set_password(self):
-        obj1 = self.__setup_db()
+        obj1, _ = self.__setup_db()
         obj1.set_password(obj1.uid, 'admin')
         success = obj1.log_in(obj1.email, 'admin')
 
         self.assertEqual(success, True)
 
     def test_email(self):
-        obj1 = self.__setup_db()
+        obj1, _ = self.__setup_db()
         self.assertEqual(User.email_in_use(obj1.email), True)
         self.assertEqual(User.email_in_use('xbeloff@me.com'), False)
 
@@ -85,12 +85,19 @@ class TestUserPersistence(unittest.TestCase):
     def __setup_db(cls):
         User.recreate_tables()
 
-        abs_filename = os.path.join(os.path.dirname(__file__), 'data', 'new_user.json')
+        abs_filename = os.path.join(os.path.dirname(__file__), 'data', 'new_user1.json')
         with open(abs_filename) as fp:
             jdict = json.load(fp)
-
         obj1 = User.construct_from_jdict(jdict)
-        return obj1.save(password='password')
+        obj1 = obj1.save(password='password')
+
+        abs_filename = os.path.join(os.path.dirname(__file__), 'data', 'new_user2.json')
+        with open(abs_filename) as fp:
+            jdict = json.load(fp)
+        obj2 = User.construct_from_jdict(jdict)
+        obj2 = obj2.save(password='password')
+
+        return obj1, obj2
 
 
 if __name__ == "__main_":

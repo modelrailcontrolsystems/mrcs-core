@@ -23,6 +23,6 @@ class Setup(object):
         if DBClient.client_db_mode() == DBMode.TEST:
             return
 
-        DBClient.drop_all()
+        DBClient.kill_all()
         DBClient.set_client_db_mode(DBMode.TEST)
         print('dbSetup: set DB for test', file=sys.stderr)
