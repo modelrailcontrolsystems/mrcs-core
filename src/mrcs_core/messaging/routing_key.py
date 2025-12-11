@@ -9,6 +9,7 @@ VIS.001.001.MPU.001.*
 """
 
 import re
+
 from abc import ABC
 
 from mrcs_core.data.equipment_identity import EquipmentIdentifier, EquipmentFilter, EquipmentSpecification

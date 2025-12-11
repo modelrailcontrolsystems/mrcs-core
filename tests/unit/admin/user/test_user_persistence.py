@@ -14,9 +14,9 @@ import os
 import unittest
 
 from mrcs_core.db.dbclient import DBClient, DBMode
-from setup import Setup
-
 from mrcs_core.admin.user.user import User
+
+from setup import Setup
 
 
 # --------------------------------------------------------------------------------------------------------------------

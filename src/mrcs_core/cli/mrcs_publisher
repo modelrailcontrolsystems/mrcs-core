@@ -24,6 +24,7 @@ RESOURCES
 
 import json
 import sys
+
 from json import JSONDecodeError
 
 from pika.exceptions import AMQPError
