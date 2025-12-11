@@ -12,7 +12,6 @@ https://stackoverflow.com/questions/8047736/how-to-load-data-from-a-file-for-a-u
 
 import json
 import os
-
 import unittest
 
 from mrcs_core.data.json import JSONify

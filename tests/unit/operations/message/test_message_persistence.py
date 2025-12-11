@@ -12,10 +12,10 @@ https://www.jetbrains.com/help/pycharm/creating-tests.html
 import json
 import unittest
 
-from setup import Setup
-
 from mrcs_core.messaging.message import Message
 from mrcs_core.operations.recorder.message_record import MessageRecord
+
+from setup import Setup
 
 
 # --------------------------------------------------------------------------------------------------------------------
