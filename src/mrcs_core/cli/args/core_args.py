@@ -15,7 +15,7 @@ from mrcs_core.operations.operation_mode import OperationMode
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class MRCSArgs(ABC):
+class CoreArgs(ABC):
     """unix command line handler"""
 
     def __init__(self, description):

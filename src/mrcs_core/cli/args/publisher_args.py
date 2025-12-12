@@ -7,12 +7,12 @@ https://realpython.com/command-line-interfaces-python-argparse/
 https://stackoverflow.com/questions/34988908/argparse-with-two-values-for-one-argument
 """
 
-from mrcs_core.cli.args.mrcs_args import MRCSArgs
+from mrcs_core.cli.args.core_args import CoreArgs
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class PublisherArgs(MRCSArgs):
+class PublisherArgs(CoreArgs):
     """unix command line handler"""
 
     def __init__(self, description):
@@ -22,13 +22,13 @@ class PublisherArgs(MRCSArgs):
                                   help='TST source serial number (default 1)')
 
         self._parser.add_argument('-e', '--target_equipment', action='store', type=str,
-                                  help='target equipment type')
+                                  help='target equipment type (default *)')
 
         self._parser.add_argument('-b', '--target_block', action='store', type=int,
-                                  help='target equipment block')
+                                  help='target equipment block (default *)')
 
         self._parser.add_argument('-n', '--target_serial', action='store', type=int,
-                                  help='target equipment serial number')
+                                  help='target equipment serial number (default *)')
 
         self._parser.add_argument('-m', '--message_body', action='store',
                                   help='use this body instead of stdin')
