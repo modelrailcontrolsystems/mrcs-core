@@ -6,12 +6,12 @@ Created on 17 Nov 2025
 https://realpython.com/command-line-interfaces-python-argparse/
 """
 
-from mrcs_core.cli.args.mrcs_args import MRCSArgs
+from mrcs_core.cli.args.core_args import CoreArgs
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class BrokerArgs(MRCSArgs):
+class BrokerArgs(CoreArgs):
     """unix command line handler"""
 
     def __init__(self, description):
