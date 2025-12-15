@@ -10,6 +10,7 @@ Created on 1 Nov 2025
 
 https://www.rabbitmq.com/tutorials/tutorial-four-python
 https://github.com/aiidateam/aiida-core/issues/1142
+https://stackoverflow.com/questions/15150207/connection-in-rabbitmq-server-auto-lost-after-600s
 """
 
 from abc import ABC
@@ -70,11 +71,14 @@ class MQClient(ABC):
                 return False
 
             self.channel.close()
-            self.__channel = None
             return True
 
-        except AMQPError:
+        except AMQPError as ex:
+            self._logger.warn(f'close: {ex.__class__.__name__}:{ex}')
             return False
+
+        finally:
+            self.__channel = None
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -159,12 +163,20 @@ class Publisher(MQClient):
         if self.channel is None:
             raise RuntimeError('publish: no channel')
 
-        self.channel.basic_publish(
-            exchange=self.exchange_name,
-            routing_key=message.routing_key.as_json(),
-            body=JSONify.dumps(message.body),
-            properties=pika.BasicProperties(delivery_mode=pika.DeliveryMode.Persistent)
-        )
+        while True:
+            try:
+                self.channel.basic_publish(
+                    exchange=self.exchange_name,
+                    routing_key=message.routing_key.as_json(),
+                    body=JSONify.dumps(message.body),
+                    properties=pika.BasicProperties(delivery_mode=pika.DeliveryMode.Persistent)
+                )
+                break
+
+            except AMQPError:
+                self.close()
+                self.connect()
+                self._logger.warn('publish: connection re-established')
 
 
     # ----------------------------------------------------------------------------------------------------------------
