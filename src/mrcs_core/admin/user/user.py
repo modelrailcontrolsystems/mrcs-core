@@ -37,6 +37,7 @@ class UserRole(StrEnum, metaclass=MetaEnum):
     """
 
     ADMIN = 'ADMIN'
+    DESIGNER = 'DESIGNER'
     OPERATOR = 'OPERATOR'
     OBSERVER = 'OBSERVER'
 
@@ -45,7 +46,7 @@ class UserRole(StrEnum, metaclass=MetaEnum):
 
 class User(UserPersistence, PersistentObject, JSONable):
     """
-    classdocs
+    a structured representation of a user
     """
 
     @classmethod

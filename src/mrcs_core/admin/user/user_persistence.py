@@ -5,13 +5,17 @@ Created on 29 Nov 2025
 
 SQLite database management for users
 
+make salt:
+openssl rand -hex 32
+
 https://www.geeksforgeeks.org/python/how-to-hash-passwords-in-python/
 """
 
-import hashlib
 import uuid
 
 from abc import ABC
+
+from pwdlib import PasswordHash
 
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.persistence import PersistentObject
@@ -25,12 +29,11 @@ class UserPersistence(PersistentObject, ABC):
     SQLite database management for users
     """
 
+    __SALT = 'f0d655c131f2f64bd2203421515e940ccf6828f6d1595db92fb89507a3cd0bdf'
+
     @classmethod
     def hash_password(cls, password):
-        salt = 'MRCS'
-        password_salt = password + salt
-
-        return hashlib.sha256(password_salt.encode()).hexdigest()
+        return PasswordHash.recommended().hash(password, salt=cls.__SALT.encode())
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -141,7 +144,7 @@ class UserPersistence(PersistentObject, ABC):
         client.execute(sql, data=(uid, ))
         row = client.fetchone()
 
-        return None if not row else cls.construct_from_db(*row)
+        return cls.construct_from_db(*row) if row else None
 
 
     @classmethod
@@ -244,15 +247,22 @@ class UserPersistence(PersistentObject, ABC):
             row = client.fetchone()
 
             if not row:
-                return False
+                return None
+
+            uid = row[0]
 
             sql = f'UPDATE {table} SET latest_login = ? WHERE uid = ?'
-            client.execute(sql, data=(ISODatetime.now().dbformat(), row[0]))
+            client.execute(sql, data=(ISODatetime.now().dbformat(), uid))
+
+            sql = (f'SELECT uid, email, role, must_set_password, given_name, family_name, created, latest_login '
+                   f'FROM {table} WHERE uid == ?')
+            client.execute(sql, data=(uid,))
+            row = client.fetchone()
+
+            return cls.construct_from_db(*row)
 
         finally:
             client.commit()
-
-        return True
 
 
     @classmethod

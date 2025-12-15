@@ -28,6 +28,7 @@ class TestUserPersistence(unittest.TestCase):
         DBClient.set_client_db_mode(DBMode.TEST)
         Setup.dbSetup()
 
+
     def test_insert(self):
         obj1, _ = self.__setup_db()
         records = list(User.find_all())
@@ -35,11 +36,13 @@ class TestUserPersistence(unittest.TestCase):
 
         self.assertEqual(obj2.email, obj1.email)
 
+
     def test_find(self):
         obj1, _ = self.__setup_db()
         obj2 = User.find(obj1.uid)
 
         self.assertEqual(obj2.email, obj1.email)
+
 
     def test_update(self):
         obj1, _ = self.__setup_db()
@@ -51,6 +54,7 @@ class TestUserPersistence(unittest.TestCase):
         self.assertEqual(obj3.given_name, 'Mickey')
         self.assertEqual(obj3.family_name, 'Mouse')
 
+
     def test_delete(self):
         _, obj2 = self.__setup_db()
         User.delete(obj2.uid)
@@ -58,20 +62,22 @@ class TestUserPersistence(unittest.TestCase):
 
         self.assertEqual(obj3, None)
 
+
     def test_log_in(self):
         obj1, _ = self.__setup_db()
-        success = obj1.log_in(obj1.email, 'password')
-        self.assertEqual(success, True)
+        user = obj1.log_in(obj1.email, 'password')
+        self.assertIsNotNone(user)
 
-        success = obj1.log_in(obj1.email, 'junk')
-        self.assertEqual(success, False)
+        user = obj1.log_in(obj1.email, 'junk')
+        self.assertIsNone(user)
+
 
     def test_set_password(self):
         obj1, _ = self.__setup_db()
         obj1.set_password(obj1.uid, 'admin')
-        success = obj1.log_in(obj1.email, 'admin')
+        user = obj1.log_in(obj1.email, 'admin')
+        self.assertIsNotNone(user)
 
-        self.assertEqual(success, True)
 
     def test_email(self):
         obj1, _ = self.__setup_db()
