@@ -24,8 +24,6 @@ from mrcs_core.data.datum import Datum
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONable
 from mrcs_core.data.meta_enum import MetaEnum
-from mrcs_core.data.persistence import PersistentObject
-from mrcs_core.admin.user.user_persistence import UserPersistence
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -44,7 +42,7 @@ class UserRole(StrEnum, metaclass=MetaEnum):
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class User(UserPersistence, PersistentObject, JSONable):
+class User(JSONable):
     """
     a structured representation of a user
     """
@@ -67,20 +65,6 @@ class User(UserPersistence, PersistentObject, JSONable):
         family_name = jdict.get('family_name')
         created = ISODatetime.construct_from_jdict(jdict.get('created'))
         latest_login = ISODatetime.construct_from_jdict(jdict.get('latest_login'))
-
-        return cls(uid, email, role, must_set_password, given_name, family_name, created, latest_login)
-
-
-    @classmethod
-    def construct_from_db(cls, uid, email, role, must_set_password, given_name, family_name, created, latest_login):
-        uid = uid
-        email = email
-        role = UserRole(role)
-        must_set_password = bool(must_set_password)
-        given_name = given_name
-        family_name = family_name
-        created = ISODatetime.construct_from_db(created)
-        latest_login = ISODatetime.construct_from_db(latest_login)
 
         return cls(uid, email, role, must_set_password, given_name, family_name, created, latest_login)
 
@@ -126,17 +110,6 @@ class User(UserPersistence, PersistentObject, JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def save(self, password=None):
-        if self.uid is None:
-            if password is None:
-                raise ValueError('insert requires password')
-            return super().insert(self, password=password)
-
-        return super().update(self)
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
@@ -150,14 +123,6 @@ class User(UserPersistence, PersistentObject, JSONable):
         jdict['latest_login'] = self.latest_login
 
         return jdict
-
-
-    def as_db_insert(self):
-        return self.email, self.role, self.must_set_password, self.given_name, self.family_name
-
-
-    def as_db_update(self):
-        return self.email, self.given_name, self.family_name, self.uid
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -205,6 +170,6 @@ class User(UserPersistence, PersistentObject, JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'User:{{uid:{self.uid}, email:{self.email}, role:{self.role}, '
+        return (f'{self.__class__.__name__}:{{uid:{self.uid}, email:{self.email}, role:{self.role}, '
                 f'must_set_password:{self.must_set_password}, given_name:{self.given_name}, '
                 f'family_name:{self.family_name}, created:{self.created}, latest_login:{self.latest_login}}}')

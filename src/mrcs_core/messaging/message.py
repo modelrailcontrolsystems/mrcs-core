@@ -11,19 +11,15 @@ A structured representation of a message
 }
 """
 
-import json
-
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable, JSONify
-from mrcs_core.data.persistence import PersistentObject
 from mrcs_core.messaging.routing_key import RoutingKey, PublicationRoutingKey
-from mrcs_core.operations.recorder.message_persistence import MessagePersistence
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Message(MessagePersistence, PersistentObject, JSONable):
+class Message(JSONable):
     """
     classdocs
     """
@@ -50,16 +46,6 @@ class Message(MessagePersistence, PersistentObject, JSONable):
         body = jdict.get('body')
 
         return cls(routing_key, body)
-
-
-    @classmethod
-    def construct_from_callback(cls, routing_key, body_str):
-        return cls(routing_key, json.loads(body_str.decode()))
-
-
-    @classmethod
-    def construct_from_db(cls, *fields):
-        raise NotImplementedError('use MessageRecord class instead')
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -90,12 +76,6 @@ class Message(MessagePersistence, PersistentObject, JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def save(self):
-        return super().insert(self)
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
@@ -103,14 +83,6 @@ class Message(MessagePersistence, PersistentObject, JSONable):
         jdict['body'] = self.body
 
         return jdict
-
-
-    def as_db_insert(self):
-        return self.routing_key.as_json(), JSONify.dumps(self.body)
-
-
-    def as_db_update(self):
-        raise NotImplementedError('messages are immutable')
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -128,5 +100,4 @@ class Message(MessagePersistence, PersistentObject, JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'{self.__class__.__name__}:'
-                f'{{routing_key:{self.routing_key}, body:{self.body}}}')
+        return f'{self.__class__.__name__}:{{routing_key:{self.routing_key}, body:{self.body}}}'

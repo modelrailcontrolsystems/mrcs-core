@@ -15,8 +15,6 @@ https://stackoverflow.com/questions/17574784/sqlite-current-timestamp-with-milli
 https://forum.xojo.com/t/sqlite-return-id-of-record-inserted/37896/3
 """
 
-import json
-
 from collections import OrderedDict
 
 from mrcs_core.data.iso_datetime import ISODatetime
@@ -44,16 +42,6 @@ class MessageRecord(Message):
         return cls(uid, rec, routing_key, body)
 
 
-    @classmethod
-    def construct_from_db(cls, uid_field, rec_field, routing_key_field, body_field):
-        uid = int(uid_field)
-        rec = ISODatetime.construct_from_db(rec_field)
-        routing_key = PublicationRoutingKey.construct_from_db(routing_key_field)
-        body = json.loads(body_field)
-
-        return cls(uid, rec, routing_key, body)
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, uid: int, rec: ISODatetime, routing_key: RoutingKey, body):
@@ -73,12 +61,6 @@ class MessageRecord(Message):
 
     def __lt__(self, other):
         return self.uid < other.uid
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def save(self):
-        raise NotImplementedError('use Message class instead')
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -109,4 +91,5 @@ class MessageRecord(Message):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'MessageRecord:{{uid:{self.uid}, rec:{self.rec}, routing_key:{self.routing_key}, body:{self.body}}}'
+        return (f'{self.__class__.__name__}:'
+                f'{{uid:{self.uid}, rec:{self.rec}, routing_key:{self.routing_key}, body:{self.body}}}')
