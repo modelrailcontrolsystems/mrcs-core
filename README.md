@@ -1,5 +1,5 @@
 # mrcs-core
-_Core functionality and common data structures for the Model Rail Control Systems (MRCS) domain_
+_ Data structures and utilities required by all Model Rail Control Systems (MRCS) functional components_
 
 ---
 
