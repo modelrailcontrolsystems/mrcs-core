@@ -6,6 +6,7 @@ Created on 13 Aug 2016
 JSONify must handle **kw because the standard JSONEncoder does not.
 
 https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python
+https://stackoverflow.com/questions/9575409/calling-parent-class-init-with-multiple-inheritance-whats-the-right-way
 """
 
 import json
@@ -287,7 +288,8 @@ class AbstractPersistentJSONable(JSONable, ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, last_modified=None):
+    def __init__(self, *args, last_modified=None, **kwargs):
+        super().__init__(*args, **kwargs)                       # supports multiple inheritance
         self._last_modified = last_modified                     # LocalizedDatetime
 
 
