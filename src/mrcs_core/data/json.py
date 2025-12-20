@@ -289,7 +289,7 @@ class AbstractPersistentJSONable(JSONable, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, *args, last_modified=None, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)                       # supports multiple inheritance
         self._last_modified = last_modified                     # LocalizedDatetime
 
 
