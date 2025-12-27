@@ -68,7 +68,17 @@ class ISODatetime(JSONable, datetime):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __new__(cls, *args, **kwargs):
+        if len(args) == 1 and 'tzinfo' not in kwargs:
+            kwargs['tzinfo'] = cls.__LOCAL_ZONE             # called using datetime standard form - override tzinfo
+
         return datetime.__new__(cls, *args, **kwargs)
+
+
+    def __eq__(self, other):
+        try:
+            return self.isoformat() == other.isoformat()    # strip any existing microseconds
+        except (AttributeError, TypeError):
+            return False
 
 
     # ----------------------------------------------------------------------------------------------------------------
