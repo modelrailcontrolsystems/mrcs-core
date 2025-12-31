@@ -3,17 +3,16 @@ Created on 26 Dec 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A model clock, with start datetime, offset and speed
+A model clock, with true_start datetime, model_start and speed
 
 {
     "speed": 4,
-    "offset": 3029029272.269169,
-    "start": "2025-12-26T11:01:12.269+00:00"
+    "model_start": 3029029272.269169,
+    "true_start": "2025-12-26T11:01:12.269+00:00"
 }
 """
 
 from collections import OrderedDict
-from datetime import timedelta
 
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import PersistentJSONable
@@ -26,7 +25,7 @@ class Clock(PersistentJSONable):
     classdocs
     """
 
-    START_OF_TIME = 1804        # Pen-y-Darren built by Richard Trevithick
+    START_OF_TIME_YEAR = 1804        # Pen-y-Darren is built by Richard Trevithick
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -42,37 +41,41 @@ class Clock(PersistentJSONable):
     @classmethod
     def construct_from_jdict(cls, jdict, skeleton=None):
         if not jdict:
-            return cls(1, timedelta(), ISODatetime.now())
+            if skeleton:
+                now = ISODatetime.now()
+                return cls(1, now, now)
+            else:
+                return None
 
         speed = int(jdict.get('speed'))
-        offset = timedelta(seconds=jdict.get('offset'))
-        start = ISODatetime.construct_from_jdict(jdict.get('start'))
+        model_start = ISODatetime.construct_from_jdict(jdict.get('model_start'))
+        true_start = ISODatetime.construct_from_jdict(jdict.get('true_start'))
 
-        return cls(speed, offset, start)
+        return cls(speed, model_start, true_start)
 
 
     @classmethod
     def set(cls, speed: int, year, month, day, hour, minute=0, second=0):
-        now = ISODatetime.now()
-        model_now = ISODatetime(year, month=month, day=day, hour=hour, minute=minute, second=second)
-        offset = now - model_now
+        model_start = ISODatetime(year, month=month, day=day, hour=hour, minute=minute, second=second)
+        true_start = ISODatetime.now()
 
-        return cls(speed, offset, now)
+        return cls(speed, model_start, true_start)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, speed: int, offset: timedelta, start: ISODatetime):
+    def __init__(self, speed: int, model_start: ISODatetime, true_start: ISODatetime):
         super().__init__()
 
         self.__speed = speed
-        self.__offset = offset
-        self.__start = start
+        self.__model_start = model_start
+        self.__true_start = true_start
 
 
     def __eq__(self, other):
         try:
-            return self.speed == other.speed and self.offset == other.offset and self.start == other.start
+            return (self.speed == other.speed and self.model_start == other.model_start and
+                    self.true_start == other.true_start)
         except (AttributeError, TypeError):
             return False
 
@@ -80,19 +83,14 @@ class Clock(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def now(self):
-        now = ISODatetime.now()
-        true_period = now - self.start
-        running_period = true_period * self.speed
+        true_period = ISODatetime.now() - self.true_start
+        model_period = true_period * self.speed
 
-        return self.start + running_period - self.offset
+        return self.model_start + model_period
 
 
     def restart(self):
-        now = ISODatetime.now()
-        true_period = now - self.start
-
-        self.__offset += true_period
-        self.__start = now
+        self.__true_start = ISODatetime.now()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -101,8 +99,8 @@ class Clock(PersistentJSONable):
         jdict = OrderedDict()
 
         jdict['speed'] = self.speed
-        jdict['offset'] = self.offset.total_seconds()
-        jdict['start'] = self.start
+        jdict['model_start'] = self.model_start
+        jdict['true_start'] = self.true_start
 
         return jdict
 
@@ -115,16 +113,16 @@ class Clock(PersistentJSONable):
 
 
     @property
-    def offset(self):
-        return self.__offset
+    def model_start(self):
+        return self.__model_start
 
 
     @property
-    def start(self):
-        return self.__start
+    def true_start(self):
+        return self.__true_start
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'Clock{{speed:{self.speed}, offset:{self.offset}, start:{self.start}}}'
+        return f'Clock{{speed:{self.speed}, model_start:{self.model_start}, true_start:{self.true_start}}}'

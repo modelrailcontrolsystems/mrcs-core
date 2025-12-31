@@ -17,7 +17,7 @@ from datetime import timedelta
 
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONify
-from mrcs_core.operations.clock import Clock
+from mrcs_core.operations.time.clock import Clock
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ class TestClock(unittest.TestCase):
         now = ISODatetime.now()
         obj1 = Clock.set(4, 2020, 2, 4, 6)
         self.assertEqual(obj1.speed, 4)
-        self.assertEqual(obj1.start, now)
+        self.assertEqual(obj1.true_start, now)
 
     def test_json(self):
         obj1 = Clock.set(4, 2020, 2, 4, 6)
