@@ -6,9 +6,10 @@ Created on 26 Dec 2025
 A model clock, with true_start datetime, model_start and speed
 
 {
+    "is_running": false,
     "speed": 4,
-    "model_start": 3029029272.269169,
-    "true_start": "2025-12-26T11:01:12.269+00:00"
+    "model_start": "2020-02-04T06:00:00.000+00:00",
+    "true_start": "2026-01-01T09:12:08.216+00:00"
 }
 """
 
@@ -43,30 +44,32 @@ class Clock(PersistentJSONable):
         if not jdict:
             if skeleton:
                 now = ISODatetime.now()
-                return cls(1, now, now)
+                return cls(True, 1, now, now)
             else:
                 return None
 
+        is_running = jdict.get('is_running')
         speed = int(jdict.get('speed'))
         model_start = ISODatetime.construct_from_jdict(jdict.get('model_start'))
         true_start = ISODatetime.construct_from_jdict(jdict.get('true_start'))
 
-        return cls(speed, model_start, true_start)
+        return cls(is_running, speed, model_start, true_start)
 
 
     @classmethod
-    def set(cls, speed: int, year, month, day, hour, minute=0, second=0):
+    def set(cls, is_running: bool, speed: int, year, month, day, hour, minute=0, second=0):
         model_start = ISODatetime(year, month=month, day=day, hour=hour, minute=minute, second=second)
-        true_start = ISODatetime.now()
+        true_start = ISODatetime.now() if is_running else None
 
-        return cls(speed, model_start, true_start)
+        return cls(is_running, speed, model_start, true_start)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, speed: int, model_start: ISODatetime, true_start: ISODatetime):
+    def __init__(self, is_running: bool, speed: int, model_start: ISODatetime, true_start: ISODatetime | None):
         super().__init__()
 
+        self.__is_running = is_running
         self.__speed = speed
         self.__model_start = model_start
         self.__true_start = true_start
@@ -74,8 +77,8 @@ class Clock(PersistentJSONable):
 
     def __eq__(self, other):
         try:
-            return (self.speed == other.speed and self.model_start == other.model_start and
-                    self.true_start == other.true_start)
+            return (self.is_running == other.is_running and self.speed == other.speed and
+                    self.model_start == other.model_start and self.true_start == other.true_start)
         except (AttributeError, TypeError):
             return False
 
@@ -83,14 +86,18 @@ class Clock(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def now(self):
+        if not self.is_running:
+            return self.model_start
+
         true_period = ISODatetime.now() - self.true_start
         model_period = true_period * self.speed
 
         return self.model_start + model_period
 
 
-    def restart(self):
+    def start(self):
         self.__true_start = ISODatetime.now()
+        self.__is_running = True
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -98,6 +105,7 @@ class Clock(PersistentJSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
+        jdict['is_running'] = self.is_running
         jdict['speed'] = self.speed
         jdict['model_start'] = self.model_start
         jdict['true_start'] = self.true_start
@@ -106,6 +114,11 @@ class Clock(PersistentJSONable):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def is_running(self):
+        return self.__is_running
+
 
     @property
     def speed(self):
@@ -125,4 +138,5 @@ class Clock(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'Clock{{speed:{self.speed}, model_start:{self.model_start}, true_start:{self.true_start}}}'
+        return (f'Clock{{is_running:{self.is_running}, speed:{self.speed}, model_start:{self.model_start}, '
+                f'true_start:{self.true_start}}}')

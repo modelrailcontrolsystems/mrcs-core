@@ -10,6 +10,7 @@ A structured representation of a message
     "body": "hello"
 }
 """
+
 import json
 from collections import OrderedDict
 
@@ -38,7 +39,7 @@ class Message(JSONable):
 
 
     @classmethod
-    def construct_from_callback(cls, routing_key, body_str):
+    def construct_from_callback(cls, routing_key: RoutingKey, body_str: bytes):
         return cls(routing_key, json.loads(body_str.decode()))
 
 

@@ -26,19 +26,29 @@ class TestClock(unittest.TestCase):
 
     def test_construct(self):
         now = ISODatetime.now()
-        obj1 = Clock.set(4, 2020, 2, 4, 6)
+        obj1 = Clock.set(True, 4, 2020, 2, 4, 6)
         self.assertEqual(obj1.speed, 4)
         self.assertEqual(obj1.true_start, now)
 
     def test_json(self):
-        obj1 = Clock.set(4, 2020, 2, 4, 6)
-        jstr = JSONify.dumps(obj1)
+        obj1 = Clock.set(False, 4, 2020, 2, 4, 6)
+        jstr = JSONify.dumps(obj1, indent=4)
         obj2 = Clock.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
 
-    def test_time(self):
-        obj1 = Clock.set(4, 2020, 2, 4, 6)
+    def test_stopped_time(self):
+        obj1 = Clock.set(False, 4, 2020, 2, 4, 6)
         t1 = obj1.now()
+
+        time.sleep(1)
+        t2 = obj1.now()
+        self.assertEqual(t2 - t1, timedelta())
+
+    def test_start_time(self):
+        obj1 = Clock.set(False, 4, 2020, 2, 4, 6)
+        t1 = obj1.now()
+
+        obj1.start()
 
         time.sleep(1)
         t2 = obj1.now()
@@ -50,17 +60,19 @@ class TestClock(unittest.TestCase):
         self.assertGreaterEqual(t3 - t1, timedelta(seconds=8))
         self.assertLess(t3 - t1, timedelta(seconds=8.1))
 
-    def test_restart(self):
-        obj1 = Clock.set(4, 2020, 2, 4, 6)
+    def test_running_time(self):
+        obj1 = Clock.set(True, 4, 2020, 2, 4, 6)
         t1 = obj1.now()
 
         time.sleep(1)
-        obj1.restart()
         t2 = obj1.now()
+        self.assertGreater(t2 - t1, timedelta(seconds=4))
+        self.assertLess(t2 - t1, timedelta(seconds=4.1))
 
-        self.assertGreaterEqual(t2 - t1, timedelta())
-        self.assertLess(t2 - t1, timedelta(seconds=0.1))
-
+        time.sleep(1)
+        t3 = obj1.now()
+        self.assertGreaterEqual(t3 - t1, timedelta(seconds=8))
+        self.assertLess(t3 - t1, timedelta(seconds=8.1))
 
 
 if __name__ == "__main_":
