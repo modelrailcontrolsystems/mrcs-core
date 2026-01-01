@@ -24,6 +24,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     """
 
     BOS = 'BOS'         # block occupancy sensor
+    CRN = 'CRN'         # cron
     CTL = 'CTL'         # control router
     DCP = 'DCP'         # decoupler
     LCR = 'LCR'         # level crossing
