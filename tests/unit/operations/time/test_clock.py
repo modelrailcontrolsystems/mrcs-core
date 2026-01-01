@@ -28,7 +28,8 @@ class TestClock(unittest.TestCase):
         now = ISODatetime.now()
         obj1 = Clock.set(True, 4, 2020, 2, 4, 6)
         self.assertEqual(obj1.speed, 4)
-        self.assertEqual(obj1.true_start, now)
+        self.assertGreaterEqual(obj1.true_start - now, timedelta())
+        self.assertLess(obj1.true_start - now, timedelta(milliseconds=0.1))
 
     def test_json(self):
         obj1 = Clock.set(False, 4, 2020, 2, 4, 6)

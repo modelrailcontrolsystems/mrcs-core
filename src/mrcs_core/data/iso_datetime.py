@@ -3,6 +3,8 @@ Created on 11 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
+A datetime that guarantees localisation
+
 https://stackoverflow.com/questions/70198931/how-to-use-milliseconds-instead-of-microsenconds-in-datetime-python
 https://stackoverflow.com/questions/24966806/subclassing-datetime-datetime
 https://stackoverflow.com/questions/4770297/convert-utc-datetime-string-to-local-datetime
@@ -20,7 +22,7 @@ from mrcs_core.data.json import JSONable
 
 class ISODatetime(JSONable, datetime):
     """
-    classdocs
+    A datetime that guarantees localisation
     """
 
     __UTC_ZONE = dateutil.tz.tzutc()
@@ -68,10 +70,12 @@ class ISODatetime(JSONable, datetime):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __new__(cls, *args, **kwargs):
-        if len(args) == 1 and 'tzinfo' not in kwargs:
-            kwargs['tzinfo'] = cls.__LOCAL_ZONE             # called using datetime standard form - override tzinfo
+        try:
+            localised_kwargs = kwargs if 'tzinfo' in kwargs else dict(kwargs, tzinfo=cls.__LOCAL_ZONE)
+            return datetime.__new__(cls, *args, **localised_kwargs)
 
-        return datetime.__new__(cls, *args, **kwargs)
+        except TypeError:   # tzinfo was in args
+            return datetime.__new__(cls, *args, **kwargs)
 
 
     def __eq__(self, other):
