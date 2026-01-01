@@ -19,6 +19,7 @@ from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONable
 
 
+# TODO: needs to handle the case where the job is going to be sent in a message, so does not need source
 # --------------------------------------------------------------------------------------------------------------------
 
 class Cronjob(JSONable):
