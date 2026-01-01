@@ -5,6 +5,8 @@ Created on 26 Dec 2025
 
 A model clock, with true_start datetime, model_start and speed
 
+Note that the clock odes not persist its is_running status - when loaded, it is in the stopped state.
+
 {
     "is_running": false,
     "speed": 4,
@@ -44,16 +46,15 @@ class Clock(PersistentJSONable):
         if not jdict:
             if skeleton:
                 now = ISODatetime.now()
-                return cls(True, 1, now, now)
+                return cls(False, 1, now, now)
             else:
                 return None
 
-        is_running = jdict.get('is_running')
         speed = int(jdict.get('speed'))
         model_start = ISODatetime.construct_from_jdict(jdict.get('model_start'))
         true_start = ISODatetime.construct_from_jdict(jdict.get('true_start'))
 
-        return cls(is_running, speed, model_start, true_start)
+        return cls(False, speed, model_start, true_start)
 
 
     @classmethod
@@ -105,7 +106,6 @@ class Clock(PersistentJSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['is_running'] = self.is_running
         jdict['speed'] = self.speed
         jdict['model_start'] = self.model_start
         jdict['true_start'] = self.true_start
