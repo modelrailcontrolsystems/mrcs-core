@@ -13,6 +13,7 @@ https://stackoverflow.com/questions/8047736/how-to-load-data-from-a-file-for-a-u
 import json
 import time
 import unittest
+
 from datetime import timedelta
 
 from mrcs_core.data.iso_datetime import ISODatetime
@@ -31,10 +32,14 @@ class TestClock(unittest.TestCase):
         self.assertGreaterEqual(obj1.true_start - now, timedelta())
         self.assertLess(obj1.true_start - now, timedelta(milliseconds=0.1))
 
+
     def test_json(self):
         obj1 = Clock.set(False, 4, 2020, 2, 4, 6)
         jstr = JSONify.dumps(obj1, indent=4)
         obj2 = Clock.construct_from_jdict(json.loads(jstr))
+        self.assertEqual(obj1, obj2)
+
+        time.sleep(1)
         self.assertEqual(obj1, obj2)
 
     def test_stopped_time(self):
@@ -44,6 +49,7 @@ class TestClock(unittest.TestCase):
         time.sleep(1)
         t2 = obj1.now()
         self.assertEqual(t2 - t1, timedelta())
+
 
     def test_start_time(self):
         obj1 = Clock.set(False, 4, 2020, 2, 4, 6)
@@ -60,6 +66,7 @@ class TestClock(unittest.TestCase):
         t3 = obj1.now()
         self.assertGreaterEqual(t3 - t1, timedelta(seconds=8))
         self.assertLess(t3 - t1, timedelta(seconds=8.1))
+
 
     def test_running_time(self):
         obj1 = Clock.set(True, 4, 2020, 2, 4, 6)
