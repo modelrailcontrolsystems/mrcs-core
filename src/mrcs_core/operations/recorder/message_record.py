@@ -4,6 +4,7 @@ Created on 9 Nov 2025
 @author: Bruno Beloff (bbeloff@me.com)
 
 A structured representation of a message
+Note that recorder components follow system time, not model time.
 
 {
     "routing": "TST.001.002.MPU.001.100",

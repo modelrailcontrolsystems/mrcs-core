@@ -3,15 +3,15 @@ Created on 26 Dec 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A model clock, with true_start datetime, model_start and speed
-
-Note that the clock odes not persist its is_running status - when loaded, it is in the stopped state.
+A model clock
+If a configuration is not present, then the model clock follows the system clock.
 
 {
-    "is_running": false,
+    "is_running": true,
     "speed": 4,
-    "model_start": "2020-02-04T06:00:00.000+00:00",
-    "true_start": "2026-01-01T09:12:08.216+00:00"
+    "model_start": "1930-01-03T06:00:00.000+00:00",
+    "true_start": "2026-01-03T12:27:51.002+00:00",
+    "true_stop": null
 }
 """
 
@@ -26,7 +26,7 @@ from mrcs_core.sys.host import Host
 
 class Clock(PersistentJSONable):
     """
-    classdocs
+    a model clock
     """
 
     START_OF_TIME_YEAR = 1804        # Pen-y-Darren is built by Richard Trevithick
