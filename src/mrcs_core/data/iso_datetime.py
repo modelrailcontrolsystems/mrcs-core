@@ -105,4 +105,4 @@ class ISODatetime(JSONable, datetime):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'ISODatetime:{{{self.isoformat()}}}'
+        return f'{self.__class__.__name__}:{{{self.isoformat()}}}'
