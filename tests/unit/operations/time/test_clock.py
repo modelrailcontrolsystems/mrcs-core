@@ -42,6 +42,7 @@ class TestClock(unittest.TestCase):
         time.sleep(1)
         self.assertEqual(obj1, obj2)
 
+
     def test_stopped_time(self):
         obj1 = Clock.set(False, 4, 2020, 2, 4, 6)
         t1 = obj1.now()
@@ -51,11 +52,11 @@ class TestClock(unittest.TestCase):
         self.assertEqual(t2 - t1, timedelta())
 
 
-    def test_start_time(self):
+    def test_run_time(self):
         obj1 = Clock.set(False, 4, 2020, 2, 4, 6)
         t1 = obj1.now()
 
-        obj1.start()
+        obj1.run()
 
         time.sleep(1)
         t2 = obj1.now()
