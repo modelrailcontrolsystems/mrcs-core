@@ -88,8 +88,6 @@ class AccessToken(object):
     The access component of a JWT
     """
 
-    DEFAULT_EXPIRE_MINUTES = 30
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, data: TokenData, expires_delta: timedelta | None):
