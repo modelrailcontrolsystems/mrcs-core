@@ -23,7 +23,6 @@ class RoutingKey(JSONable, ABC):
     An abstract routing key
     """
 
-
     @staticmethod
     def is_valid(routing):
         return re.match(r'[A-Z*]+\.[0-9*\-]+\.[0-9*]+.[A-Z*]+\.[0-9*\-]+\.[0-9*]+', routing)
