@@ -19,6 +19,7 @@ from datetime import timedelta
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONify
 from mrcs_core.operations.time.clock import Clock
+from mrcs_core.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -82,6 +83,62 @@ class TestClock(unittest.TestCase):
         t3 = obj1.now()
         self.assertGreaterEqual(t3 - t1, timedelta(seconds=8))
         self.assertLess(t3 - t1, timedelta(seconds=8.1))
+
+
+    def test_pause(self):
+        obj1 = Clock.set(True, 1, 2020, 2, 4, 6)
+        t1 = obj1.now()
+
+        time.sleep(1)
+        t2 = obj1.now()
+        self.assertGreater(t2 - t1, timedelta(seconds=1))
+        self.assertLess(t2 - t1, timedelta(seconds=1.1))
+
+        obj1.pause()
+        time.sleep(1)
+        t2 = obj1.now()
+        self.assertGreater(t2 - t1, timedelta(seconds=1))
+        self.assertLess(t2 - t1, timedelta(seconds=1.1))
+
+
+    def test_resume(self):
+        obj1 = Clock.set(True, 1, 2020, 2, 4, 6)
+        t1 = obj1.now()
+
+        time.sleep(1)
+        t2 = obj1.now()
+        self.assertGreater(t2 - t1, timedelta(seconds=1))
+        self.assertLess(t2 - t1, timedelta(seconds=1.1))
+
+        obj1.pause()
+        time.sleep(1)
+        t2 = obj1.now()
+        self.assertGreater(t2 - t1, timedelta(seconds=1))
+        self.assertLess(t2 - t1, timedelta(seconds=1.1))
+
+        obj1.resume()
+        time.sleep(1)
+        t2 = obj1.now()
+        self.assertGreater(t2 - t1, timedelta(seconds=2))
+        self.assertLess(t2 - t1, timedelta(seconds=2.1))
+
+
+    def test_reload(self):
+        obj1 = Clock.set(True, 1, 2020, 2, 4, 6)
+        t1 = obj1.now()
+
+        time.sleep(1)
+        t2 = obj1.now()
+        self.assertGreater(t2 - t1, timedelta(seconds=1))
+        self.assertLess(t2 - t1, timedelta(seconds=1.1))
+
+        now = obj1.now()
+
+        time.sleep(1)
+        obj1.reload(now)
+        t2 = obj1.now()
+        self.assertGreater(t2 - t1, timedelta(seconds=1))
+        self.assertLess(t2 - t1, timedelta(seconds=1.1))
 
 
 if __name__ == "__main_":
