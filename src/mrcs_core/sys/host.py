@@ -3,10 +3,13 @@ Created on 9 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-Abstractions over the system host and its filesystem
+Abstractions over the system host, its filesystem and its network connections
+
+https://superuser.com/questions/357159/osx-terminal-showing-incorrect-hostname
 """
 
 import os.path
+import socket
 
 from mrcs_core.sys.persistence_manager import FilesystemPersistenceManager
 
@@ -39,5 +42,12 @@ class Host(FilesystemPersistenceManager):
     @classmethod
     def mrcs_db_abs_file(cls, db_mode, filename):
         return os.path.join(cls.mrcs_db_abs_dir(db_mode), filename)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @classmethod
+    def name(cls):
+        return socket.gethostname()
 
 
