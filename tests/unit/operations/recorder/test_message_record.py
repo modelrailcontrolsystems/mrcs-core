@@ -34,8 +34,8 @@ class TestMessageRecord(unittest.TestCase):
 
         self.assertEqual(str(obj1), "MessageRecord:{uid:1, rec:ISODatetime:{2025-12-31T06:00:00.000+00:00}, "
                                     "routing_key:PublicationRoutingKey:{source:EquipmentIdentifier:{"
-                                    "equipment_type:SCH, sector_number:None, serial_number:1}, "
-                                    "target:EquipmentFilter:{equipment_type:CRN, sector_number:None, "
+                                    "equipment_type:OSC, sector_number:None, serial_number:1}, "
+                                    "target:EquipmentFilter:{equipment_type:ICO, sector_number:None, "
                                     "serial_number:None}}, body:{'field': 'test'}}")
 
     def test_json(self):
@@ -48,7 +48,7 @@ class TestMessageRecord(unittest.TestCase):
         jstr = JSONify.dumps(obj1)
 
         self.assertEqual(jstr, '{"uid": 1, "rec": "2025-12-31T06:00:00.000+00:00", '
-                               '"routing": "SCH.*.001.CRN.*.*", "body": {"field": "test"}}')
+                               '"routing": "OSC.*.001.ICO.*.*", "body": {"field": "test"}}')
 
         obj2 = MessageRecord.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
