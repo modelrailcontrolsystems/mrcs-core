@@ -25,8 +25,8 @@ from mrcs_core.operations.recorder.message_record import MessageRecord
 class TestMessageRecord(unittest.TestCase):
 
     def test_construct(self):
-        source = EquipmentIdentifier(EquipmentType.SCH, None, 1)
-        target = EquipmentFilter(EquipmentType.CRN, None, None)
+        source = EquipmentIdentifier(EquipmentType.OSC, None, 1)
+        target = EquipmentFilter(EquipmentType.ICO, None, None)
         body = {'field': 'test'}
         rec = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
         routing_key = PublicationRoutingKey(source, target)
@@ -39,8 +39,8 @@ class TestMessageRecord(unittest.TestCase):
                                     "serial_number:None}}, body:{'field': 'test'}}")
 
     def test_json(self):
-        source = EquipmentIdentifier(EquipmentType.SCH, None, 1)
-        target = EquipmentFilter(EquipmentType.CRN, None, None)
+        source = EquipmentIdentifier(EquipmentType.OSC, None, 1)
+        target = EquipmentFilter(EquipmentType.ICO, None, None)
         body = {'field': 'test'}
         rec = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
         routing_key = PublicationRoutingKey(source, target)

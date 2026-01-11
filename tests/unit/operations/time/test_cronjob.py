@@ -24,16 +24,16 @@ from mrcs_core.operations.time.cronjob import Cronjob
 class TestCronjob(unittest.TestCase):
 
     def test_construct(self):
-        target = EquipmentIdentifier(EquipmentType.SCH, None, 1)
+        target = EquipmentIdentifier(EquipmentType.OSC, None, 1)
         event_id = 'abc'
         on_datetime = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
         obj1 = Cronjob(target, event_id, on_datetime)
-        self.assertEqual(obj1.target.equipment_type, EquipmentType.SCH)
+        self.assertEqual(obj1.target.equipment_type, EquipmentType.OSC)
         self.assertEqual(obj1.event_id, event_id)
         self.assertEqual(obj1.on_datetime.year, 2025)
 
     def test_json(self):
-        target = EquipmentIdentifier(EquipmentType.SCH, None, 1)
+        target = EquipmentIdentifier(EquipmentType.OSC, None, 1)
         event_id = 'abc'
         on_datetime = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
         obj1 = Cronjob(target, event_id, on_datetime)
@@ -42,7 +42,7 @@ class TestCronjob(unittest.TestCase):
         self.assertEqual(obj1, obj2)
 
     def test_lt(self):
-        target = EquipmentIdentifier(EquipmentType.SCH, None, 1)
+        target = EquipmentIdentifier(EquipmentType.OSC, None, 1)
         on_datetime = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
         obj1 = Cronjob(target, 'abc', on_datetime)
         obj2 = Cronjob(target, 'abd', on_datetime)
