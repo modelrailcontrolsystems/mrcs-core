@@ -7,7 +7,7 @@ A structured representation of a message
 Note that recorder components follow system time, not model time.
 
 {
-    "routing": "TST.001.002.MPU.001.100",
+    "routing": "ITS.001.002.OMP.001.100",
     "body": "hello"
 }
 

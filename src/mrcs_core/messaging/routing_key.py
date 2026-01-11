@@ -5,7 +5,7 @@ Created on 1 Nov 2025
 
 A structured representation of a message routing key, with source and target
 
-VIS.001.001.MPU.001.*
+VIS.001.001.OMP.001.*
 """
 
 import re
