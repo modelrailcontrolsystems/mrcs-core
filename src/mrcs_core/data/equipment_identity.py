@@ -40,7 +40,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
 
     SBO = 'SBO'         # sensor: block occupancy
     SLD = 'SLD'         # sensor: LiDAR
-    SVI = 'SVI'         # sensor: vision sensor
+    SVI = 'SVI'         # sensor: vision
 
 
 # --------------------------------------------------------------------------------------------------------------------
