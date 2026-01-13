@@ -15,6 +15,7 @@ import time
 
 from abc import abstractmethod, ABC
 from decimal import Decimal
+from typing import Callable, Any
 
 from mrcs_core.data.datum import Datum
 
@@ -23,7 +24,7 @@ from mrcs_core.data.datum import Datum
 
 class JSONify(json.JSONEncoder):
     """
-    classdocs
+    convert any compliant object to a JSON-compatible entity
     """
 
     @classmethod
@@ -87,7 +88,7 @@ class JSONify(json.JSONEncoder):
 
 class JSONable(ABC):
     """
-    classdocs
+    a JSONify-compatible class
     """
 
     _INDENT = 4
@@ -134,21 +135,21 @@ class JSONable(ABC):
 
 class JSONReport(JSONable, ABC):
     """
-    classdocs
+    a storable JSONify-compatible class
     """
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def load(cls, filename, skeleton=False):
+    def load(cls, filename):
         if filename is None:
             return None
 
         if not os.path.isfile(filename):
-            return cls.construct_from_jdict(None, skeleton=skeleton)
+            return cls.construct_from_jdict(None)
 
         with open(filename) as f:
-            return cls.construct_from_jdict(json.load(f), skeleton=skeleton)
+            return cls.construct_from_jdict(json.load(f))
 
 
     @classmethod
@@ -162,7 +163,7 @@ class JSONReport(JSONable, ABC):
     # noinspection PyUnusedLocal
     @classmethod
     @abstractmethod
-    def construct_from_jdict(cls, jdict, skeleton=False):
+    def construct_from_jdict(cls, jdict):
         return cls()
 
 
@@ -195,7 +196,7 @@ class JSONReport(JSONable, ABC):
 
 class JSONCatalogueEntry(JSONReport, ABC):
     """
-    classdocs
+    a JSONReport that can be stored within a repo file tree
     """
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -266,20 +267,12 @@ class JSONCatalogueEntry(JSONReport, ABC):
 
 class AbstractPersistentJSONable(JSONable, ABC):
     """
-    classdocs
+    a JSONify-compatible class that can be stored in a filesystem (helper class)
     """
 
     _SECURITY_DELAY =       3.0                                 # seconds
 
-    __AWS_DIR =             "aws"                               # hard-coded rel path
-    __CONF_DIR =            "conf"                              # hard-coded rel path
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @classmethod
-    def aws_dir(cls):
-        return cls.__AWS_DIR
-
+    __CONF_DIR =            'conf'                              # hard-coded rel path
 
     @classmethod
     def conf_dir(cls):
@@ -296,7 +289,7 @@ class AbstractPersistentJSONable(JSONable, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     @abstractmethod
-    def save(self, manager):
+    def save(self, manager, on_save_complete: Callable[[Any], None] = None):
         pass
 
 
@@ -311,7 +304,7 @@ class AbstractPersistentJSONable(JSONable, ABC):
 
 class PersistentJSONable(AbstractPersistentJSONable, ABC):
     """
-    classdocs
+    a JSONify-compatible class that can be stored in a filesystem
     """
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -327,9 +320,9 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
 
 
     @classmethod
-    def load(cls, manager, encryption_key=None, skeleton=False):
+    def load(cls, manager, encryption_key=None):
         if not cls.exists(manager):
-            return cls.construct_from_jdict(None, skeleton=skeleton)
+            return cls.construct_from_jdict(None)
 
         try:
             dirname, filename = cls.persistence_location()
@@ -343,7 +336,7 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
             raise ex
 
         try:
-            obj = cls.construct_from_jdict(cls.loads(jstr), skeleton=skeleton)
+            obj = cls.construct_from_jdict(cls.loads(jstr))
             obj._last_modified = last_modified
             return obj
 
@@ -365,7 +358,7 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
 
     @classmethod
     @abstractmethod
-    def construct_from_jdict(cls, jdict, skeleton=False):
+    def construct_from_jdict(cls, jdict):
         pass
 
 
@@ -377,20 +370,23 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def save(self, manager, encryption_key=None):
-        self._last_modified = None                          # last_modified field shall be restored by load(..)
+    def save(self, manager, on_save_complete: Callable[[Any], None] = None, encryption_key=None):
+        self._last_modified = None      # last_modified field shall be restored by load(..)
 
         dirname, filename = self.persistence_location()
         jstr = JSONify.dumps(self, indent=self._INDENT)
 
         manager.save(jstr, dirname, filename, encryption_key=encryption_key)
 
+        if on_save_complete:
+            on_save_complete(self)
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
 class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
     """
-    classdocs
+    a JSONify-compatible class that can be stored in a filesystem, in multiple versions
     """
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -419,9 +415,9 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
 
 
     @classmethod
-    def load(cls, manager, name=None, encryption_key=None, skeleton=False):
+    def load(cls, manager, name=None, encryption_key=None):
         if not cls.exists(manager, name=name):
-            return cls.construct_from_jdict(None, name=name, skeleton=skeleton)
+            return cls.construct_from_jdict(None, name=name)
 
         try:
             dirname, filename = cls.persistence_location(name)
@@ -436,7 +432,7 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
             raise ex
 
         try:
-            obj = cls.construct_from_jdict(cls.loads(jstr), name=name, skeleton=skeleton)
+            obj = cls.construct_from_jdict(cls.loads(jstr), name=name)
             obj._last_modified = last_modified
             return obj
 
@@ -458,7 +454,7 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
 
     @classmethod
     @abstractmethod
-    def construct_from_jdict(cls, jdict, name=None, skeleton=False):
+    def construct_from_jdict(cls, jdict, name=None):
         pass
 
 
@@ -478,13 +474,16 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def save(self, manager, encryption_key=None):
-        self._last_modified = None                          # last_modified field shall be restored by load(..)
+    def save(self, manager, on_save_complete: Callable[[Any], None] = None, encryption_key=None):
+        self._last_modified = None      # last_modified field shall be restored by load(..)
 
         dirname, filename = self.persistence_location(self.name)
         jstr = JSONify.dumps(self, indent=self._INDENT)
 
         manager.save(jstr, dirname, filename, encryption_key=encryption_key)
+
+        if on_save_complete:
+            on_save_complete(self)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -497,4 +496,4 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return "MultiPersistentJSONable:{name:%s}" % self.name
+        return f'MultiPersistentJSONable:{{name:{self.name}}}'
