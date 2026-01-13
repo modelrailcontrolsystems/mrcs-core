@@ -18,10 +18,11 @@ If a configuration is not present, then the model clock follows the system clock
 from collections import OrderedDict
 
 from mrcs_core.data.json import PersistentJSONable
-from mrcs_core.operations.time.persistent_iso_datetime import PersistentISODatetime
+from mrcs_core.operations.time.clock_iso_datetime import ClockISODatetime
 from mrcs_core.sys.host import Host
 
 
+# TODO: implement conf save with messaging
 # --------------------------------------------------------------------------------------------------------------------
 
 class Clock(PersistentJSONable):
@@ -43,32 +44,32 @@ class Clock(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def construct_from_jdict(cls, jdict, skeleton=False):
+    def construct_from_jdict(cls, jdict):
         if not jdict:
             return cls(True, 1, None, None, None)
 
         is_running = jdict.get('is_running')
         speed = int(jdict.get('speed'))
-        model_start = PersistentISODatetime.construct_from_jdict(jdict.get('model_start'))
-        true_start = PersistentISODatetime.construct_from_jdict(jdict.get('true_start'))
-        true_stop = PersistentISODatetime.construct_from_jdict(jdict.get('true_stop'))
+        model_start = ClockISODatetime.construct_from_jdict(jdict.get('model_start'))
+        true_start = ClockISODatetime.construct_from_jdict(jdict.get('true_start'))
+        true_stop = ClockISODatetime.construct_from_jdict(jdict.get('true_stop'))
 
         return cls(is_running, speed, model_start, true_start, true_stop)
 
 
     @classmethod
     def set(cls, is_running: bool, speed: int, year, month, day, hour, minute=0, second=0):
-        model_start = PersistentISODatetime(year, month=month, day=day, hour=hour, minute=minute, second=second)
-        true_start = PersistentISODatetime.now()
-        true_stop = None if is_running else PersistentISODatetime.now()
+        model_start = ClockISODatetime(year, month=month, day=day, hour=hour, minute=minute, second=second)
+        true_start = ClockISODatetime.now()
+        true_stop = None if is_running else ClockISODatetime.now()
 
         return cls(is_running, speed, model_start, true_start, true_stop)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, is_running: bool, speed: int, model_start: PersistentISODatetime | None,
-                 true_start: PersistentISODatetime | None, true_stop: PersistentISODatetime | None):
+    def __init__(self, is_running: bool, speed: int, model_start: ClockISODatetime | None,
+                 true_start: ClockISODatetime | None, true_stop: ClockISODatetime | None):
         super().__init__()
 
         self.__is_running = is_running
@@ -92,9 +93,9 @@ class Clock(PersistentJSONable):
 
     def now(self):
         if self.model_start is None:
-            return PersistentISODatetime.now()
+            return ClockISODatetime.now()
 
-        now = PersistentISODatetime.now() if self.is_running else self.true_stop
+        now = ClockISODatetime.now() if self.is_running else self.true_stop
 
         true_period = now - self.true_start
         model_period = true_period * self.speed
@@ -109,7 +110,7 @@ class Clock(PersistentJSONable):
         if self.is_running:
             return
 
-        self.__true_start = PersistentISODatetime.now()
+        self.__true_start = ClockISODatetime.now()
         self.__true_stop = None
         self.__is_running = True
 
@@ -121,7 +122,7 @@ class Clock(PersistentJSONable):
         if not self.is_running:
             return
 
-        self.__true_stop = PersistentISODatetime.now()
+        self.__true_stop = ClockISODatetime.now()
         self.__is_running = False
 
 
@@ -132,15 +133,15 @@ class Clock(PersistentJSONable):
         if self.is_running:
             return
 
-        paused_period = PersistentISODatetime.now() - self.true_stop
+        paused_period = ClockISODatetime.now() - self.true_stop
 
         self.__true_start = self.true_start + paused_period
         self.__true_stop = None
         self.__is_running = True
 
 
-    def reload(self, stored: PersistentISODatetime):
-        now = PersistentISODatetime.now()
+    def reload(self, stored: ClockISODatetime):
+        now = ClockISODatetime.now()
 
         if self.model_start is None:
             self.__model_start = stored

@@ -10,7 +10,7 @@ from mrcs_core.data.json import PersistentJSONable
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class PersistentISODatetime(ISODatetime, PersistentJSONable):
+class ClockISODatetime(ISODatetime, PersistentJSONable):
     """
     classdocs
     """
@@ -23,7 +23,7 @@ class PersistentISODatetime(ISODatetime, PersistentJSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, iso_string, skeleton=False):
+    def construct_from_jdict(cls, iso_string):
         return super().construct_from_jdict(iso_string)
 
 
