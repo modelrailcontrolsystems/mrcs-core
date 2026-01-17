@@ -23,24 +23,24 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     An enumeration of all the possible equipment types
     """
 
-    IAP = 'IAP'         # infrastructure: MRCS Web API
-    ICO = 'ICO'         # infrastructure: cron
-    ICR = 'ICR'         # infrastructure: control router
-    IML = 'IML'         # infrastructure: message logger
-    ITS = 'ITS'         # infrastructure: test equipment
+    API = 'API'         # infrastructure: MRCS Web API
+    CRN = 'CRN'         # infrastructure: cron
+    CRT = 'CRT'         # infrastructure: control router
+    MLG = 'MLG'         # infrastructure: message logger
+    TST = 'TST'         # infrastructure: test equipment
 
-    ODC = 'ODC'         # operations: decoupler
-    OLC = 'OLC'         # operations: level crossing
-    OLG = 'OLG'         # operations: lighting group
-    OMP = 'OMP'         # operations: motive power unit
-    OSC = 'OSC'         # operations: schedule controller
-    OSG = 'OSG'         # operations: signal
-    OTR = 'OTR'         # operations: turnout (point)
-    OTS = 'OTS'         # operations: train set (may be multi-headed)
+    DCP = 'DCP'         # operations: decoupler
+    LGP = 'LGP'         # operations: lighting group
+    LVL = 'LVL'         # operations: level crossing
+    MPU = 'MPU'         # operations: motive power unit
+    SCH = 'SCH'         # operations: schedule controller
+    SIG = 'SIG'         # operations: signal
+    TRN = 'TRN'         # operations: turnout (point)
+    TRS = 'TRS'         # operations: train set (may be multi-headed)
 
-    SBO = 'SBO'         # sensor: block occupancy
-    SLD = 'SLD'         # sensor: LiDAR
-    SVI = 'SVI'         # sensor: vision
+    BOS = 'BOS'         # sensor: block occupancy
+    LID = 'LID'         # sensor: LiDAR
+    VIS = 'VIS'         # sensor: vision
 
 
 # --------------------------------------------------------------------------------------------------------------------

@@ -23,7 +23,7 @@ from mrcs_core.operations.time.clock import Clock
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class TestClock(unittest.TestCase):
+class TestClockConf(unittest.TestCase):
 
     def test_construct(self):
         now = ISODatetime.now()

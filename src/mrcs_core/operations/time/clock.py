@@ -6,6 +6,9 @@ Created on 26 Dec 2025
 A model clock
 If a configuration is not present, then the model clock follows the system clock.
 
+WARNING: The configuration of the clock should only be saved using the ClockManager service - this ensures that
+dependent processes are updated with any clock configuration change.
+
 {
     "is_running": true,
     "speed": 4,
@@ -22,7 +25,6 @@ from mrcs_core.operations.time.clock_iso_datetime import ClockISODatetime
 from mrcs_core.sys.host import Host
 
 
-# TODO: implement conf save with messaging
 # --------------------------------------------------------------------------------------------------------------------
 
 class Clock(PersistentJSONable):
