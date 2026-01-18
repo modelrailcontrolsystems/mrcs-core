@@ -11,3 +11,4 @@ Systems:
 
 ---
 
+mrcs-core is a library repo, and has no command-line utilities.

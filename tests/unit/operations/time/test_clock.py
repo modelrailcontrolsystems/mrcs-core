@@ -19,6 +19,7 @@ from datetime import timedelta
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONify
 from mrcs_core.operations.time.clock import Clock
+from mrcs_core.sys.host import Host
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -45,6 +46,7 @@ class TestClockConf(unittest.TestCase):
 
     def test_stopped_time(self):
         obj1 = Clock.set(False, 4, 2020, 2, 4, 6)
+        obj1.save(Host)
         t1 = obj1.now()
 
         time.sleep(1)
@@ -54,6 +56,7 @@ class TestClockConf(unittest.TestCase):
 
     def test_run_time(self):
         obj1 = Clock.set(False, 4, 2020, 2, 4, 6)
+        obj1.save(Host)
         t1 = obj1.now()
 
         obj1.run()
@@ -71,6 +74,7 @@ class TestClockConf(unittest.TestCase):
 
     def test_running_time(self):
         obj1 = Clock.set(True, 4, 2020, 2, 4, 6)
+        obj1.save(Host)
         t1 = obj1.now()
 
         time.sleep(1)
@@ -86,6 +90,7 @@ class TestClockConf(unittest.TestCase):
 
     def test_pause(self):
         obj1 = Clock.set(True, 1, 2020, 2, 4, 6)
+        obj1.save(Host)
         t1 = obj1.now()
 
         time.sleep(1)
@@ -102,6 +107,7 @@ class TestClockConf(unittest.TestCase):
 
     def test_resume(self):
         obj1 = Clock.set(True, 1, 2020, 2, 4, 6)
+        obj1.save(Host)
         t1 = obj1.now()
 
         time.sleep(1)
@@ -124,6 +130,7 @@ class TestClockConf(unittest.TestCase):
 
     def test_reload(self):
         obj1 = Clock.set(True, 1, 2020, 2, 4, 6)
+        obj1.save(Host)
         t1 = obj1.now()
 
         time.sleep(1)
