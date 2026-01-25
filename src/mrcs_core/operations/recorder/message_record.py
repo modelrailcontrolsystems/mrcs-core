@@ -37,16 +37,17 @@ class MessageRecord(Message):
 
         uid = jdict.get('uid')
         rec = ISODatetime.construct_from_jdict(jdict.get('rec'))
+        origin = jdict.get('origin')
         routing_key = PublicationRoutingKey.construct_from_jdict(jdict.get('routing'))
         body = jdict.get('body')
 
-        return cls(uid, rec, routing_key, body)
+        return cls(uid, rec, routing_key, body, origin)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, uid: int, rec: ISODatetime, routing_key: RoutingKey, body):
-        super().__init__(routing_key, body)
+    def __init__(self, uid: int, rec: ISODatetime, routing_key: RoutingKey, body, origin):
+        super().__init__(routing_key, body, origin=origin)
 
         self.__uid = uid
         self.__rec = rec
@@ -54,7 +55,7 @@ class MessageRecord(Message):
 
     def __eq__(self, other):
         try:
-            return (self.uid == other.uid and self.rec == other.rec and
+            return (self.uid == other.uid and self.rec == other.rec and self.origin == other.origin and
                     self.routing_key == other.routing_key and self.body == other.body)
         except (AttributeError, TypeError):
             return False
@@ -71,6 +72,7 @@ class MessageRecord(Message):
 
         jdict['uid'] = self.uid
         jdict['rec'] = self.rec
+        jdict['origin'] = self.origin
         jdict['routing'] = self.routing_key
         jdict['body'] = self.body
 
@@ -92,5 +94,5 @@ class MessageRecord(Message):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'{self.__class__.__name__}:'
-                f'{{uid:{self.uid}, rec:{self.rec}, routing_key:{self.routing_key}, body:{self.body}}}')
+        return (f'{self.__class__.__name__}:{{uid:{self.uid}, rec:{self.rec}, origin:{self.origin}, '
+                f'routing_key:{self.routing_key}, body:{self.body}}}')
