@@ -43,6 +43,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     VIS = 'VIS'         # sensor: vision
 
 
+# TODO: create int enums of equipment numbers (for CRN)
 # --------------------------------------------------------------------------------------------------------------------
 
 class EquipmentSpecification(JSONable, ABC):
@@ -50,10 +51,10 @@ class EquipmentSpecification(JSONable, ABC):
     An abstract specification of a piece of equipment, with type, sector ID, and within-sector serial number
     """
 
-    def __init__(self, equipment_type, sector_number, serial_number):
-        self.__equipment_type = equipment_type                  # EquipmentType | None
-        self.__sector_number = sector_number                    # int | None
-        self.__serial_number = serial_number                    # int | None
+    def __init__(self, equipment_type: EquipmentType | None, sector_number: int | None, serial_number: int | None):
+        self.__equipment_type = equipment_type
+        self.__sector_number = sector_number
+        self.__serial_number = serial_number
 
 
     def __eq__(self, other):
@@ -205,8 +206,10 @@ class EquipmentFilter(EquipmentSpecification):
 
         return cls(equipment_type, sector_number, serial_number)
 
+
     @classmethod
-    def construct(cls, equipment_type_spec: str | None, sector_number_spec: int | None, serial_number_spec: int | None):
+    def construct(cls, equipment_type_spec: EquipmentType | None, sector_number_spec: int | None,
+                  serial_number_spec: int | None):
         try:
             equipment_type = None if equipment_type_spec is None else EquipmentType(equipment_type_spec)
         except ValueError:
@@ -219,7 +222,7 @@ class EquipmentFilter(EquipmentSpecification):
 
 
     @classmethod
-    def all(cls):
+    def any(cls):
         return cls(None, None, None)
 
 

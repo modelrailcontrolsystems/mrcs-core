@@ -30,13 +30,14 @@ class TestMessageRecord(unittest.TestCase):
         body = {'field': 'test'}
         rec = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
         routing_key = PublicationRoutingKey(source, target)
-        obj1 = MessageRecord(1, rec, routing_key, body)
+        obj1 = MessageRecord(1, rec, routing_key, body, '12345678')
 
-        self.assertEqual(str(obj1), "MessageRecord:{uid:1, rec:ISODatetime:{2025-12-31T06:00:00.000+00:00}, "
-                                    "routing_key:PublicationRoutingKey:{source:EquipmentIdentifier:{"
-                                    "equipment_type:SCH, sector_number:None, serial_number:1}, "
-                                    "target:EquipmentFilter:{equipment_type:CRN, sector_number:None, "
-                                    "serial_number:None}}, body:{'field': 'test'}}")
+        self.assertEqual("MessageRecord:{uid:1, rec:ISODatetime:{2025-12-31T06:00:00.000+00:00}, origin:12345678, "
+                         "routing_key:PublicationRoutingKey:{"
+                         "source:EquipmentIdentifier:{equipment_type:SCH, sector_number:None, serial_number:1}, "
+                         "target:EquipmentFilter:{equipment_type:CRN, sector_number:None, serial_number:None}}, "
+                         "body:{'field': 'test'}}", str(obj1))
+
 
     def test_json(self):
         source = EquipmentIdentifier(EquipmentType.SCH, None, 1)
@@ -44,11 +45,11 @@ class TestMessageRecord(unittest.TestCase):
         body = {'field': 'test'}
         rec = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
         routing_key = PublicationRoutingKey(source, target)
-        obj1 = MessageRecord(1, rec, routing_key, body)
+        obj1 = MessageRecord(1, rec, routing_key, body, '12345678')
         jstr = JSONify.dumps(obj1)
 
-        self.assertEqual(jstr, '{"uid": 1, "rec": "2025-12-31T06:00:00.000+00:00", '
-                               '"routing": "SCH.*.001.CRN.*.*", "body": {"field": "test"}}')
+        self.assertEqual('{"uid": 1, "rec": "2025-12-31T06:00:00.000+00:00", "origin": "12345678", '
+                         '"routing": "SCH.*.001.CRN.*.*", "body": {"field": "test"}}', jstr)
 
         obj2 = MessageRecord.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
