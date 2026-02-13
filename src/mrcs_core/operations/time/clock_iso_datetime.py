@@ -17,6 +17,7 @@ class ClockISODatetime(ISODatetime, PersistentJSONable):
 
     __FILENAME = "model_time.json"
 
+
     @classmethod
     def persistence_location(cls):
         return cls.conf_dir(), cls.__FILENAME
@@ -24,7 +25,7 @@ class ClockISODatetime(ISODatetime, PersistentJSONable):
 
     @classmethod
     def construct_from_jdict(cls, iso_string):
-        return super().construct_from_jdict(iso_string)
+        return super().construct_from_jdict(iso_string)  # raises TypeError, ValueError
 
 
     # ----------------------------------------------------------------------------------------------------------------
