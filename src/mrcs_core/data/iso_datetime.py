@@ -11,9 +11,9 @@ https://stackoverflow.com/questions/4770297/convert-utc-datetime-string-to-local
 https://labex.io/tutorials/python-how-to-create-datetime-objects-from-iso-8601-date-strings-417942
 """
 
-import dateutil.tz
-
 from datetime import datetime
+
+import dateutil.tz
 
 from mrcs_core.data.json import JSONable
 
@@ -30,6 +30,7 @@ class ISODatetime(JSONable, datetime):
 
     __DB_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
@@ -37,9 +38,9 @@ class ISODatetime(JSONable, datetime):
         if not iso_string:
             return None
 
-        iso = super().fromisoformat(iso_string)
+        iso = super().fromisoformat(iso_string)  # raises TypeError, ValueError
 
-        return iso.astimezone(cls.__LOCAL_ZONE)
+        return iso.astimezone(cls.__LOCAL_ZONE)  # raises TypeError
 
 
     @classmethod
@@ -74,13 +75,13 @@ class ISODatetime(JSONable, datetime):
             localised_kwargs = kwargs if 'tzinfo' in kwargs else dict(kwargs, tzinfo=cls.__LOCAL_ZONE)
             return datetime.__new__(cls, *args, **localised_kwargs)
 
-        except TypeError:   # tzinfo was in args
+        except TypeError:  # tzinfo was in args
             return datetime.__new__(cls, *args, **kwargs)
 
 
     def __eq__(self, other):
         try:
-            return self.isoformat() == other.isoformat()    # strip any existing microseconds
+            return self.isoformat() == other.isoformat()  # strip any existing microseconds
         except (AttributeError, TypeError):
             return False
 
