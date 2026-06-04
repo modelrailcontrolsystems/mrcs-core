@@ -16,6 +16,7 @@ https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-a
 """
 
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -39,7 +40,12 @@ class EnvPaths(object):
 
     @classmethod
     def mrcs(cls):
-        return os.path.join(cls.__HOME, cls.__MRCS)
+        if cls.__HOME is None:
+            raise EnvironmentError("HOME environment variable is not set")
+        if cls.__MRCS is None:
+            raise EnvironmentError("MRCS environment variable is not set")
+
+        return Path(cls.__HOME) / cls.__MRCS
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -49,18 +55,21 @@ class EnvPaths(object):
         path = []
         python_path = []
 
+        if cls.__VENV is None:
+            raise EnvironmentError("VENV environment variable is not set")
+
         for repo in cls.__REPOS:
-            repo_src = os.path.join(cls.mrcs(), repo, 'src')
+            repo_src = cls.mrcs() / repo / 'src'
             python_path.append(repo_src)
 
             if repo in cls.__LIB_REPOS:
                 continue
 
             package = repo.replace('-', '_')
-            path.append(os.path.join(repo_src, package, 'cli'))
+            path.append(str(repo_src / package / 'cli'))
 
-        venv_path = os.path.join(cls.mrcs(), cls.__VENV, 'bin')
-        path.append(venv_path)
+        venv_path = cls.mrcs() / cls.__VENV / 'bin'
+        path.append(str(venv_path))
 
         return cls(path, python_path)
 
@@ -75,7 +84,10 @@ class EnvPaths(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_dict(self):
-        return dict(PATH=':'.join(self.path), PYTHONPATH=':'.join(self.python_path))
+        return dict(
+            PATH=':'.join(str(path) for path in self.path),
+            PYTHONPATH=':'.join(str(path) for path in self.python_path)
+        )
 
 
     # ----------------------------------------------------------------------------------------------------------------

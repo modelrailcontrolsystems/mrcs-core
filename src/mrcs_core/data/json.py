@@ -12,10 +12,9 @@ https://stackoverflow.com/questions/9575409/calling-parent-class-init-with-multi
 import json
 import os
 import time
-
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 from decimal import Decimal
-from typing import Callable, Any
+from typing import Any, Callable
 
 from mrcs_core.data.datum import Datum
 
@@ -26,6 +25,7 @@ class JSONify(json.JSONEncoder):
     """
     convert any compliant object to a JSON-compatible entity
     """
+
 
     @classmethod
     def as_jdict(cls, obj, **kwargs):
@@ -93,6 +93,7 @@ class JSONable(ABC):
 
     _INDENT = 4
 
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
@@ -109,7 +110,7 @@ class JSONable(ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_list(self, jlist):
-        del jlist[:]                                    # empty the list
+        del jlist[:]  # empty the list
 
         for key, value in self.as_json().items():
             try:
@@ -117,7 +118,7 @@ class JSONable(ABC):
             except AttributeError:
                 pass
 
-            jlist.append((key, value))                  # append the key-value pairs of the dictionary
+            jlist.append((key, value))  # append the key-value pairs of the dictionary
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -137,6 +138,7 @@ class JSONReport(JSONable, ABC):
     """
     a storable JSONify-compatible class
     """
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -183,7 +185,7 @@ class JSONReport(JSONable, ABC):
             with open(tmp_filename, 'w') as f:
                 f.write(jstr + '\n')
 
-        except FileNotFoundError:           # the containing directory does not exist (yet)
+        except FileNotFoundError:  # the containing directory does not exist (yet)
             return False
 
         # atomic operation...
@@ -198,6 +200,7 @@ class JSONCatalogueEntry(JSONReport, ABC):
     """
     a JSONReport that can be stored within a repo file tree
     """
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -270,9 +273,10 @@ class AbstractPersistentJSONable(JSONable, ABC):
     a JSONify-compatible class that can be stored in a filesystem (helper class)
     """
 
-    _SECURITY_DELAY =       3.0                                 # seconds
+    _SECURITY_DELAY = 3.0  # seconds
 
-    __CONF_DIR =            'conf'                              # hard-coded rel path
+    __CONF_DIR = 'conf'  # hard-coded rel path
+
 
     @classmethod
     def conf_dir(cls):
@@ -282,14 +286,14 @@ class AbstractPersistentJSONable(JSONable, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, *args, last_modified=None, **kwargs):
-        super().__init__(*args, **kwargs)                       # supports multiple inheritance
-        self._last_modified = last_modified                     # LocalizedDatetime
+        super().__init__(*args, **kwargs)  # supports multiple inheritance
+        self._last_modified = last_modified  # LocalizedDatetime
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @abstractmethod
-    def save(self, manager, on_save_complete: Callable[[Any], None] = None):
+    def save(self, manager, on_save_complete: Callable[[Any], None] | None = None):
         pass
 
 
@@ -306,6 +310,7 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
     """
     a JSONify-compatible class that can be stored in a filesystem
     """
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -331,7 +336,7 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
 
         try:
             jstr, last_modified = manager.load(dirname, filename, encryption_key=encryption_key)
-        except (KeyError, ValueError) as ex:            # caused by incorrect encryption_key
+        except (KeyError, ValueError) as ex:  # caused by incorrect encryption_key
             time.sleep(cls._SECURITY_DELAY)
             raise ex
 
@@ -370,8 +375,8 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def save(self, manager, on_save_complete: Callable[[Any], None] = None, encryption_key=None):
-        self._last_modified = None      # last_modified field shall be restored by load(..)
+    def save(self, manager, on_save_complete: Callable[[Any], None] | None = None, encryption_key=None):
+        self._last_modified = None  # last_modified field shall be restored by load(..)
 
         dirname, filename = self.persistence_location()
         jstr = JSONify.dumps(self, indent=self._INDENT)
@@ -388,6 +393,7 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
     """
     a JSONify-compatible class that can be stored in a filesystem, in multiple versions
     """
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -427,7 +433,7 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
         try:
             jstr, last_modified = manager.load(dirname, filename, encryption_key=encryption_key)
 
-        except (KeyError, ValueError) as ex:            # caused by incorrect encryption_key
+        except (KeyError, ValueError) as ex:  # caused by incorrect encryption_key
             time.sleep(cls._SECURITY_DELAY)
             raise ex
 
@@ -469,13 +475,13 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
     def __init__(self, name, last_modified=None):
         super().__init__(last_modified=last_modified)
 
-        self.__name = name                                  # string
+        self.__name = name  # string
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def save(self, manager, on_save_complete: Callable[[Any], None] = None, encryption_key=None):
-        self._last_modified = None      # last_modified field shall be restored by load(..)
+    def save(self, manager, on_save_complete: Callable[[Any], None] | None = None, encryption_key=None):
+        self._last_modified = None  # last_modified field shall be restored by load(..)
 
         dirname, filename = self.persistence_location(self.name)
         jstr = JSONify.dumps(self, indent=self._INDENT)

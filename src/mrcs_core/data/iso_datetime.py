@@ -70,6 +70,7 @@ class ISODatetime(JSONable, datetime):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    # noinspection PyTypeChecker
     def __new__(cls, *args, **kwargs):
         try:
             localised_kwargs = kwargs if 'tzinfo' in kwargs else dict(kwargs, tzinfo=cls.__LOCAL_ZONE)
