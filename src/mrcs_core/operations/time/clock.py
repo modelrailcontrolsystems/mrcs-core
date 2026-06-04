@@ -6,6 +6,8 @@ Created on 26 Dec 2025
 A model clock
 If a configuration is not present, then the model clock follows the system clock.
 
+No-inspections are included because the run / pause / resume methods guard the object state.
+
 WARNING: The configuration of the clock should only be saved using the ClockManager service - this ensures that
 dependent processes are updated with any clock configuration change.
 
@@ -32,11 +34,12 @@ class Clock(PersistentJSONable):
     a model clock
     """
 
-    START_OF_TIME_YEAR = 1804        # Pen-y-Darren is built by Richard Trevithick
+    START_OF_TIME_YEAR = 1804  # Pen-y-Darren is built by Richard Trevithick
 
     # ----------------------------------------------------------------------------------------------------------------
 
     __FILENAME = "clock_conf.json"
+
 
     @classmethod
     def persistence_location(cls):
@@ -93,6 +96,7 @@ class Clock(PersistentJSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    # noinspection PyUnresolvedReferences
     def now(self):
         if self.model_start is None:
             return ClockISODatetime.now()
@@ -128,6 +132,7 @@ class Clock(PersistentJSONable):
         self.__is_running = False
 
 
+    # noinspection PyTypeChecker,PyUnresolvedReferences
     def resume(self):
         if not self.exists(Host):
             raise RuntimeError('resume - no clock configuration exists')
@@ -142,6 +147,7 @@ class Clock(PersistentJSONable):
         self.__is_running = True
 
 
+    # noinspection PyTypeChecker
     def reload(self, stored: ClockISODatetime):
         now = ClockISODatetime.now()
 
