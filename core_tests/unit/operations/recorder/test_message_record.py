@@ -13,7 +13,7 @@ https://stackoverflow.com/questions/8047736/how-to-load-data-from-a-file-for-a-u
 import json
 import unittest
 
-from mrcs_core.data.equipment_identity import EquipmentIdentifier, EquipmentType, EquipmentFilter
+from mrcs_core.data.equipment_identity import EquipmentFilter, EquipmentIdentifier, EquipmentType
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONify
 from mrcs_core.messaging.routing_key import PublicationRoutingKey
@@ -55,5 +55,5 @@ class TestMessageRecord(unittest.TestCase):
         self.assertEqual(obj1, obj2)
 
 
-if __name__ == "__main_":
+if __name__ == "__main__":
     unittest.main()

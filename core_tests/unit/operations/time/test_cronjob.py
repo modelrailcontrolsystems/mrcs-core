@@ -32,6 +32,7 @@ class TestCronjob(unittest.TestCase):
         self.assertEqual(obj1.event_id, event_id)
         self.assertEqual(obj1.on_datetime.year, 2025)
 
+
     def test_json(self):
         target = EquipmentIdentifier(EquipmentType.SCH, None, 1)
         event_id = 'abc'
@@ -41,6 +42,7 @@ class TestCronjob(unittest.TestCase):
         obj2 = Cronjob.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
 
+
     def test_lt(self):
         target = EquipmentIdentifier(EquipmentType.SCH, None, 1)
         on_datetime = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
@@ -49,5 +51,5 @@ class TestCronjob(unittest.TestCase):
         self.assertLess(obj1, obj2)
 
 
-if __name__ == "__main_":
+if __name__ == "__main__":
     unittest.main()

@@ -8,10 +8,10 @@ A JSON Web Token (JWT) carrying scopes
 https://fastapi.tiangolo.com/advanced/security/oauth2-scopes/#verify-the-scopes
 """
 
-import jwt
-
 from collections import OrderedDict
 from datetime import timedelta
+
+import jwt
 
 from mrcs_core.data.json import JSONable
 
@@ -25,6 +25,7 @@ class TokenData(JSONable):
 
     SECRET_KEY = '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7'
     ALGORITHM = 'HS256'
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -88,6 +89,7 @@ class AccessToken(object):
     The access component of a JWT
     """
 
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, data: TokenData, expires_delta: timedelta | None):
@@ -110,6 +112,7 @@ class AccessToken(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
+        # noinspection PyStringConversionWithoutDunderMethod
         return f'AccessToken:{{data:{self.data}, expires_delta:{self.expires_delta}}}'
 
 
@@ -121,6 +124,7 @@ class JWT(object):
     """
 
     TOKEN_TYPE = 'bearer'
+
 
     # ----------------------------------------------------------------------------------------------------------------
 

@@ -10,8 +10,8 @@ https://www.jetbrains.com/help/pycharm/creating-tests.html
 """
 
 import json
-import os
 import unittest
+from pathlib import Path
 
 from mrcs_core.admin.user.user import User
 from mrcs_core.data.json import JSONify
@@ -20,33 +20,40 @@ from mrcs_core.data.json import JSONify
 # --------------------------------------------------------------------------------------------------------------------
 
 class TestUser(unittest.TestCase):
+
     def test_construct_from_none_jdict(self):
         obj1 = User.construct_from_jdict({})
         self.assertEqual(None, obj1)
+
 
     def test_construct_from_jdict(self):
         obj1 = self.__load_user('new_user1.json')
         self.assertEqual('User:{uid:None, email:bbeloff1@me.com, role:ADMIN, must_set_password:True, '
                          'given_name:Bruno, family_name:Beloff, created:None, latest_login:None}', str(obj1))
 
+
     def test_eq(self):
         obj1 = self.__load_user('new_user1.json')
         self.assertEqual(True, obj1 == obj1)
+
 
     def test_neq(self):
         obj1 = self.__load_user('new_user1.json')
         obj2 = self.__load_user('saved_user.json')
         self.assertEqual(False, obj1 == obj2)
 
+
     def test_lt(self):
         obj1 = self.__load_user('new_user1.json')
         obj2 = self.__load_user('gt_user.json')
         self.assertEqual(True, obj1 < obj2)
 
+
     def test_nlt(self):
         obj1 = self.__load_user('new_user1.json')
         obj2 = self.__load_user('gt_user.json')
         self.assertEqual(False, obj2 < obj1)
+
 
     def test_as_json(self):
         obj1 = self.__load_user('saved_user.json')
@@ -60,12 +67,12 @@ class TestUser(unittest.TestCase):
 
     @classmethod
     def __load_user(cls, rel_filename):
-        abs_filename = os.path.join(os.path.dirname(__file__), 'data', rel_filename)
+        abs_filename = Path(__file__).parent / 'data' / rel_filename
         with open(abs_filename) as fp:
             jdict = json.load(fp)
 
         return User.construct_from_jdict(jdict)
 
 
-if __name__ == "__main_":
+if __name__ == "__main__":
     unittest.main()

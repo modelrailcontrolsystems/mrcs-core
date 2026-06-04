@@ -27,6 +27,7 @@ class Cronjob(JSONable):
     represents a cron job to be performed
     """
 
+
     @classmethod
     def construct_from_jdict(cls, jdict):
         if not jdict:
@@ -44,9 +45,9 @@ class Cronjob(JSONable):
     def __init__(self, target: EquipmentIdentifier | None, event_id: str, on_datetime: ISODatetime):
         super().__init__()
 
-        self.__target = target              # the target of the cron event (may be the source of the crontab message)
-        self.__event_id = event_id          # the ID of the event to be performed
-        self.__on_datetime = on_datetime    # the model datetime when the event should be performed
+        self.__target = target  # the target of the cron event (may be the source of the crontab message)
+        self.__event_id = event_id  # the ID of the event to be performed
+        self.__on_datetime = on_datetime  # the model datetime when the event should be performed
 
 
     def __eq__(self, other):
@@ -57,6 +58,7 @@ class Cronjob(JSONable):
             return False
 
 
+    # noinspection PyUnresolvedReferences
     def __lt__(self, other):
         if self.on_datetime < other.on_datetime:
             return True
@@ -64,11 +66,12 @@ class Cronjob(JSONable):
         if self.on_datetime > other.on_datetime:
             return False
 
-        if self.target < other.target:
-            return True
+        if self.target is not None and other.target is not None:
+            if self.target < other.target:
+                return True
 
-        if self.target > other.target:
-            return False
+            if self.target > other.target:
+                return False
 
         return self.event_id < other.event_id
 

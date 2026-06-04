@@ -9,7 +9,7 @@ https://docs.python.org/3/howto/enum.html
 """
 
 from abc import ABC
-from enum import unique, StrEnum
+from enum import StrEnum, unique
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.data.meta_enum import MetaEnum
@@ -23,24 +23,28 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     An enumeration of all the possible equipment types
     """
 
-    API = 'API'         # infrastructure: MRCS Web API
-    CRN = 'CRN'         # infrastructure: cron
-    CRT = 'CRT'         # infrastructure: control router
-    MLG = 'MLG'         # infrastructure: message logger
-    TST = 'TST'         # infrastructure: test equipment
+    API = 'API'  # infrastructure: MRCS Web API
+    CRN = 'CRN'  # infrastructure: cron
+    CRT = 'CRT'  # infrastructure: control router
+    MLG = 'MLG'  # infrastructure: message logger
+    TST = 'TST'  # infrastructure: test equipment
 
-    DCP = 'DCP'         # operations: decoupler
-    LGP = 'LGP'         # operations: lighting group
-    LVL = 'LVL'         # operations: level crossing
-    MPU = 'MPU'         # operations: motive power unit
-    SCH = 'SCH'         # operations: schedule controller
-    SIG = 'SIG'         # operations: signal
-    TRN = 'TRN'         # operations: turnout (point)
-    TRS = 'TRS'         # operations: train set (may be multi-headed)
+    DCP = 'DCP'  # operations: decoupler
+    LGP = 'LGP'  # operations: lighting group
+    LVL = 'LVL'  # operations: level crossing
+    MPU = 'MPU'  # operations: motive power unit
+    SCH = 'SCH'  # operations: schedule controller
+    SIG = 'SIG'  # operations: signal
+    TRN = 'TRN'  # operations: turnout (point)
+    TRS = 'TRS'  # operations: train set (may be multi-headed)
 
-    BOS = 'BOS'         # sensor: block occupancy
-    LID = 'LID'         # sensor: LiDAR
-    VIS = 'VIS'         # sensor: vision
+    BOS = 'BOS'  # sensor: block occupancy
+    LID = 'LID'  # sensor: LiDAR
+    VIS = 'VIS'  # sensor: vision
+
+
+    def __lt__(self, other):
+        return self.value < other.value
 
 
 # TODO: create int enums of equipment numbers (for CRN)
@@ -50,6 +54,7 @@ class EquipmentSpecification(JSONable, ABC):
     """
     An abstract specification of a piece of equipment, with type, sector ID, and within-sector serial number
     """
+
 
     def __init__(self, equipment_type: EquipmentType | None, sector_number: int | None, serial_number: int | None):
         self.__equipment_type = equipment_type
@@ -65,6 +70,7 @@ class EquipmentSpecification(JSONable, ABC):
             return False
 
 
+    # noinspection PyUnresolvedReferences
     def __lt__(self, other):
         if self.equipment_type != other.equipment_type:
             if self.equipment_type is None and other.equipment_type is not None:
@@ -73,11 +79,12 @@ class EquipmentSpecification(JSONable, ABC):
             if self.equipment_type is not None and other.equipment_type is None:
                 return False
 
-            if self.equipment_type < other.equipment_type:
-                return True
+            if self.equipment_type is not None and other.equipment_type is not None:
+                if self.equipment_type < other.equipment_type:
+                    return True
 
-            if self.equipment_type > other.equipment_type:
-                return False
+                if self.equipment_type > other.equipment_type:
+                    return False
 
         if self.sector_number != other.sector_number:
             if self.sector_number is None and other.sector_number is not None:
@@ -150,6 +157,7 @@ class EquipmentIdentifier(EquipmentSpecification, JSONable):
     A fully-specified equipment identifier, for use by publishers
     """
 
+
     @classmethod
     def construct_from_jdict(cls, jdict):
         if not jdict:
@@ -189,6 +197,7 @@ class EquipmentFilter(EquipmentSpecification):
     """
     A partially-specified equipment identifier, for use by subscribers
     """
+
 
     @classmethod
     def construct_from_jdict(cls, jdict):

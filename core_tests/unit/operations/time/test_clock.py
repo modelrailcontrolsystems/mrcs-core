@@ -13,7 +13,6 @@ https://stackoverflow.com/questions/8047736/how-to-load-data-from-a-file-for-a-u
 import json
 import time
 import unittest
-
 from datetime import timedelta
 
 from mrcs_core.data.iso_datetime import ISODatetime
@@ -147,5 +146,5 @@ class TestClockConf(unittest.TestCase):
         self.assertLess(t2 - t1, timedelta(seconds=1.1))
 
 
-if __name__ == "__main_":
+if __name__ == "__main__":
     unittest.main()
