@@ -3,7 +3,7 @@ Created on 6 Jun 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v dcc/z21/entities/test_motive_power_unit.py
+python -m unittest -v unit/equipment/motive_power_unit/test_motive_power_unit_state.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html

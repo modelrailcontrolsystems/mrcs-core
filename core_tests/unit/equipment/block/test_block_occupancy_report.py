@@ -3,7 +3,7 @@ Created on 13 Jun 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v dcc/z21/entities/test_control_router.py
+python -m unittest -v unit/equipment/block/test_block_occupancy_report.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html

@@ -3,7 +3,7 @@ Created on 11 Jun 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v dcc/z21/entities/test_control_router.py
+python -m unittest -v unit/equipment/control_router/test_control_router.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html

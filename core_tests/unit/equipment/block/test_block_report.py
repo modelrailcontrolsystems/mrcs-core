@@ -3,7 +3,7 @@ Created on 17 Jun 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v equipment/block/test_block_status_report.py
+python -m unittest -v unit/equipment/block/test_block_report.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
