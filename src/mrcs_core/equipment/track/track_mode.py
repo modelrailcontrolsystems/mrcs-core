@@ -1,0 +1,29 @@
+"""
+Created on 13 Jun 2026
+
+@author: Bruno Beloff (bbeloff@me.com)
+
+An enumeration of all the track modes
+
+Classes in support of the Rocco Z21 DCC command station:
+https://www.z21.eu/en/products/z21
+"""
+
+from enum import IntEnum, unique
+
+from mrcs_core.data.meta_enum import MetaEnum
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+@unique
+class TrackMode(IntEnum, metaclass=MetaEnum):
+    """
+    An enumeration of all the track modes
+    """
+
+    POWER_OFF = 0x00
+    POWER_ON = 0x01
+    PROGRAMMING = 0x02
+    SHORT_CIRCUIT = 0x08
+    UNKNOWN = 0x82

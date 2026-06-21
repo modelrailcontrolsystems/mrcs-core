@@ -38,7 +38,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     TRN = 'TRN'  # operations: turnout (point)
     TRS = 'TRS'  # operations: train set (may be multi-headed)
 
-    BOS = 'BOS'  # sensor: block occupancy
+    BOS = 'BOS'  # sensor: block occupancy detector
     LID = 'LID'  # sensor: LiDAR
     VIS = 'VIS'  # sensor: vision
 
