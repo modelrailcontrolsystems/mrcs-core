@@ -132,6 +132,11 @@ class JSONable(ABC):
         pass
 
 
+    @abstractmethod
+    def __str__(self, *args, **kwargs):
+        pass
+
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class JSONReport(JSONable, ABC):
