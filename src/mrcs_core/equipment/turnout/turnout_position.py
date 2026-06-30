@@ -30,3 +30,9 @@ class TurnoutPosition(IntEnum, metaclass=MetaEnum):
     P0 = 1
     P1 = 2
     INVALID = 3
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return f'{self.name}[{self.value}]'

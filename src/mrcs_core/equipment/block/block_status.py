@@ -29,3 +29,9 @@ class BlockStatus(IntEnum, metaclass=MetaEnum):
     OCCUPIED_OVERLOAD_1 = 0x1201
     OCCUPIED_OVERLOAD_2 = 0x1202
     OCCUPIED_OVERLOAD_3 = 0x1203
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return f'{self.name}[0x{self.value:04x}]'
