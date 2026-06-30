@@ -25,3 +25,9 @@ class BlockOccupantFace(IntEnum, metaclass=MetaEnum):
     UNKNOWN = 0x00
     FWD = 0x02
     REV = 0x03
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return f'{self.name}[0x{self.value:02x}]'

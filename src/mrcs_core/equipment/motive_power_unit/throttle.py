@@ -54,3 +54,9 @@ class DCCThrottleSteps(IntEnum, metaclass=MetaEnum):
                 return 28
             case self.STEPS_128:
                 return 128
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return f'{self.name}[{self.value}]'
