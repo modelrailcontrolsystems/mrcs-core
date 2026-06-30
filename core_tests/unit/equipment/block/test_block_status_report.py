@@ -3,7 +3,7 @@ Created on 17 Jun 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v equipment/block/test_block_status_report.py
+python -m unittest -v unit/equipment/block/test_block_status_report.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -67,3 +67,9 @@ class TestBlockStatusReport(unittest.TestCase):
         jstr = JSONify.dumps(obj1)
         obj2 = BlockStatusReport.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

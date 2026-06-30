@@ -27,3 +27,12 @@ class TrackMode(IntEnum, metaclass=MetaEnum):
     PROGRAMMING = 0x02
     SHORT_CIRCUIT = 0x08
     UNKNOWN = 0x82
+
+    COMMAND_POWER_OFF = 0x80
+    COMMAND_POWER_ON = 0x81
+
+
+    # TODO: is there a nice way to implement __str__(..) here?
+
+    def __str__(self, *args, **kwargs):
+        return f'TrackMode:{{{self.name:}: 0x{self.value:02x}}}'

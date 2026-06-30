@@ -3,7 +3,7 @@ Created on 15 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v messaging/test_exchange.py
+python -m unittest -v unit/messaging/test_exchange.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -71,6 +71,8 @@ class TestExchange(unittest.TestCase):
                          '"auto_delete": false, "message_stats": {"publish_in": 7, "publish_out": 10}}',
                          JSONify.dumps(obj1))
 
+
+# --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     unittest.main()

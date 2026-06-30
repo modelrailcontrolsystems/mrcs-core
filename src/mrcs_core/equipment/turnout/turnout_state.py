@@ -64,7 +64,7 @@ class TurnoutState(JSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['type'] = self.__class__.__name__
+        jdict['type'] = self.type_name()
 
         jdict['addr'] = self.address
         jdict['position'] = self.position.name

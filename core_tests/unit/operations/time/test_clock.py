@@ -3,7 +3,7 @@ Created on 26 Dec 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v operations/test_clock.py
+python -m unittest -v unit/operations/recorder/test_message_record.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -145,6 +145,8 @@ class TestClockConf(unittest.TestCase):
         self.assertGreater(t2 - t1, timedelta(seconds=1))
         self.assertLess(t2 - t1, timedelta(seconds=1.1))
 
+
+# --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     unittest.main()

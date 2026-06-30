@@ -34,3 +34,9 @@ class TestBlockReport(unittest.TestCase):
         obj1 = BlockReport.construct_from_jdict(json.loads(jstr))
         self.assertEqual('BlockOccupancyReport:{network_id:0x0001, reporter_address:2, reporter_input:3, '
                          'occupant_group:1, occupants:[BlockOccupant:{address:4660, face:REV}]}', str(obj1))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

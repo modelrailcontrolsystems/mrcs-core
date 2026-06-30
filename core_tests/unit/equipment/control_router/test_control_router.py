@@ -103,3 +103,9 @@ class TestControlRouterState(unittest.TestCase):
         jstr = JSONify.dumps(obj1)
         obj2 = ControlRouterState.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

@@ -94,6 +94,11 @@ class JSONable(ABC):
     _INDENT = 4
 
 
+    @classmethod
+    def type_name(cls):
+        return cls.__name__
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod

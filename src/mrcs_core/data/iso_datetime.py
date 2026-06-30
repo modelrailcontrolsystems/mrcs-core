@@ -12,6 +12,7 @@ https://labex.io/tutorials/python-how-to-create-datetime-objects-from-iso-8601-d
 """
 
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import dateutil.tz
 
@@ -26,9 +27,14 @@ class ISODatetime(JSONable, datetime):
     """
 
     __UTC_ZONE = dateutil.tz.tzutc()
-    __LOCAL_ZONE = dateutil.tz.tzlocal()
+    __LOCAL_ZONE: ZoneInfo = dateutil.tz.tzlocal()
 
     __DB_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+
+
+    @classmethod
+    def set_local_zone(cls, tz: ZoneInfo):  # should only be used to standardise unit tests across timezones
+        cls.__LOCAL_ZONE = tz
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -40,7 +46,7 @@ class ISODatetime(JSONable, datetime):
 
         iso = super().fromisoformat(iso_string)  # raises TypeError, ValueError
 
-        return iso.astimezone(cls.__LOCAL_ZONE)  # raises TypeError
+        return iso  # TODO: check if we need iso.astimezone(cls.__LOCAL_ZONE)  # raises TypeError
 
 
     @classmethod

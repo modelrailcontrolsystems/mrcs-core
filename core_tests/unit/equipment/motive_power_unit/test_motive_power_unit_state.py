@@ -92,3 +92,9 @@ class TestMotivePowerUnitState(unittest.TestCase):
                          '"smart_search": true}', jstr)
         obj2 = MotivePowerUnitState.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

@@ -3,7 +3,7 @@ Created on 26 Dec 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v operations/test_clock.py
+python -m unittest -v unit/operations/time/test_cronjob.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -50,6 +50,8 @@ class TestCronjob(unittest.TestCase):
         obj2 = Cronjob(target, 'abd', on_datetime)
         self.assertLess(obj1, obj2)
 
+
+# --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     unittest.main()

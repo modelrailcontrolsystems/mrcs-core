@@ -32,8 +32,8 @@ class ControlRouterState(JSONable):
 
         type_name = jdict.get('type')
 
-        if type_name != cls.__name__:
-            raise TypeError(f'required type:{cls.__name__} got:{type_name}')
+        if type_name != cls.type_name():
+            raise TypeError(f'required type:{cls.type_name()} got:{type_name}')
 
         main_current = jdict.get('main_current')
         prog_current = jdict.get('prog_current')
@@ -89,7 +89,7 @@ class ControlRouterState(JSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['type'] = self.__class__.__name__
+        jdict['type'] = self.type_name()
 
         jdict['main_current'] = self.main_current
         jdict['prog_current'] = self.prog_current

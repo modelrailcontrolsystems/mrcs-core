@@ -3,7 +3,7 @@ Created on 15 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v data/test_equipment_filter.py
+python -m unittest -v unit/admin/user/test_user.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -73,6 +73,8 @@ class TestUser(unittest.TestCase):
 
         return User.construct_from_jdict(jdict)
 
+
+# --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     unittest.main()

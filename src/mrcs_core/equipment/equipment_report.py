@@ -25,6 +25,8 @@ class EquipmentReport(object):
     A constructor to unmarshall equipment reports from JSON
     """
 
+    # TODO: make this an Enum, so that we can build a mapping from command (headers) to return types
+
     __TYPE_MAPPING = {
         'BlockOccupancyReport': BlockOccupancyReport,
         'BlockStatusReport': BlockStatusReport,
@@ -38,6 +40,7 @@ class EquipmentReport(object):
 
     @classmethod
     def __class_for_type_name(cls, type_name):
+        # may raise KeyError
         return cls.__TYPE_MAPPING[type_name]
 
 

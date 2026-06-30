@@ -129,7 +129,7 @@ class BlockStatusReport(BlockReport):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['type'] = self.__class__.__name__
+        jdict['type'] = self.type_name()
 
         jdict['nid'] = self.network_id
         jdict['reporter'] = self.reporter_address
@@ -214,7 +214,7 @@ class BlockOccupancyReport(BlockReport):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['type'] = self.__class__.__name__
+        jdict['type'] = self.type_name()
 
         jdict['nid'] = self.network_id
         jdict['reporter'] = self.reporter_address

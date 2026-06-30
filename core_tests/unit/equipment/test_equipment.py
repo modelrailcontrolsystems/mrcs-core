@@ -3,7 +3,7 @@ Created on 20 Jun 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v dcc/z21/entities/test_control_router.py
+python -m unittest -v unit/equipment/test_equipment.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -74,3 +74,9 @@ class TestEquipment(unittest.TestCase):
         jstr = '{"addr": 3, "position": "P1"}'
         with self.assertRaises(TypeError):
             EquipmentReport.construct_from_jdict(json.loads(jstr))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()
