@@ -3,7 +3,7 @@ Created on 15 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v data/test_equipment_identity.py
+python -m unittest -v unit/data/test_equipment_identity.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -57,6 +57,8 @@ class TestEquipmentIdentifier(unittest.TestCase):
         obj1 = EquipmentIdentifier.construct_from_jdict(json.loads('"BOS.01.02"'))
         self.assertEqual('BOS.001.002', obj1.as_json())
 
+
+# --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     unittest.main()

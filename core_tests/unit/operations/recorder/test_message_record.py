@@ -3,7 +3,7 @@ Created on 8 Jan 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v operations/test_message_record.py
+python -m unittest -v unit/operations/recorder/test_message_record.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -12,6 +12,7 @@ https://stackoverflow.com/questions/8047736/how-to-load-data-from-a-file-for-a-u
 
 import json
 import unittest
+from datetime import timezone
 
 from mrcs_core.data.equipment_identity import EquipmentFilter, EquipmentIdentifier, EquipmentType
 from mrcs_core.data.iso_datetime import ISODatetime
@@ -24,11 +25,12 @@ from mrcs_core.operations.recorder.message_record import MessageRecord
 
 class TestMessageRecord(unittest.TestCase):
 
+
     def test_construct(self):
         source = EquipmentIdentifier(EquipmentType.SCH, None, 1)
         target = EquipmentFilter(EquipmentType.CRN, None, None)
         body = {'field': 'test'}
-        rec = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
+        rec = ISODatetime(2025, month=12, day=31, hour=6, minute=0, tzinfo=timezone.utc)
         routing_key = PublicationRoutingKey(source, target)
         obj1 = MessageRecord(1, rec, routing_key, body, '12345678')
 
@@ -43,7 +45,7 @@ class TestMessageRecord(unittest.TestCase):
         source = EquipmentIdentifier(EquipmentType.SCH, None, 1)
         target = EquipmentFilter(EquipmentType.CRN, None, None)
         body = {'field': 'test'}
-        rec = ISODatetime(2025, month=12, day=31, hour=6, minute=0)
+        rec = ISODatetime(2025, month=12, day=31, hour=6, minute=0, tzinfo=timezone.utc)
         routing_key = PublicationRoutingKey(source, target)
         obj1 = MessageRecord(1, rec, routing_key, body, '12345678')
         jstr = JSONify.dumps(obj1)
@@ -54,6 +56,8 @@ class TestMessageRecord(unittest.TestCase):
         obj2 = MessageRecord.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
 
+
+# --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     unittest.main()
