@@ -35,33 +35,33 @@ class TestEquipment(unittest.TestCase):
 
 
     def test_control_router(self):
-        jstr = ('{"type": "ControlRouterState", "main_current": 1, "prog_current": 2, "filtered_main_current": 3, '
+        jstr = ('{"type": "ControlRouterReport", "main_current": 1, "prog_current": 2, "filtered_main_current": 3, '
                 '"supply_voltage": 4, "track_voltage": 5, "temperature": 6, "central_state": 255, '
                 '"central_state_ext": 0, "capabilities": 170, "reserved": 85}')
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('ControlRouterState:{main_current:1, prog_current:2, filtered_main_current:3, '
+        self.assertEqual('ControlRouterReport:{main_current:1, prog_current:2, filtered_main_current:3, '
                          'supply_voltage:4, track_voltage:5, temperature:6, central_state:0xff, '
                          'central_state_ext:0x00, capabilities:0xaa, reserved:0x55}', str(obj1))
 
 
     def test_motive_power_unit(self):
-        jstr = ('{"type": "MotivePowerUnitState", "addr": 3, "functions": "+-+", "busy": false, '
+        jstr = ('{"type": "MPUConfigurationReport", "addr": 3, "functions": "+-+", "busy": false, '
                 '"stepping": "STEPS_28", "speed": 12, "reverse": true, "consist": false, "smart_search": true}')
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('MotivePowerUnitState:{address:3, functions:+-+, is_busy:False, stepping:STEPS_28, '
-                         'speed_value:12, reverse:True, double_traction:False, smart_search:True}', str(obj1))
+        self.assertEqual('MPUConfigurationReport:{address:3, functions:+-+, is_busy:False, stepping:STEPS_28, '
+                         'speed_setting:12, reverse:True, double_traction:False, smart_search:True}', str(obj1))
 
 
     def test_track(self):
-        jstr = '{"type": "TrackState", "mode": "SHORT_CIRCUIT"}'
+        jstr = '{"type": "TrackReport", "mode": "SHORT_CIRCUIT"}'
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('TrackState:{mode:SHORT_CIRCUIT}', str(obj1))
+        self.assertEqual('TrackReport:{mode:SHORT_CIRCUIT}', str(obj1))
 
 
     def test_turnout(self):
-        jstr = '{"type": "TurnoutState", "addr": 3, "position": "P1"}'
+        jstr = '{"type": "TurnoutReport", "addr": 3, "position": "P1"}'
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('TurnoutState:{address:3, position:P1}', str(obj1))
+        self.assertEqual('TurnoutReport:{address:3, position:P1}', str(obj1))
 
 
     def test_unknown(self):

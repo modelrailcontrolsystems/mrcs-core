@@ -11,11 +11,11 @@ https://www.z21.eu/en/products/z21
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_report import BlockOccupancyReport, BlockStatusReport
-from mrcs_core.equipment.control_router.control_router_state import ControlRouterState
-from mrcs_core.equipment.motive_power_unit.motive_power_unit_decoder import MotivePowerUnitDecoder
-from mrcs_core.equipment.motive_power_unit.motive_power_unit_state import MotivePowerUnitState
-from mrcs_core.equipment.track.track_state import TrackState
-from mrcs_core.equipment.turnout.turnout_state import TurnoutState
+from mrcs_core.equipment.control_router.control_router_report import ControlRouterReport
+from mrcs_core.equipment.motive_power_unit.mpu_configuration_report import MPUConfigurationReport
+from mrcs_core.equipment.motive_power_unit.mpu_decoder_report import MPUDecoderReport
+from mrcs_core.equipment.track.track_report import TrackReport
+from mrcs_core.equipment.turnout.turnout_report import TurnoutReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,16 +25,14 @@ class EquipmentReport(object):
     A constructor to unmarshall equipment reports from JSON
     """
 
-    # TODO: make this an Enum, so that we can build a mapping from command (headers) to return types
-
     __TYPE_MAPPING = {
         'BlockOccupancyReport': BlockOccupancyReport,
         'BlockStatusReport': BlockStatusReport,
-        'ControlRouterState': ControlRouterState,
-        'MotivePowerUnitDecoder': MotivePowerUnitDecoder,
-        'MotivePowerUnitState': MotivePowerUnitState,
-        'TrackState': TrackState,
-        'TurnoutState': TurnoutState
+        'ControlRouterReport': ControlRouterReport,
+        'MPUDecoderReport': MPUDecoderReport,
+        'MPUConfigurationReport': MPUConfigurationReport,
+        'TrackReport': TrackReport,
+        'TurnoutReport': TurnoutReport
     }
 
 
