@@ -17,7 +17,7 @@ from abc import ABC, abstractmethod
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.equipment.block.block_occupant import BlockOccupant
+from mrcs_core.equipment.block.block_occupant_report import BlockOccupantReport
 from mrcs_core.equipment.block.block_status import BlockStatus
 
 
@@ -185,7 +185,7 @@ class BlockOccupancyReport(BlockReport):
         reporter_input = jdict.get('input')
 
         occupant_group = jdict.get('group')
-        occupants = [BlockOccupant.construct_from_jdict(occupant) for occupant in jdict.get('occupants', [])]
+        occupants = [BlockOccupantReport.construct_from_jdict(occupant) for occupant in jdict.get('occupants', [])]
 
         return cls(network_id, reporter_address, reporter_input, occupant_group, occupants)
 
@@ -193,7 +193,7 @@ class BlockOccupancyReport(BlockReport):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, network_id: int, reporter_address: int, reporter_input: int, occupant_group: int | None,
-                 occupants: list[BlockOccupant]):
+                 occupants: list[BlockOccupantReport]):
         super().__init__(network_id, reporter_address, reporter_input)
 
         self._occupant_group = occupant_group
