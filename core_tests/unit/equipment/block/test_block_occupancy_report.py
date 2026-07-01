@@ -13,8 +13,8 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
-from mrcs_core.equipment.block.block_occupant import BlockOccupant
 from mrcs_core.equipment.block.block_occupant_face import BlockOccupantFace
+from mrcs_core.equipment.block.block_occupant_report import BlockOccupantReport
 from mrcs_core.equipment.block.block_report import BlockOccupancyReport
 
 
@@ -27,7 +27,7 @@ class TestBlockOccupancyReport(unittest.TestCase):
         reporter_address = 2
         reporter_input = 3
         occupant_group = 1
-        occupants = [BlockOccupant(0x1234, BlockOccupantFace.REV)]
+        occupants = [BlockOccupantReport(0x1234, BlockOccupantFace.REV)]
 
         obj1 = BlockOccupancyReport(network_id, reporter_address, reporter_input, occupant_group, occupants)
         self.assertEqual(network_id, obj1.network_id)
@@ -42,11 +42,11 @@ class TestBlockOccupancyReport(unittest.TestCase):
         reporter_address = 2
         reporter_input = 3
         occupant_group = 1
-        occupants = [BlockOccupant(0x1234, BlockOccupantFace.REV)]
+        occupants = [BlockOccupantReport(0x1234, BlockOccupantFace.REV)]
 
         obj1 = BlockOccupancyReport(network_id, reporter_address, reporter_input, occupant_group, occupants)
         self.assertEqual('BlockOccupancyReport:{network_id:0x0001, reporter_address:2, reporter_input:3, '
-                         'occupant_group:1, occupants:[BlockOccupant:{address:4660, face:REV}]}', str(obj1))
+                         'occupant_group:1, occupants:[BlockOccupantReport:{address:4660, face:REV}]}', str(obj1))
 
 
     def test_block_occupation_report_jstr(self):
@@ -54,7 +54,7 @@ class TestBlockOccupancyReport(unittest.TestCase):
         reporter_address = 2
         reporter_input = 3
         occupant_group = 1
-        occupants = [BlockOccupant(0x1234, BlockOccupantFace.REV)]
+        occupants = [BlockOccupantReport(0x1234, BlockOccupantFace.REV)]
 
         obj1 = BlockOccupancyReport(network_id, reporter_address, reporter_input, occupant_group, occupants)
         jstr = JSONify.dumps(obj1)
@@ -67,7 +67,7 @@ class TestBlockOccupancyReport(unittest.TestCase):
         reporter_address = 2
         reporter_input = 3
         occupant_group = 1
-        occupants = [BlockOccupant(0x1234, BlockOccupantFace.REV)]
+        occupants = [BlockOccupantReport(0x1234, BlockOccupantFace.REV)]
 
         obj1 = BlockOccupancyReport(network_id, reporter_address, reporter_input, occupant_group, occupants)
         jstr = JSONify.dumps(obj1)

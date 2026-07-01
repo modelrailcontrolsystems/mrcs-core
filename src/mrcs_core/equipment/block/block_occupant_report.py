@@ -17,14 +17,14 @@ from mrcs_core.equipment.block.block_occupant_face import BlockOccupantFace
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class BlockOccupant(JSONable):
+class BlockOccupantReport(JSONable):
     """
     An MPU occupant of a block
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockOccupant:
+    def construct_from_jdict(cls, jdict) -> BlockOccupantReport:
         address = jdict.get('addr')
 
         # may raise KeyError
@@ -84,4 +84,4 @@ class BlockOccupant(JSONable):
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        return f'{self.__class__.__name__}:{{address:{self.address}, face:{self.face.name}}}'
+        return f'BlockOccupantReport:{{address:{self.address}, face:{self.face.name}}}'
