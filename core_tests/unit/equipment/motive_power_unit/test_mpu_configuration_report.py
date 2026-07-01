@@ -21,7 +21,7 @@ from mrcs_core.equipment.motive_power_unit.throttle import DCCThrottleSteps
 
 class TestMPUConfigurationReport(unittest.TestCase):
 
-    def test_construct_motive_power_unit(self):
+    def test_construct_mpu_configuration_report(self):
         address = 3
         functions = [True, False, True]
         is_busy = False
@@ -44,7 +44,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
         self.assertEqual(smart_search, obj1.smart_search)
 
 
-    def test_motive_power_unit_percentage(self):
+    def test_mpu_configuration_report_percentage(self):
         address = 3
         functions = [True, False, True]
         is_busy = False
@@ -60,7 +60,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
         self.assertEqual(43, obj1.speed_setting_percent)
 
 
-    def test_motive_power_unit_str(self):
+    def test_mpu_configuration_report_str(self):
         address = 3
         functions = [True, False, True]
         is_busy = False
@@ -77,7 +77,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
                          'speed_setting:12, reverse:True, double_traction:False, smart_search:True}', str(obj1))
 
 
-    def test_motive_power_unit_json(self):
+    def test_mpu_configuration_report_json(self):
         address = 3
         functions = [True, False, True]
         is_busy = False
