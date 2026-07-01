@@ -17,14 +17,14 @@ from mrcs_core.equipment.motive_power_unit.throttle import DCCThrottleSteps
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class MotivePowerUnitState(JSONable):
+class MPUConfigurationReport(JSONable):
     """
     A DCC motive power unit (MPU) state
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> MotivePowerUnitState | None:
+    def construct_from_jdict(cls, jdict) -> MPUConfigurationReport | None:
         if not jdict:
             return None
 
@@ -40,13 +40,13 @@ class MotivePowerUnitState(JSONable):
         functions = [function == '+' for function in jdict.get('functions')]
         is_busy = jdict.get('busy')
         stepping = stepping
-        speed_value = jdict.get('speed')
+        speed_setting = jdict.get('speed')
         reverse = jdict.get('reverse')
         double_traction = jdict.get('consist')
         smart_search = jdict.get('smart_search')
 
         return cls(address, functions, is_busy=is_busy,
-                   stepping=stepping, speed_value=speed_value,
+                   stepping=stepping, speed_setting=speed_setting,
                    reverse=reverse, double_traction=double_traction,
                    smart_search=smart_search)
 
@@ -54,14 +54,14 @@ class MotivePowerUnitState(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, address: int, functions: list[bool], is_busy: bool | None = None,
-                 stepping: DCCThrottleSteps | None = None, speed_value: int | None = None,
+                 stepping: DCCThrottleSteps | None = None, speed_setting: int | None = None,
                  reverse: bool | None = None, double_traction: bool | None = None,
                  smart_search: bool | None = None):
         self._address = address
         self._functions = functions
         self._is_busy = is_busy
         self._stepping = stepping
-        self._speed_value = speed_value
+        self._speed_setting = speed_setting
         self._reverse = reverse
         self._double_traction = double_traction
         self._smart_search = smart_search
@@ -71,7 +71,7 @@ class MotivePowerUnitState(JSONable):
         try:
             return (self.address == other.address and self.functions == other.functions and
                     self.is_busy == other.is_busy and self.stepping == other.stepping and
-                    self.speed_value == other.speed_value and self.reverse == other.reverse and
+                    self.speed_setting == other.speed_setting and self.reverse == other.reverse and
                     self.double_traction == other.double_traction and self.smart_search == other.smart_search)
         except (AttributeError, TypeError):
             return False
@@ -93,7 +93,7 @@ class MotivePowerUnitState(JSONable):
         jdict['functions'] = ''.join('+' if f else '-' for f in self.functions)
         jdict['busy'] = self.is_busy
         jdict['stepping'] = None if self.stepping is None else self.stepping.name
-        jdict['speed'] = self.speed_value
+        jdict['speed'] = self.speed_setting
         jdict['reverse'] = self.reverse
         jdict['consist'] = self.double_traction
         jdict['smart_search'] = self.smart_search
@@ -105,16 +105,16 @@ class MotivePowerUnitState(JSONable):
 
     @property
     def is_emergency_stop(self) -> bool:
-        return self.speed_value == 1
+        return self.speed_setting == 1
 
 
     # noinspection PyUnresolvedReferences
     @property
-    def speed_percentage(self):
-        if self.stepping is None or self.speed_value is None:
+    def speed_setting_percent(self):
+        if self.stepping is None or self.speed_setting is None:
             return None
 
-        return round((self.speed_value / self.stepping.max_speed) * 100.0)
+        return round((self.speed_setting / self.stepping.max_speed) * 100.0)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -140,8 +140,8 @@ class MotivePowerUnitState(JSONable):
 
 
     @property
-    def speed_value(self):
-        return self._speed_value
+    def speed_setting(self):
+        return self._speed_setting
 
 
     @property
@@ -167,5 +167,5 @@ class MotivePowerUnitState(JSONable):
         stepping = None if self.stepping is None else self.stepping.name
 
         return (f'{self.__class__.__name__}:{{address:{self.address}, functions:{functions}, is_busy:{self.is_busy}, '
-                f'stepping:{stepping}, speed_value:{self.speed_value}, reverse:{self.reverse}, '
+                f'stepping:{stepping}, speed_setting:{self.speed_setting}, reverse:{self.reverse}, '
                 f'double_traction:{self.double_traction}, smart_search:{self.smart_search}}}')

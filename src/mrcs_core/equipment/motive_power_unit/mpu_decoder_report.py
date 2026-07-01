@@ -20,14 +20,14 @@ from mrcs_core.data.json import JSONable
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class MotivePowerUnitDecoder(JSONable):
+class MPUDecoderReport(JSONable):
     """
     A DCC motive power unit (MPU) decoder state
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> MotivePowerUnitDecoder | None:
+    def construct_from_jdict(cls, jdict) -> MPUDecoderReport | None:
         if not jdict:
             return None
 

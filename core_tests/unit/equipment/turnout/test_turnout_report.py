@@ -14,18 +14,18 @@ import unittest
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.turnout.turnout_position import TurnoutPosition
-from mrcs_core.equipment.turnout.turnout_state import TurnoutState
+from mrcs_core.equipment.turnout.turnout_report import TurnoutReport
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class TestTurnoutState(unittest.TestCase):
+class TestTurnoutReport(unittest.TestCase):
 
     def test_turnout(self):
         address = 3
         position = TurnoutPosition.P1
 
-        obj1 = TurnoutState(address, position)
+        obj1 = TurnoutReport(address, position)
         self.assertEqual(address, obj1.address)
         self.assertEqual(position, obj1.position)
 
@@ -34,15 +34,15 @@ class TestTurnoutState(unittest.TestCase):
         address = 3
         position = TurnoutPosition.P1
 
-        obj1 = TurnoutState(address, position)
-        self.assertEqual('TurnoutState:{address:3, position:P1}', str(obj1))
+        obj1 = TurnoutReport(address, position)
+        self.assertEqual('TurnoutReport:{address:3, position:P1}', str(obj1))
 
 
     def test_turnout_is_valid(self):
         address = 3
         position = TurnoutPosition.P1
 
-        obj1 = TurnoutState(address, position)
+        obj1 = TurnoutReport(address, position)
         self.assertEqual(True, obj1.is_valid)
 
 
@@ -50,7 +50,7 @@ class TestTurnoutState(unittest.TestCase):
         address = 3
         position = TurnoutPosition.P1
 
-        obj1 = TurnoutState(address, position)
+        obj1 = TurnoutReport(address, position)
         self.assertEqual(True, obj1.is_known)
 
 
@@ -58,18 +58,18 @@ class TestTurnoutState(unittest.TestCase):
         address = 3
         position = TurnoutPosition.P1
 
-        obj1 = TurnoutState(address, position)
+        obj1 = TurnoutReport(address, position)
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "TurnoutState", "addr": 3, "position": "P1"}', jstr)
+        self.assertEqual('{"type": "TurnoutReport", "addr": 3, "position": "P1"}', jstr)
 
 
     def test_turnout_jstr_eq(self):
         address = 3
         position = TurnoutPosition.P1
 
-        obj1 = TurnoutState(address, position)
+        obj1 = TurnoutReport(address, position)
         jstr = JSONify.dumps(obj1)
-        obj2 = TurnoutState.construct_from_jdict(json.loads(jstr))
+        obj2 = TurnoutReport.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
 
 

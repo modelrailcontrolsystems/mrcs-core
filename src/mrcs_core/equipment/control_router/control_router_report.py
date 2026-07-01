@@ -19,14 +19,14 @@ from mrcs_core.data.json import JSONable
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class ControlRouterState(JSONable):
+class ControlRouterReport(JSONable):
     """
     The state of a command station
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> ControlRouterState | None:
+    def construct_from_jdict(cls, jdict) -> ControlRouterReport | None:
         if not jdict:
             return None
 
