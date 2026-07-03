@@ -13,7 +13,7 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
-from mrcs_core.equipment.track.track_mode import TrackMode
+from mrcs_core.equipment.track.track_enums import TrackMode
 from mrcs_core.equipment.track.track_report import TrackReport
 
 

@@ -1,9 +1,9 @@
 """
-Created on 14 Jun 2026
+Created on 13 Jun 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-An enumeration of all the block occupant directions
+The enumerated types used by track equipment
 
 Classes in support of the Rocco Z21 DCC command station:
 https://www.z21.eu/en/products/z21
@@ -17,14 +17,19 @@ from mrcs_core.data.meta_enum import MetaEnum
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class BlockOccupantFace(IntEnum, metaclass=MetaEnum):
+class TrackMode(IntEnum, metaclass=MetaEnum):
     """
-    An enumeration of all the block occupant directions
+    An enumeration of all the track modes
     """
 
-    UNKNOWN = 0x00
-    FWD = 0x02
-    REV = 0x03
+    POWER_OFF = 0x00
+    POWER_ON = 0x01
+    PROGRAMMING = 0x02
+    SHORT_CIRCUIT = 0x08
+    UNKNOWN = 0x82
+
+    COMMAND_POWER_OFF = 0x80
+    COMMAND_POWER_ON = 0x81
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -12,7 +12,7 @@ https://github.com/botmonster/z21aio/tree/main
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.equipment.track.track_mode import TrackMode
+from mrcs_core.equipment.track.track_enums import TrackMode
 
 
 # --------------------------------------------------------------------------------------------------------------------

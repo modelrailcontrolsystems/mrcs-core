@@ -12,7 +12,7 @@ https://github.com/botmonster/z21aio/tree/main
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.equipment.turnout.turnout_position import TurnoutPosition
+from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 
 
 # --------------------------------------------------------------------------------------------------------------------

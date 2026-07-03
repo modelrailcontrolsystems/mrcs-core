@@ -14,7 +14,7 @@ import unittest
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.motive_power_unit.mpu_configuration_report import MPUConfigurationReport
-from mrcs_core.equipment.motive_power_unit.throttle import DCCThrottleSteps
+from mrcs_core.equipment.motive_power_unit.mpu_enums import ThrottleSteps
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
         address = 3
         functions = [True, False, True]
         is_busy = False
-        stepping = DCCThrottleSteps.STEPS_28
+        stepping = ThrottleSteps.STEPS_28
         speed_setting = 12
         reverse = True
         double_traction = False
@@ -48,7 +48,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
         address = 3
         functions = [True, False, True]
         is_busy = False
-        stepping = DCCThrottleSteps.STEPS_28
+        stepping = ThrottleSteps.STEPS_28
         speed_setting = 12
         reverse = True
         double_traction = False
@@ -64,7 +64,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
         address = 3
         functions = [True, False, True]
         is_busy = False
-        stepping = DCCThrottleSteps.STEPS_28
+        stepping = ThrottleSteps.STEPS_28
         speed_setting = 12
         reverse = True
         double_traction = False
@@ -81,7 +81,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
         address = 3
         functions = [True, False, True]
         is_busy = False
-        stepping = DCCThrottleSteps.STEPS_28
+        stepping = ThrottleSteps.STEPS_28
         speed_setting = 12
         reverse = True
         double_traction = False
