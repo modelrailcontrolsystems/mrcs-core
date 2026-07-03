@@ -12,7 +12,7 @@ https://github.com/botmonster/z21aio/tree/main
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.equipment.motive_power_unit.throttle import DCCThrottleSteps
+from mrcs_core.equipment.motive_power_unit.mpu_enums import ThrottleSteps
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ class MPUConfigurationReport(JSONable):
             raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
         # may raise KeyError
-        stepping = None if jdict.get('stepping') is None else DCCThrottleSteps[jdict.get('stepping')]
+        stepping = None if jdict.get('stepping') is None else ThrottleSteps[jdict.get('stepping')]
 
         address = jdict.get('addr')
         functions = [function == '+' for function in jdict.get('functions')]
@@ -54,7 +54,7 @@ class MPUConfigurationReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, address: int, functions: list[bool], is_busy: bool | None = None,
-                 stepping: DCCThrottleSteps | None = None, speed_setting: int | None = None,
+                 stepping: ThrottleSteps | None = None, speed_setting: int | None = None,
                  reverse: bool | None = None, double_traction: bool | None = None,
                  smart_search: bool | None = None):
         self._address = address

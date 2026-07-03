@@ -3,7 +3,7 @@ Created on 6 Jun 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-An enumeration of all the possible DCC throttle step resolutions
+The enumerated types used by MPU equipment
 
 Classes in support of the Rocco Z21 DCC command station:
 https://www.z21.eu/en/products/z21
@@ -21,7 +21,7 @@ from mrcs_core.data.meta_enum import MetaEnum
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class DCCThrottleSteps(IntEnum, metaclass=MetaEnum):
+class ThrottleSteps(IntEnum, metaclass=MetaEnum):
     """
     An enumeration of all the possible DCC throttle step resolutions
     """

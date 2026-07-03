@@ -13,7 +13,7 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
-from mrcs_core.equipment.turnout.turnout_position import TurnoutPosition
+from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 from mrcs_core.equipment.turnout.turnout_report import TurnoutReport
 
 

@@ -12,19 +12,19 @@ https://www.z21.eu/en/products/z21
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.equipment.block.block_occupant_face import BlockOccupantFace
+from mrcs_core.equipment.block.block_enums import BlockOccupantFace
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class BlockOccupantReport(JSONable):
+class BlockOccupant(JSONable):
     """
     An MPU occupant of a block
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockOccupantReport:
+    def construct_from_jdict(cls, jdict) -> BlockOccupant:
         address = jdict.get('addr')
 
         # may raise KeyError
@@ -84,4 +84,4 @@ class BlockOccupantReport(JSONable):
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        return f'BlockOccupantReport:{{address:{self.address}, face:{self.face.name}}}'
+        return f'BlockOccupant:{{address:{self.address}, face:{self.face.name}}}'

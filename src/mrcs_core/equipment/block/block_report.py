@@ -17,8 +17,9 @@ from abc import ABC, abstractmethod
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.equipment.block.block_occupant_report import BlockOccupantReport
-from mrcs_core.equipment.block.block_status import BlockStatus
+from mrcs_core.equipment.block.block_enums import BlockVoltage
+from mrcs_core.equipment.block.block_id import BlockID
+from mrcs_core.equipment.block.block_occupant import BlockOccupant
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -30,30 +31,29 @@ class BlockReport(JSONable, ABC):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockStatusReport | BlockOccupancyReport | None:
+    def construct_from_jdict(cls, jdict) -> BlockVoltageReport | BlockOccupancyReport | None:
         if not jdict:
             return None
 
-        return BlockStatusReport.construct_from_jdict(jdict) if 'status' in jdict else \
-            BlockOccupancyReport.construct_from_jdict(jdict)
+        type_name = jdict.get('type')
+
+        if type_name == 'BlockVoltageReport':
+            return BlockVoltageReport.construct_from_jdict(jdict)
+
+        if type_name == 'BlockOccupancyReport':
+            return BlockOccupancyReport.construct_from_jdict(jdict)
+
+        raise TypeError(f'unsupported type:{type_name}')
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, network_id: int, reporter_address: int, reporter_input: int):
-        self._network_id = network_id
-        self._reporter_address = reporter_address
-        self._reporter_input = reporter_input
+    def __init__(self, block_id: BlockID):
+        self._block_id = block_id
 
 
     def __lt__(self, other):
-        if self.reporter_address < other.reporter_address:
-            return True
-
-        if self.reporter_address > other.reporter_address:
-            return False
-
-        return self.reporter_input < other.reporter_input
+        return self.block_id < other.block_id
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -67,30 +67,20 @@ class BlockReport(JSONable, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def network_id(self):
-        return self._network_id
-
-
-    @property
-    def reporter_address(self):
-        return self._reporter_address
-
-
-    @property
-    def reporter_input(self):
-        return self._reporter_input
+    def block_id(self):
+        return self._block_id
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class BlockStatusReport(BlockReport):
+class BlockVoltageReport(BlockReport):
     """
-    A block report, including status
+    A block report, including voltage
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockStatusReport | None:
+    def construct_from_jdict(cls, jdict) -> BlockVoltageReport | None:
         if not jdict:
             return None
 
@@ -99,27 +89,27 @@ class BlockStatusReport(BlockReport):
         if type_name != cls.__name__:
             raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
-        network_id = jdict.get('nid')
-        reporter_address = jdict.get('reporter')
-        reporter_input = jdict.get('input')
+        block_id = BlockID.construct_from_jdict(jdict.get('id'))
+
+        if block_id is None:
+            raise ValueError(f'missing BlockID in:{jdict}')
 
         # may raise KeyError
-        status = BlockStatus[jdict.get('status')]
+        voltage = BlockVoltage[jdict.get('voltage')]
 
-        return cls(network_id, reporter_address, reporter_input, status)
+        return cls(block_id, voltage)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, network_id: int, reporter_address: int, reporter_input: int, status: BlockStatus):
-        super().__init__(network_id, reporter_address, reporter_input)
-        self._status = status
+    def __init__(self, block_id: BlockID, voltage: BlockVoltage):
+        super().__init__(block_id)
+        self._voltage = voltage
 
 
     def __eq__(self, other):
         try:
-            return (self.network_id == other.network_id and self.reporter_address == other.reporter_address and
-                    self.reporter_input == other.reporter_input and self.status == other.status)
+            return self.block_id == other.block_id and self.voltage == other.voltage
         except (AttributeError, TypeError):
             return False
 
@@ -131,10 +121,8 @@ class BlockStatusReport(BlockReport):
 
         jdict['type'] = self.type_name()
 
-        jdict['nid'] = self.network_id
-        jdict['reporter'] = self.reporter_address
-        jdict['input'] = self.reporter_input
-        jdict['status'] = self.status.name
+        jdict['id'] = self.block_id
+        jdict['voltage'] = self.voltage.name
 
         return jdict
 
@@ -149,17 +137,15 @@ class BlockStatusReport(BlockReport):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def status(self):
-        return self._status
+    def voltage(self):
+        return self._voltage
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        return (f'{self.__class__.__name__}:{{network_id:0x{self.network_id:04x}, '
-                f'reporter_address:{self.reporter_address}, reporter_input:{self.reporter_input}, '
-                f'status:{self.status.name}}}')
+        return f'{self.__class__.__name__}:{{block_id:{self.block_id}, voltage:{self.voltage.name}}}'
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -180,21 +166,21 @@ class BlockOccupancyReport(BlockReport):
         if type_name != cls.__name__:
             raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
-        network_id = jdict.get('nid')
-        reporter_address = jdict.get('reporter')
-        reporter_input = jdict.get('input')
+        block_id = BlockID.construct_from_jdict(jdict.get('id'))
+
+        if block_id is None:
+            raise ValueError(f'missing BlockID in:{jdict}')
 
         occupant_group = jdict.get('group')
-        occupants = [BlockOccupantReport.construct_from_jdict(occupant) for occupant in jdict.get('occupants', [])]
+        occupants = [BlockOccupant.construct_from_jdict(occupant) for occupant in jdict.get('occupants', [])]
 
-        return cls(network_id, reporter_address, reporter_input, occupant_group, occupants)
+        return cls(block_id, occupant_group, occupants)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, network_id: int, reporter_address: int, reporter_input: int, occupant_group: int | None,
-                 occupants: list[BlockOccupantReport]):
-        super().__init__(network_id, reporter_address, reporter_input)
+    def __init__(self, block_id: BlockID, occupant_group: int | None, occupants: list[BlockOccupant]):
+        super().__init__(block_id)
 
         self._occupant_group = occupant_group
         self._occupants = occupants
@@ -202,9 +188,8 @@ class BlockOccupancyReport(BlockReport):
 
     def __eq__(self, other):
         try:
-            return (self.network_id == other.network_id and self.reporter_address == other.reporter_address and
-                    self.reporter_input == other.reporter_input and self.occupant_group == other.occupant_group and
-                    self.occupants == other.occupants)
+            return (self.block_id == other.block_id and
+                    self.occupant_group == other.occupant_group and self.occupants == other.occupants)
         except (AttributeError, TypeError):
             return False
 
@@ -216,9 +201,7 @@ class BlockOccupancyReport(BlockReport):
 
         jdict['type'] = self.type_name()
 
-        jdict['nid'] = self.network_id
-        jdict['reporter'] = self.reporter_address
-        jdict['input'] = self.reporter_input
+        jdict['id'] = self.block_id
         jdict['group'] = self.occupant_group
         jdict['occupants'] = self.occupants
 
@@ -250,6 +233,5 @@ class BlockOccupancyReport(BlockReport):
     def __str__(self, *args, **kwargs):
         occupants = '[' + ', '.join([str(occupant) for occupant in self.occupants]) + ']'
 
-        return (f'{self.__class__.__name__}:{{network_id:0x{self.network_id:04x}, '
-                f'reporter_address:{self.reporter_address}, reporter_input:{self.reporter_input}, '
+        return (f'{self.__class__.__name__}:{{block_id:{self.block_id}, '
                 f'occupant_group:{self.occupant_group}, occupants:{occupants}}}')

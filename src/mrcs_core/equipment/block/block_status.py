@@ -1,37 +1,109 @@
 """
-Created on 16 Jun 2026
+Created on 2 Jul 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-An enumeration of all the LAN_CAN_DETECTOR occupancy status values
+The current status of a block
 
 Classes in support of the Rocco Z21 DCC command station:
 https://www.z21.eu/en/products/z21
 """
 
-from enum import IntEnum, unique
+from collections import OrderedDict
 
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.block.block_enums import BlockDirection, BlockVoltage
+from mrcs_core.equipment.block.block_occupant import BlockOccupant
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-@unique
-class BlockStatus(IntEnum, metaclass=MetaEnum):
+class BlockStatus(JSONable):
     """
-    An enumeration of all the LAN_CAN_DETECTOR occupancy status values
+    The current status of a block
     """
 
-    FREE_NO_VOLTAGE = 0x0000
-    FREE_WITH_VOLTAGE = 0x0100
-    OCCUPIED_NO_VOLTAGE = 0x1000
-    OCCUPIED_WITH_VOLTAGE = 0x1100
-    OCCUPIED_OVERLOAD_1 = 0x1201
-    OCCUPIED_OVERLOAD_2 = 0x1202
-    OCCUPIED_OVERLOAD_3 = 0x1203
+
+    @classmethod
+    def construct_from_jdict(cls, jdict) -> BlockStatus | None:
+        if not jdict:
+            return None
+
+        id = jdict.get('id')
+
+        # may raise KeyError
+        direction = BlockDirection[jdict.get('direction')]
+
+        # may raise KeyError
+        voltage = BlockVoltage[jdict.get('voltage')]
+
+        occupants = [BlockOccupant.construct_from_jdict(occupant_jdict) for occupant_jdict in
+                     jdict.get('occupants', [])]
+
+        return cls(id, direction, voltage, *occupants)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __init__(self, id: str, direction: BlockDirection, voltage: BlockVoltage, *occupants: BlockOccupant):
+        self._id = id
+        self._direction = direction
+        self._voltage = voltage
+        self._occupants = occupants
+
+
+    def __eq__(self, other):
+        try:
+            return (self.id == other.id and self.direction == other.direction and self.direction == other.direction and
+                    self.occupants == other.occupants)
+        except (AttributeError, TypeError):
+            return False
+
+
+    def __lt__(self, other):
+        return self.id < other.id
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        jdict = OrderedDict()
+
+        jdict['type'] = self.type_name()
+
+        jdict['id'] = self.id
+        jdict['direction'] = self.direction.name
+        jdict['voltage'] = self.voltage.name
+        jdict['occupants'] = self.occupants
+
+        return jdict
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def id(self):
+        return self._id
+
+
+    @property
+    def direction(self):
+        return self._direction
+
+
+    @property
+    def voltage(self):
+        return self._voltage
+
+
+    @property
+    def occupants(self):
+        return self._occupants
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'{self.name}[0x{self.value:04x}]'
+        occupants = '[' + ', '.join([str(occupant) for occupant in self.occupants]) + ']'
+        return (f'BlockStatus:{{id:{self.id}, direction:{self.direction.name}, voltage:{self.voltage.name}, '
+                f'occupants:{occupants}}}')
