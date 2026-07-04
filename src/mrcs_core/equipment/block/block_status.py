@@ -5,8 +5,22 @@ Created on 2 Jul 2026
 
 The current status of a block
 
-Classes in support of the Rocco Z21 DCC command station:
-https://www.z21.eu/en/products/z21
+{
+    "type": "BlockStatus",
+    "id": "N01",
+    "direction": "UP",
+    "voltage": "OCCUPIED_WITH_VOLTAGE",
+    "occupants": [
+        {
+            "addr": 4660,
+            "face": "FWD"
+        },
+        {
+            "addr": 17767,
+            "face": "REV"
+        }
+    ]
+}
 """
 
 from collections import OrderedDict
@@ -98,7 +112,7 @@ class BlockStatus(JSONable):
 
     @property
     def occupants(self):
-        return self._occupants
+        return sorted(self._occupants)
 
 
     # ----------------------------------------------------------------------------------------------------------------
