@@ -4,10 +4,11 @@ Created on 2 Jul 2026
 @author: Bruno Beloff (bbeloff@me.com)
 
 The current status of a block
+The label of the BlockStatus is found from the BlockDesign, which maps BlockReport IDs to BlockStatus labels
 
 {
     "type": "BlockStatus",
-    "id": "N01",
+    "label": "N01",
     "direction": "UP",
     "voltage": "OCCUPIED_WITH_VOLTAGE",
     "occupants": [
@@ -43,7 +44,7 @@ class BlockStatus(JSONable):
         if not jdict:
             return None
 
-        id = jdict.get('id')
+        label = jdict.get('label')
 
         # may raise KeyError
         direction = BlockDirection[jdict.get('direction')]
@@ -54,13 +55,13 @@ class BlockStatus(JSONable):
         occupants = [BlockOccupant.construct_from_jdict(occupant_jdict) for occupant_jdict in
                      jdict.get('occupants', [])]
 
-        return cls(id, direction, voltage, *occupants)
+        return cls(label, direction, voltage, *occupants)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, id: str, direction: BlockDirection, voltage: BlockVoltage, *occupants: BlockOccupant):
-        self._id = id
+    def __init__(self, label: str, direction: BlockDirection, voltage: BlockVoltage, *occupants: BlockOccupant):
+        self._label = label
         self._direction = direction
         self._voltage = voltage
         self._occupants = occupants
@@ -68,14 +69,15 @@ class BlockStatus(JSONable):
 
     def __eq__(self, other):
         try:
-            return (self.id == other.id and self.direction == other.direction and self.direction == other.direction and
-                    self.occupants == other.occupants)
+            return (
+                    self.label == other.label and self.direction == other.direction and
+                    self.direction == other.direction and self.occupants == other.occupants)
         except (AttributeError, TypeError):
             return False
 
 
     def __lt__(self, other):
-        return self.id < other.id
+        return self.label < other.label
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -85,7 +87,7 @@ class BlockStatus(JSONable):
 
         jdict['type'] = self.type_name()
 
-        jdict['id'] = self.id
+        jdict['label'] = self.label
         jdict['direction'] = self.direction.name
         jdict['voltage'] = self.voltage.name
         jdict['occupants'] = self.occupants
@@ -96,8 +98,8 @@ class BlockStatus(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def id(self):
-        return self._id
+    def label(self):
+        return self._label
 
 
     @property
@@ -119,5 +121,5 @@ class BlockStatus(JSONable):
 
     def __str__(self, *args, **kwargs):
         occupants = '[' + ', '.join([str(occupant) for occupant in self.occupants]) + ']'
-        return (f'BlockStatus:{{id:{self.id}, direction:{self.direction.name}, voltage:{self.voltage.name}, '
+        return (f'BlockStatus:{{label:{self.label}, direction:{self.direction.name}, voltage:{self.voltage.name}, '
                 f'occupants:{occupants}}}')
