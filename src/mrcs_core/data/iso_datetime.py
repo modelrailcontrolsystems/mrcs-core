@@ -50,7 +50,7 @@ class ISODatetime(JSONable, datetime):
 
 
     @classmethod
-    def construct_from_db(cls, field):
+    def construct_from_db_field(cls, field):
         if field is None:
             return None
 
