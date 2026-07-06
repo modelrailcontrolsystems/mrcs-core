@@ -32,7 +32,7 @@ class TestISODatetime(unittest.TestCase):
 
     def test_construct_from_db(self):
         ISODatetime.set_local_zone(ZoneInfo('Europe/London'))
-        obj1 = ISODatetime.construct_from_db('2025-08-26 01:23:45.678')
+        obj1 = ISODatetime.construct_from_db_field('2025-08-26 01:23:45.678')
         self.assertEqual('ISODatetime:{2025-08-26T02:23:45.678+01:00}', str(obj1))
 
 

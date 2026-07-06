@@ -9,10 +9,9 @@ VIS.001.001.MPU.001.*
 """
 
 import re
-
 from abc import ABC
 
-from mrcs_core.data.equipment_identity import EquipmentIdentifier, EquipmentFilter, EquipmentSpecification
+from mrcs_core.data.equipment_identity import EquipmentFilter, EquipmentIdentifier, EquipmentSpecification
 from mrcs_core.data.json import JSONable
 
 
@@ -22,6 +21,7 @@ class RoutingKey(JSONable, ABC):
     """
     An abstract routing key
     """
+
 
     @staticmethod
     def is_valid(routing):
@@ -94,6 +94,7 @@ class PublicationRoutingKey(RoutingKey):
     A routing key for a publisher, with a fully-specified source
     """
 
+
     @classmethod
     def construct_from_jdict(cls, jdict):
         if not jdict:
@@ -110,22 +111,13 @@ class PublicationRoutingKey(RoutingKey):
         return cls(source, target)
 
 
-    @classmethod
-    def construct_from_db(cls, field):
-        pieces = field.split('.')
-
-        source = EquipmentIdentifier.construct_from_jdict('.'.join(pieces[:3]))
-        target = EquipmentFilter.construct_from_jdict('.'.join(pieces[3:]))
-
-        return cls(source, target)
-
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class SubscriptionRoutingKey(RoutingKey):
     """
     A routing key for a subscriber, with a partially-specified source
     """
+
 
     @classmethod
     def construct_from_jdict(cls, jdict):
