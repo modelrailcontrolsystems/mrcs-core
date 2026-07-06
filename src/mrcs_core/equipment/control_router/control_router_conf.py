@@ -44,10 +44,7 @@ class ControlRouterConf(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def construct_from_jdict(cls, jdict):
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> ControlRouterConf:
         ip_address = IPv4Address.construct(jdict.get('ip_address'))
         port = jdict.get('port')
         timeout = jdict.get('timeout')

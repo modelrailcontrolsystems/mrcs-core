@@ -23,9 +23,6 @@ class MPUFunctions(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> MPUFunctions:
-        if not jdict:
-            raise ValueError('MPUFunctions.construct_from_jdict should not be None')
-
         return cls([func == '+' for func in jdict])
 
 

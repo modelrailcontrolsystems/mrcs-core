@@ -35,9 +35,6 @@ class MPUDecoderReport(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> MPUDecoderReport:
-        if not jdict:  # TODO: remove all of these in the equipment package
-            raise ValueError(f'jdict may not be None')
-
         type_name = jdict.get('type')
 
         if type_name != cls.__name__:

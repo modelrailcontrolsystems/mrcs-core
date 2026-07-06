@@ -31,10 +31,7 @@ class BlockReport(JSONable, ABC):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockVoltageReport | BlockOccupancyReport | None:
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> BlockVoltageReport | BlockOccupancyReport:
         type_name = jdict.get('type')
 
         if type_name == 'BlockVoltageReport':
@@ -80,10 +77,7 @@ class BlockVoltageReport(BlockReport):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockVoltageReport | None:
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> BlockVoltageReport:
         type_name = jdict.get('type')
 
         if type_name != cls.__name__:
@@ -157,10 +151,7 @@ class BlockOccupancyReport(BlockReport):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockOccupancyReport | None:
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> BlockOccupancyReport:
         type_name = jdict.get('type')
 
         if type_name != cls.__name__:

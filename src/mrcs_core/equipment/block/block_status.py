@@ -40,10 +40,7 @@ class BlockStatus(JSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockStatus | None:
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> BlockStatus:
         label = jdict.get('label')
 
         # may raise KeyError

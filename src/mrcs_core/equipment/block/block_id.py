@@ -28,10 +28,7 @@ class BlockID(JSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockID | None:
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> BlockID:
         address = jdict.get('addr')
         channel = jdict.get('channel')
         reporter_id = jdict.get('rid')
