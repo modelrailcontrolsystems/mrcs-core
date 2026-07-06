@@ -15,6 +15,7 @@ import unittest
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.motive_power_unit.mpu_configuration_report import MPUConfigurationReport
 from mrcs_core.equipment.motive_power_unit.mpu_enums import ThrottleSteps
+from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -23,7 +24,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
 
     def test_construct_mpu_configuration_report(self):
         address = 3
-        functions = [True, False, True]
+        functions = MPUFunctions([True, False, True])
         is_busy = False
         stepping = ThrottleSteps.STEPS_28
         speed_setting = 12
@@ -46,7 +47,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
 
     def test_mpu_configuration_report_percentage(self):
         address = 3
-        functions = [True, False, True]
+        functions = MPUFunctions([True, False, True])
         is_busy = False
         stepping = ThrottleSteps.STEPS_28
         speed_setting = 12
@@ -62,7 +63,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
 
     def test_mpu_configuration_report_str(self):
         address = 3
-        functions = [True, False, True]
+        functions = MPUFunctions([True, False, True])
         is_busy = False
         stepping = ThrottleSteps.STEPS_28
         speed_setting = 12
@@ -79,7 +80,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
 
     def test_mpu_configuration_report_json(self):
         address = 3
-        functions = [True, False, True]
+        functions = MPUFunctions([True, False, True])
         is_busy = False
         stepping = ThrottleSteps.STEPS_28
         speed_setting = 12

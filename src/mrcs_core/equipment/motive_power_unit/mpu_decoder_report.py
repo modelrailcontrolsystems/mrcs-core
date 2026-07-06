@@ -9,8 +9,15 @@ A DCC motive power unit (MPU) decoder state
 Class 08    0x003   0000 0011   0000 1110      0000 0000    0001 1000        4        1       120
 Class 60    0x004   0000 0011   0000 1110      0000 0000    0001 1000        4        1       100
 
-Based on code:
-https://github.com/botmonster/z21aio/tree/main
+{
+  "type": "MPUDecoderReport",
+  "addr": 4660,
+  "received": 456,
+  "errors": 789,
+  "opts": 171,
+  "speed": 90,
+  "qos": 5
+}
 """
 
 from collections import OrderedDict
@@ -27,9 +34,9 @@ class MPUDecoderReport(JSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> MPUDecoderReport | None:
-        if not jdict:
-            return None
+    def construct_from_jdict(cls, jdict) -> MPUDecoderReport:
+        if not jdict:  # TODO: remove all of these in the equipment package
+            raise ValueError(f'jdict may not be None')
 
         type_name = jdict.get('type')
 
