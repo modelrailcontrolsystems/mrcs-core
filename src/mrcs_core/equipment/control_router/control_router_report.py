@@ -26,10 +26,7 @@ class ControlRouterReport(JSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> ControlRouterReport | None:
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> ControlRouterReport:
         type_name = jdict.get('type')
 
         if type_name != cls.type_name():

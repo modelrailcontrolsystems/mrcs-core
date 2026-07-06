@@ -24,10 +24,7 @@ class TurnoutReport(JSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> TurnoutReport | None:
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> TurnoutReport:
         type_name = jdict.get('type')
 
         if type_name != cls.__name__:

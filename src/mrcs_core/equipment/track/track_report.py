@@ -24,10 +24,7 @@ class TrackReport(JSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> TrackReport | None:
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> TrackReport:
         type_name = jdict.get('type')
 
         if type_name != cls.__name__:
