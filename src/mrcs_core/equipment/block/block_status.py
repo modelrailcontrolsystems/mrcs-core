@@ -4,7 +4,7 @@ Created on 2 Jul 2026
 @author: Bruno Beloff (bbeloff@me.com)
 
 The current status of a block
-The label of the BlockStatus is found from the BlockDesign, which maps BlockReport IDs to BlockStatus labels
+The label of the BlockStatus is found from the Block Inventory, which maps BlockReport IDs to BlockStatus labels
 
 {
     "type": "BlockStatus",

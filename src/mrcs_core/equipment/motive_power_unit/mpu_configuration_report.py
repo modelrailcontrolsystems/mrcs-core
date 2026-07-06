@@ -3,60 +3,59 @@ Created on 6 Jun 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A DCC motive power unit (MPU) state
+A motive power unit (MPU) configuration
 
-Based on code:
-https://github.com/botmonster/z21aio/tree/main
+{
+    "type": "MPUConfigurationReport",
+    "addr": 3,
+    "functions": "+-+",
+    "busy": false,
+    "stepping": "STEPS_28",
+    "speed": 12,
+    "reverse": true,
+    "consist": false,
+    "smart_search": true
+}
 """
 
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.motive_power_unit.mpu_enums import ThrottleSteps
+from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 class MPUConfigurationReport(JSONable):
     """
-    A DCC motive power unit (MPU) state
+    A motive power unit (MPU) configuration
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> MPUConfigurationReport | None:
-        if not jdict:
-            return None
-
+    def construct_from_jdict(cls, jdict) -> MPUConfigurationReport:
         type_name = jdict.get('type')
 
         if type_name != cls.__name__:
             raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
-        # may raise KeyError
-        stepping = None if jdict.get('stepping') is None else ThrottleSteps[jdict.get('stepping')]
-
         address = jdict.get('addr')
-        functions = [function == '+' for function in jdict.get('functions')]
+        functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
         is_busy = jdict.get('busy')
-        stepping = stepping
+        stepping = ThrottleSteps[jdict.get('stepping')]
         speed_setting = jdict.get('speed')
         reverse = jdict.get('reverse')
         double_traction = jdict.get('consist')
         smart_search = jdict.get('smart_search')
 
-        return cls(address, functions, is_busy=is_busy,
-                   stepping=stepping, speed_setting=speed_setting,
-                   reverse=reverse, double_traction=double_traction,
-                   smart_search=smart_search)
+        return cls(address, functions, is_busy, stepping, speed_setting, reverse, double_traction, smart_search)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, address: int, functions: list[bool], is_busy: bool | None = None,
-                 stepping: ThrottleSteps | None = None, speed_setting: int | None = None,
-                 reverse: bool | None = None, double_traction: bool | None = None,
-                 smart_search: bool | None = None):
+    def __init__(self, address: int, functions: MPUFunctions, is_busy: bool, stepping: ThrottleSteps,
+                 speed_setting: int, reverse: bool, double_traction: bool, smart_search: bool):
         self._address = address
         self._functions = functions
         self._is_busy = is_busy
@@ -90,7 +89,7 @@ class MPUConfigurationReport(JSONable):
         jdict['type'] = self.type_name()
 
         jdict['addr'] = self.address
-        jdict['functions'] = ''.join('+' if f else '-' for f in self.functions)
+        jdict['functions'] = self.functions
         jdict['busy'] = self.is_busy
         jdict['stepping'] = None if self.stepping is None else self.stepping.name
         jdict['speed'] = self.speed_setting
@@ -163,9 +162,8 @@ class MPUConfigurationReport(JSONable):
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        functions = ''.join('+' if f else '-' for f in self.functions)
         stepping = None if self.stepping is None else self.stepping.name
 
-        return (f'{self.__class__.__name__}:{{address:{self.address}, functions:{functions}, is_busy:{self.is_busy}, '
-                f'stepping:{stepping}, speed_setting:{self.speed_setting}, reverse:{self.reverse}, '
-                f'double_traction:{self.double_traction}, smart_search:{self.smart_search}}}')
+        return (f'{self.__class__.__name__}:{{address:{self.address}, functions:{self.functions.as_json()}, '
+                f'is_busy:{self.is_busy}, stepping:{stepping}, speed_setting:{self.speed_setting}, '
+                f'reverse:{self.reverse}, double_traction:{self.double_traction}, smart_search:{self.smart_search}}}')
