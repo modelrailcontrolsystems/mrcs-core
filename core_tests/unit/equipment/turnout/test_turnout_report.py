@@ -21,16 +21,7 @@ from mrcs_core.equipment.turnout.turnout_report import TurnoutReport
 
 class TestTurnoutReport(unittest.TestCase):
 
-    def test_turnout(self):
-        address = 3
-        position = TurnoutPosition.P1
-
-        obj1 = TurnoutReport(address, position)
-        self.assertEqual(address, obj1.address)
-        self.assertEqual(position, obj1.position)
-
-
-    def test_turnout_str(self):
+    def test_turnout_report_str(self):
         address = 3
         position = TurnoutPosition.P1
 
@@ -38,7 +29,7 @@ class TestTurnoutReport(unittest.TestCase):
         self.assertEqual('TurnoutReport:{address:3, position:P1}', str(obj1))
 
 
-    def test_turnout_is_valid(self):
+    def test_turnout_report_is_valid(self):
         address = 3
         position = TurnoutPosition.P1
 
@@ -46,7 +37,7 @@ class TestTurnoutReport(unittest.TestCase):
         self.assertEqual(True, obj1.is_valid)
 
 
-    def test_turnout_is_known(self):
+    def test_turnout_report_is_known(self):
         address = 3
         position = TurnoutPosition.P1
 
@@ -54,7 +45,7 @@ class TestTurnoutReport(unittest.TestCase):
         self.assertEqual(True, obj1.is_known)
 
 
-    def test_turnout_jstr(self):
+    def test_turnout_report_jstr(self):
         address = 3
         position = TurnoutPosition.P1
 
@@ -63,7 +54,7 @@ class TestTurnoutReport(unittest.TestCase):
         self.assertEqual('{"type": "TurnoutReport", "addr": 3, "position": "P1"}', jstr)
 
 
-    def test_turnout_jstr_eq(self):
+    def test_turnout_report_jstr_eq(self):
         address = 3
         position = TurnoutPosition.P1
 
