@@ -1,14 +1,18 @@
 """
-Created on 13 Jun 2026
+Created on 6 Jul 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A reported turnout state
+The current status of a turnout
+The label of the TurnoutStatus is found from the Turnout Inventory,
+which maps TurnoutStatus addresses to TurnoutStatus labels
 
 {
-  "type": "TurnoutReport",
-  "addr": 3,
-  "position": "P1"
+    "type": "TurnoutStatus",
+    "label": "TE01",
+    "block_label": "BN01",
+    "addr": 3,
+    "position": "P1"
 }
 """
 
@@ -20,43 +24,51 @@ from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class TurnoutReport(JSONable):
+class TurnoutStatus(JSONable):
     """
-    A reported turnout state
+    The current status of a turnout
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> TurnoutReport:
-        type_name = jdict.get('type')
-
-        if type_name != cls.__name__:
-            raise TypeError(f'required type:{cls.__name__} got:{type_name}')
+    def construct_from_jdict(cls, jdict) -> TurnoutStatus:
+        label = jdict.get('label')
+        block_label = jdict.get('block_label')
 
         address = jdict.get('addr')
 
         # may raise KeyError
         position = TurnoutPosition[jdict.get('position')]
 
-        return cls(address, position)
+        return cls(label, block_label, address, position)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, address: int, position: TurnoutPosition):
+    def __init__(self, label: str, block_label: str, address: int, position: TurnoutPosition):
+        self.__label = label
+        self.__block_label = block_label
         self.__address = address
         self.__position = position
 
 
     def __eq__(self, other):
         try:
-            return self.address == other.address and self.position == other.position
+            return (self.label == other.label and self.block_label == other.block_label and
+                    self.address == other.address and self.position == other.position)
         except (AttributeError, TypeError):
             return False
 
 
     def __lt__(self, other):
-        return self.address < other.address
+        return self.label < other.label
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def has_known_position(self) -> bool:
+        return bool(self.position != TurnoutPosition.UNKNOWN)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -66,6 +78,8 @@ class TurnoutReport(JSONable):
 
         jdict['type'] = self.type_name()
 
+        jdict['label'] = self.label
+        jdict['block_label'] = self.block_label
         jdict['addr'] = self.address
         jdict['position'] = self.position.name
 
@@ -75,16 +89,14 @@ class TurnoutReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def is_known(self) -> bool:
-        return bool(self.position != TurnoutPosition.UNKNOWN)
+    def label(self):
+        return self.__label
 
 
     @property
-    def is_valid(self) -> bool:
-        return bool(self.position != TurnoutPosition.INVALID)
+    def block_label(self):
+        return self.__block_label
 
-
-    # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def address(self):
@@ -99,4 +111,5 @@ class TurnoutReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'{self.__class__.__name__}:{{address:{self.address}, position:{self.position.name}}}'
+        return (f'TurnoutStatus:{{label:{self.label}, block_label:{self.block_label}, address:{self.address}, '
+                f'position:{self.position.name}}}')
