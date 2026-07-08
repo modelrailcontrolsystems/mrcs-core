@@ -64,6 +64,13 @@ class BlockReport(JSONable, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def block_address(self):
+        return self.block_id.block_address
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @property
     def block_id(self):
         return self._block_id
 

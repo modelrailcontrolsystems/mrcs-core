@@ -28,6 +28,14 @@ class TestBlockReport(unittest.TestCase):
                          'voltage:OCCUPIED_OVERLOAD_1}', str(obj1))
 
 
+    def test_block_address(self):
+        jstr = ('{"type": "BlockVoltageReport", "id": {"addr": 5, "channel": 6, "rid": 4660}, '
+                '"voltage": "OCCUPIED_OVERLOAD_1"}')
+
+        obj1 = BlockReport.construct_from_jdict(json.loads(jstr))
+        self.assertEqual('5/6', obj1.block_address)
+
+
     def test_block_report_occupancy(self):
         jstr = ('{"type": "BlockOccupancyReport", "id": {"addr": 5, "channel": 6, "rid": 4660}, '
                 '"group": 1, "occupants": [{"addr": 22136, "face": "REV"}]}')
