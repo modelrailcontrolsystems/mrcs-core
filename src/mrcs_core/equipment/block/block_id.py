@@ -9,7 +9,6 @@ Note that that (address, channel) for a PK, the reporter_id field is purely for 
 Based on the Roco 10808 detector:
 https://www.roco.cc/ren/products/control/accessories/10808-z21-detector.html
 
-
 Based on code:
 https://github.com/botmonster/z21aio/tree/main
 """
@@ -72,6 +71,13 @@ class BlockID(JSONable):
         jdict['rid'] = self.reporter_id
 
         return jdict
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def block_address(self):
+        return f'{self.address}/{self.channel}'
 
 
     # ----------------------------------------------------------------------------------------------------------------

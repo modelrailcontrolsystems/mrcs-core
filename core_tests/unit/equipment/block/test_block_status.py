@@ -25,17 +25,18 @@ class TestBlockStatus(unittest.TestCase):
     @staticmethod
     def __sample_block_status():
         label = 'N01'
+        address = '5/6'
         direction = BlockDirection.UP
         voltage = BlockVoltage.OCCUPIED_WITH_VOLTAGE
         occupants = [BlockOccupant(0x1234, BlockOccupantFace.FWD),
                      BlockOccupant(0x4567, BlockOccupantFace.REV)]
 
-        return BlockStatus(label, direction, voltage, *occupants)
+        return BlockStatus(label, address, direction, voltage, *occupants)
 
 
     def test_block_status_str(self):
         obj1 = self.__sample_block_status()
-        self.assertEqual('BlockStatus:{label:N01, direction:UP, voltage:OCCUPIED_WITH_VOLTAGE, '
+        self.assertEqual('BlockStatus:{label:N01, address:5/6, direction:UP, voltage:OCCUPIED_WITH_VOLTAGE, '
                          'occupants:[BlockOccupant:{address:4660, face:FWD}, '
                          'BlockOccupant:{address:17767, face:REV}]}', str(obj1))
 
@@ -43,7 +44,7 @@ class TestBlockStatus(unittest.TestCase):
     def test_block_occupation_report_jstr(self):
         obj1 = self.__sample_block_status()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "BlockStatus", "label": "N01", "direction": "UP", '
+        self.assertEqual('{"type": "BlockStatus", "label": "N01", "addr": "5/6", "direction": "UP", '
                          '"voltage": "OCCUPIED_WITH_VOLTAGE", "occupants": [{"addr": 4660, "face": "FWD"}, '
                          '{"addr": 17767, "face": "REV"}]}', jstr)
 

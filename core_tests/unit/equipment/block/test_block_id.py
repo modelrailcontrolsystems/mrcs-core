@@ -33,6 +33,11 @@ class TestBlockID(unittest.TestCase):
         self.assertEqual('BlockID:{address:5, channel:6, reporter_id:0x1234}', str(obj1))
 
 
+    def test_block_address(self):
+        obj1 = self.__sample_block_id()
+        self.assertEqual('5/6', obj1.block_address)
+
+
     def test_block_jstr(self):
         obj1 = self.__sample_block_id()
         jstr = JSONify.dumps(obj1)
