@@ -40,7 +40,7 @@ class MPUConfigurationReport(JSONable):
         if type_name != cls.__name__:
             raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
-        address = jdict.get('addr')
+        mpu_address = jdict.get('addr')
         functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
         is_busy = jdict.get('busy')
         stepping = ThrottleSteps[jdict.get('stepping')]
@@ -49,14 +49,14 @@ class MPUConfigurationReport(JSONable):
         double_traction = jdict.get('consist')
         smart_search = jdict.get('smart_search')
 
-        return cls(address, functions, is_busy, stepping, speed_setting, reverse, double_traction, smart_search)
+        return cls(mpu_address, functions, is_busy, stepping, speed_setting, reverse, double_traction, smart_search)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, address: int, functions: MPUFunctions, is_busy: bool, stepping: ThrottleSteps,
+    def __init__(self, mpu_address: int, functions: MPUFunctions, is_busy: bool, stepping: ThrottleSteps,
                  speed_setting: int, reverse: bool, double_traction: bool, smart_search: bool):
-        self._address = address
+        self._mpu_address = mpu_address
         self._functions = functions
         self._is_busy = is_busy
         self._stepping = stepping
@@ -68,7 +68,7 @@ class MPUConfigurationReport(JSONable):
 
     def __eq__(self, other):
         try:
-            return (self.address == other.address and self.functions == other.functions and
+            return (self.mpu_address == other.mpu_address and self.functions == other.functions and
                     self.is_busy == other.is_busy and self.stepping == other.stepping and
                     self.speed_setting == other.speed_setting and self.reverse == other.reverse and
                     self.double_traction == other.double_traction and self.smart_search == other.smart_search)
@@ -77,7 +77,7 @@ class MPUConfigurationReport(JSONable):
 
 
     def __lt__(self, other):
-        return self.address < other.address
+        return self.mpu_address < other.mpu_address
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ class MPUConfigurationReport(JSONable):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.address
+        jdict['addr'] = self.mpu_address
         jdict['functions'] = self.functions
         jdict['busy'] = self.is_busy
         jdict['stepping'] = None if self.stepping is None else self.stepping.name
@@ -119,8 +119,8 @@ class MPUConfigurationReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def address(self):
-        return self._address
+    def mpu_address(self):
+        return self._mpu_address
 
 
     @property
@@ -164,6 +164,6 @@ class MPUConfigurationReport(JSONable):
     def __str__(self, *args, **kwargs):
         stepping = None if self.stepping is None else self.stepping.name
 
-        return (f'{self.__class__.__name__}:{{address:{self.address}, functions:{self.functions.as_json()}, '
+        return (f'{self.__class__.__name__}:{{mpu_address:{self.mpu_address}, functions:{self.functions.as_json()}, '
                 f'is_busy:{self.is_busy}, stepping:{stepping}, speed_setting:{self.speed_setting}, '
                 f'reverse:{self.reverse}, double_traction:{self.double_traction}, smart_search:{self.smart_search}}}')

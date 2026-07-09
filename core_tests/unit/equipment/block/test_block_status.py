@@ -25,20 +25,20 @@ class TestBlockStatus(unittest.TestCase):
     @staticmethod
     def __sample_block_status():
         label = 'N01'
-        address = '5/6'
+        block_address = '5/6'
         direction = BlockDirection.UP
         voltage = BlockVoltage.OCCUPIED_WITH_VOLTAGE
         occupants = [BlockOccupant(0x1234, BlockOccupantFace.FWD),
                      BlockOccupant(0x4567, BlockOccupantFace.REV)]
 
-        return BlockStatus(label, address, direction, voltage, *occupants)
+        return BlockStatus(label, block_address, direction, voltage, *occupants)
 
 
     def test_block_status_str(self):
         obj1 = self.__sample_block_status()
-        self.assertEqual('BlockStatus:{label:N01, address:5/6, direction:UP, voltage:OCCUPIED_WITH_VOLTAGE, '
-                         'occupants:[BlockOccupant:{address:4660, face:FWD}, '
-                         'BlockOccupant:{address:17767, face:REV}]}', str(obj1))
+        self.assertEqual('BlockStatus:{label:N01, block_address:5/6, direction:UP, voltage:OCCUPIED_WITH_VOLTAGE, '
+                         'occupants:[BlockOccupant:{mpu_address:4660, face:FWD}, '
+                         'BlockOccupant:{mpu_address:17767, face:REV}]}', str(obj1))
 
 
     def test_block_occupation_report_jstr(self):

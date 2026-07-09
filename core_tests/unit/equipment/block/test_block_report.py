@@ -24,8 +24,8 @@ class TestBlockReport(unittest.TestCase):
                 '"voltage": "OCCUPIED_OVERLOAD_1"}')
 
         obj1 = BlockReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('BlockVoltageReport:{block_id:BlockID:{address:5, channel:6, reporter_id:0x1234}, '
-                         'voltage:OCCUPIED_OVERLOAD_1}', str(obj1))
+        self.assertEqual('BlockVoltageReport:{block_id:BlockID:{detector_address:5, channel:6, '
+                         'reporter_id:0x1234}, voltage:OCCUPIED_OVERLOAD_1}', str(obj1))
 
 
     def test_block_address(self):
@@ -41,8 +41,9 @@ class TestBlockReport(unittest.TestCase):
                 '"group": 1, "occupants": [{"addr": 22136, "face": "REV"}]}')
 
         obj1 = BlockReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{address:5, channel:6, reporter_id:0x1234}, '
-                         'occupant_group:1, occupants:[BlockOccupant:{address:22136, face:REV}]}', str(obj1))
+        self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{detector_address:5, channel:6, '
+                         'reporter_id:0x1234}, occupant_group:1, occupants:[BlockOccupant:{mpu_address:22136, '
+                         'face:REV}]}', str(obj1))
 
 
     def test_bad_type(self):

@@ -33,30 +33,30 @@ class TurnoutReport(JSONable):
         if type_name != cls.__name__:
             raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
-        address = jdict.get('addr')
+        turnout_address = jdict.get('addr')
 
         # may raise KeyError
         position = TurnoutPosition[jdict.get('position')]
 
-        return cls(address, position)
+        return cls(turnout_address, position)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, address: int, position: TurnoutPosition):
-        self.__address = address
+    def __init__(self, turnout_address: int, position: TurnoutPosition):
+        self.__turnout_address = turnout_address
         self.__position = position
 
 
     def __eq__(self, other):
         try:
-            return self.address == other.address and self.position == other.position
+            return self.turnout_address == other.turnout_address and self.position == other.position
         except (AttributeError, TypeError):
             return False
 
 
     def __lt__(self, other):
-        return self.address < other.address
+        return self.turnout_address < other.turnout_address
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ class TurnoutReport(JSONable):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.address
+        jdict['addr'] = self.turnout_address
         jdict['position'] = self.position.name
 
         return jdict
@@ -87,8 +87,8 @@ class TurnoutReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def address(self):
-        return self.__address
+    def turnout_address(self):
+        return self.__turnout_address
 
 
     @property
@@ -99,4 +99,4 @@ class TurnoutReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'{self.__class__.__name__}:{{address:{self.address}, position:{self.position.name}}}'
+        return f'{self.__class__.__name__}:{{turnout_address:{self.turnout_address}, position:{self.position.name}}}'

@@ -24,40 +24,41 @@ class TestTurnoutStatus(unittest.TestCase):
     def test_turnout_status_str(self):
         label = 'TE01'
         block_label = 'BN01'
-        address = 3
+        turnout_address = 3
         position = TurnoutPosition.UNKNOWN
 
-        obj1 = TurnoutStatus(label, block_label, address, position)
-        self.assertEqual('TurnoutStatus:{label:TE01, block_label:BN01, address:3, position:UNKNOWN}', str(obj1))
+        obj1 = TurnoutStatus(label, block_label, turnout_address, position)
+        self.assertEqual('TurnoutStatus:{label:TE01, block_label:BN01, turnout_address:3, position:UNKNOWN}',
+                         str(obj1))
 
 
     def test_turnout_status_is_known(self):
         label = 'TE01'
         block_label = 'BN01'
-        address = 3
+        turnout_address = 3
         position = TurnoutPosition.P1
 
-        obj1 = TurnoutStatus(label, block_label, address, position)
+        obj1 = TurnoutStatus(label, block_label, turnout_address, position)
         self.assertTrue(obj1.has_known_position)
 
 
     def test_turnout_status_is_not_known(self):
         label = 'TE01'
         block_label = 'BN01'
-        address = 3
+        turnout_address = 3
         position = TurnoutPosition.UNKNOWN
 
-        obj1 = TurnoutStatus(label, block_label, address, position)
+        obj1 = TurnoutStatus(label, block_label, turnout_address, position)
         self.assertFalse(obj1.has_known_position)
 
 
     def test_turnout_status_jstr(self):
         label = 'TE01'
         block_label = 'BN01'
-        address = 3
+        turnout_address = 3
         position = TurnoutPosition.P1
 
-        obj1 = TurnoutStatus(label, block_label, address, position)
+        obj1 = TurnoutStatus(label, block_label, turnout_address, position)
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"type": "TurnoutStatus", "label": "TE01", "block_label": "BN01", "addr": 3, '
                          '"position": "P1"}', jstr)
@@ -66,10 +67,10 @@ class TestTurnoutStatus(unittest.TestCase):
     def test_turnout_status_jstr_eq(self):
         label = 'TE01'
         block_label = 'BN01'
-        address = 3
+        turnout_address = 3
         position = TurnoutPosition.P1
 
-        obj1 = TurnoutStatus(label, block_label, address, position)
+        obj1 = TurnoutStatus(label, block_label, turnout_address, position)
         jstr = JSONify.dumps(obj1)
         obj2 = TurnoutStatus.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
@@ -78,10 +79,10 @@ class TestTurnoutStatus(unittest.TestCase):
     def test_turnout_status_jstr_lt(self):
         label = 'TE01'
         block_label = 'BN01'
-        address = 3
+        turnout_address = 3
         position = TurnoutPosition.P0
 
-        obj1 = TurnoutStatus(label, block_label, address, position)
+        obj1 = TurnoutStatus(label, block_label, turnout_address, position)
         jstr = JSONify.dumps(obj1)
         obj2 = TurnoutStatus.construct_from_jdict(json.loads(jstr))
         self.assertFalse(obj1 < obj2)

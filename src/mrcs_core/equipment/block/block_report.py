@@ -13,7 +13,7 @@ Based on code:
 https://github.com/botmonster/z21aio/tree/main
 """
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONable
@@ -51,14 +51,6 @@ class BlockReport(JSONable, ABC):
 
     def __lt__(self, other):
         return self.block_id < other.block_id
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    @abstractmethod
-    def is_occupancy(self):
-        pass
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -126,13 +118,6 @@ class BlockVoltageReport(BlockReport):
         jdict['voltage'] = self.voltage.name
 
         return jdict
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def is_occupancy(self):
-        return False
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -209,8 +194,8 @@ class BlockOccupancyReport(BlockReport):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def is_occupancy(self):
-        return True
+    def has_occupants(self):
+        return len(self.occupants) > 0
 
 
     # ----------------------------------------------------------------------------------------------------------------

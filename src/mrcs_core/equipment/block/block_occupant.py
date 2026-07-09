@@ -25,36 +25,36 @@ class BlockOccupant(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> BlockOccupant:
-        address = jdict.get('addr')
+        mpu_address = jdict.get('addr')
 
         # may raise KeyError
         face = BlockOccupantFace[jdict.get('face')]
 
-        return cls(address, face)
+        return cls(mpu_address, face)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, address: int, face: BlockOccupantFace):
-        self._address = address
+    def __init__(self, mpu_address: int, face: BlockOccupantFace):
+        self._mpu_address = mpu_address
         self._face = face
 
 
     def __eq__(self, other):
         try:
-            return self.address == other.address and self.face == other.face
+            return self.mpu_address == other.mpu_address and self.face == other.face
         except (AttributeError, TypeError):
             return False
 
 
     def __lt__(self, other):
-        return self.address < other.address
+        return self.mpu_address < other.mpu_address
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def has_address(self):
-        return self.address > 0
+    def has_mpu_address(self):
+        return self.mpu_address > 0
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ class BlockOccupant(JSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['addr'] = self.address
+        jdict['addr'] = self.mpu_address
         jdict['face'] = self.face.name
 
         return jdict
@@ -71,8 +71,8 @@ class BlockOccupant(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def address(self):
-        return self._address
+    def mpu_address(self):
+        return self._mpu_address
 
 
     @property
@@ -84,4 +84,4 @@ class BlockOccupant(JSONable):
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        return f'BlockOccupant:{{address:{self.address}, face:{self.face.name}}}'
+        return f'BlockOccupant:{{mpu_address:{self.mpu_address}, face:{self.face.name}}}'

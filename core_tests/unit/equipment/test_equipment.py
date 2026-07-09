@@ -23,15 +23,15 @@ class TestEquipment(unittest.TestCase):
         jstr = ('{"type": "BlockOccupancyReport", "id": {"addr": 5, "channel": 6, "rid": 4660}, '
                 '"group": 1, "occupants": [{"addr": 22136, "face": "REV"}]}')
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{address:5, channel:6, reporter_id:0x1234}, '
-                         'occupant_group:1, occupants:[BlockOccupant:{address:22136, face:REV}]}', str(obj1))
+        self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{detector_address:5, channel:6, reporter_id:0x1234}, '
+                         'occupant_group:1, occupants:[BlockOccupant:{mpu_address:22136, face:REV}]}', str(obj1))
 
 
     def test_block_status_report(self):
         jstr = ('{"type": "BlockVoltageReport", "id": {"addr": 5, "channel": 6, "rid": 4660}, '
                 '"voltage": "OCCUPIED_OVERLOAD_1"}')
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('BlockVoltageReport:{block_id:BlockID:{address:5, channel:6, reporter_id:0x1234}, '
+        self.assertEqual('BlockVoltageReport:{block_id:BlockID:{detector_address:5, channel:6, reporter_id:0x1234}, '
                          'voltage:OCCUPIED_OVERLOAD_1}', str(obj1))
 
 
@@ -49,7 +49,7 @@ class TestEquipment(unittest.TestCase):
         jstr = ('{"type": "MPUConfigurationReport", "addr": 3, "functions": "+-+", "busy": false, '
                 '"stepping": "STEPS_28", "speed": 12, "reverse": true, "consist": false, "smart_search": true}')
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('MPUConfigurationReport:{address:3, functions:+-+, is_busy:False, stepping:STEPS_28, '
+        self.assertEqual('MPUConfigurationReport:{mpu_address:3, functions:+-+, is_busy:False, stepping:STEPS_28, '
                          'speed_setting:12, reverse:True, double_traction:False, smart_search:True}', str(obj1))
 
 
@@ -62,7 +62,7 @@ class TestEquipment(unittest.TestCase):
     def test_turnout(self):
         jstr = '{"type": "TurnoutReport", "addr": 3, "position": "P1"}'
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('TurnoutReport:{address:3, position:P1}', str(obj1))
+        self.assertEqual('TurnoutReport:{turnout_address:3, position:P1}', str(obj1))
 
 
     def test_unknown(self):

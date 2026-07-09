@@ -40,20 +40,20 @@ class MPUDecoderReport(JSONable):
         if type_name != cls.__name__:
             raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
-        address = jdict.get('addr')
+        mpu_address = jdict.get('addr')
         receive_count = jdict.get('received')
         error_count = jdict.get('errors')
         opts = jdict.get('opts')
         speed = jdict.get('speed')
         qos = jdict.get('qos')
 
-        return cls(address, receive_count, error_count, opts, speed, qos)
+        return cls(mpu_address, receive_count, error_count, opts, speed, qos)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, address: int, receive_count: int, error_count: int, opts: int, speed: int, qos: int):
-        self._address = address
+    def __init__(self, mpu_address: int, receive_count: int, error_count: int, opts: int, speed: int, qos: int):
+        self._mpu_address = mpu_address
         self._receive_count = receive_count
         self._error_count = error_count
         self._opts = opts
@@ -63,7 +63,7 @@ class MPUDecoderReport(JSONable):
 
     def __eq__(self, other):
         try:
-            return (self.address == other.address and self.receive_count == other.receive_count and
+            return (self.mpu_address == other.mpu_address and self.receive_count == other.receive_count and
                     self.error_count == other.error_count and self.opts == other.opts and
                     self.speed == other.speed and self.qos == other.qos)
         except (AttributeError, TypeError):
@@ -71,13 +71,7 @@ class MPUDecoderReport(JSONable):
 
 
     def __lt__(self, other):
-        if self.address < other.address:
-            return True
-
-        if self.address > other.address:
-            return False
-
-        return self.receive_count < other.receive_count
+        return self.mpu_address < other.mpu_address
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -88,7 +82,7 @@ class MPUDecoderReport(JSONable):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.address
+        jdict['addr'] = self.mpu_address
         jdict['received'] = self.receive_count
         jdict['errors'] = self.error_count
         jdict['opts'] = self.opts
@@ -101,8 +95,8 @@ class MPUDecoderReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def address(self):
-        return self._address
+    def mpu_address(self):
+        return self._mpu_address
 
 
     @property
@@ -133,5 +127,5 @@ class MPUDecoderReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'{self.__class__.__name__}:{{address:{self.address}, receive_count:{self.receive_count}, '
+        return (f'{self.__class__.__name__}:{{mpu_address:{self.mpu_address}, receive_count:{self.receive_count}, '
                 f'error_count:{self.error_count}, opts:0x{self.opts:02x}, speed:{self.speed}, qos:{self.qos}}}')

@@ -21,16 +21,16 @@ class TestBlockID(unittest.TestCase):
 
     @staticmethod
     def __sample_block_id():
-        address = 5
+        detector_address = 5
         channel = 6
         reporter_id = 0x1234
 
-        return BlockID(address, channel, reporter_id)
+        return BlockID(detector_address, channel, reporter_id)
 
 
     def test_block_construct(self):
         obj1 = self.__sample_block_id()
-        self.assertEqual('BlockID:{address:5, channel:6, reporter_id:0x1234}', str(obj1))
+        self.assertEqual('BlockID:{detector_address:5, channel:6, reporter_id:0x1234}', str(obj1))
 
 
     def test_block_address(self):
