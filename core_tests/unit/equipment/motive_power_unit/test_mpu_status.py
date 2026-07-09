@@ -24,18 +24,18 @@ class TestMPUStatus(unittest.TestCase):
     @staticmethod
     def __sample_mpu_status():
         label = 'EMR Class 08'
-        address = 3
+        mpu_address = 3
         functions = MPUFunctions([True, False, True])
         speed_setting = 12
         speed = 7
         reverse = True
 
-        return MPUStatus(label, address, functions, speed_setting, speed, reverse)
+        return MPUStatus(label, mpu_address, functions, speed_setting, speed, reverse)
 
 
     def test_mpu_status_str(self):
         obj1 = self.__sample_mpu_status()
-        self.assertEqual('MPUStatus:{label:EMR Class 08, address:3, functions:+-+, '
+        self.assertEqual('MPUStatus:{label:EMR Class 08, mpu_address:3, functions:+-+, '
                          'speed_setting:12, speed:7, reverse:True}', str(obj1))
 
 

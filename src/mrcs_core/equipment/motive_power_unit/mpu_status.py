@@ -34,21 +34,21 @@ class MPUStatus(JSONable):
     @classmethod
     def construct_from_jdict(cls, jdict) -> MPUStatus:
         label = jdict.get('label')
-        address = jdict.get('addr')
+        mpu_address = jdict.get('addr')
         functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
         speed_setting = jdict.get('speed_setting')
         speed = jdict.get('speed')
         reverse = jdict.get('reverse')
 
-        return cls(label, address, functions, speed_setting, speed, reverse)
+        return cls(label, mpu_address, functions, speed_setting, speed, reverse)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, address: int, functions: MPUFunctions, speed_setting: int, speed: int,
+    def __init__(self, label: str, mpu_address: int, functions: MPUFunctions, speed_setting: int, speed: int,
                  reverse: bool):
         self._label = label
-        self._address = address
+        self._mpu_address = mpu_address
         self._functions = functions
         self._speed_setting = speed_setting
         self._speed = speed
@@ -57,7 +57,7 @@ class MPUStatus(JSONable):
 
     def __eq__(self, other):
         try:
-            return (self.label == other.label and self.address == other.address and
+            return (self.label == other.label and self.mpu_address == other.mpu_address and
                     self.functions == other.functions and self.speed_setting == other.speed_setting and
                     self.speed == other.speed and self.reverse == other.reverse)
         except (AttributeError, TypeError):
@@ -76,7 +76,7 @@ class MPUStatus(JSONable):
         jdict['type'] = self.type_name()
 
         jdict['label'] = self.label
-        jdict['addr'] = self.address
+        jdict['addr'] = self.mpu_address
         jdict['functions'] = self.functions
         jdict['speed_setting'] = self.speed_setting
         jdict['speed'] = self.speed
@@ -93,8 +93,8 @@ class MPUStatus(JSONable):
 
 
     @property
-    def address(self):
-        return self._address
+    def mpu_address(self):
+        return self._mpu_address
 
 
     @property
@@ -121,6 +121,6 @@ class MPUStatus(JSONable):
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        return (f'{self.type_name()}:{{label:{self.label}, address:{self.address}, '
+        return (f'{self.type_name()}:{{label:{self.label}, mpu_address:{self.mpu_address}, '
                 f'functions:{self.functions.as_json()}, speed_setting:{self.speed_setting}, speed:{self.speed}, '
                 f'reverse:{self.reverse}}}')

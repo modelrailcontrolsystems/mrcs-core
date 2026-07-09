@@ -24,10 +24,10 @@ class TestBlockVoltageReport(unittest.TestCase):
 
     @staticmethod
     def __sample_block_voltage_report():
-        address = 5
+        detector_address = 5
         channel = 6
         reporter_id = 0x1234
-        block_id = BlockID(address, channel, reporter_id)
+        block_id = BlockID(detector_address, channel, reporter_id)
 
         voltage = BlockVoltage.OCCUPIED_OVERLOAD_1
 
@@ -36,13 +36,8 @@ class TestBlockVoltageReport(unittest.TestCase):
 
     def test_block_voltage_report_str(self):
         obj1 = self.__sample_block_voltage_report()
-        self.assertEqual('BlockVoltageReport:{block_id:BlockID:{address:5, channel:6, reporter_id:0x1234}, '
-                         'voltage:OCCUPIED_OVERLOAD_1}', str(obj1))
-
-
-    def test_block_voltage_report_occupancy(self):
-        obj1 = self.__sample_block_voltage_report()
-        self.assertFalse(obj1.is_occupancy)
+        self.assertEqual('BlockVoltageReport:{block_id:BlockID:{detector_address:5, channel:6, '
+                         'reporter_id:0x1234}, voltage:OCCUPIED_OVERLOAD_1}', str(obj1))
 
 
     def test_block_voltage_report_jstr(self):

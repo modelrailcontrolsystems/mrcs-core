@@ -5,7 +5,7 @@ Created on 6 Jul 2026
 
 The current status of a turnout
 The label of the TurnoutStatus is found from the Turnout Inventory,
-which maps TurnoutStatus addresses to TurnoutStatus labels
+which maps TurnoutStatus turnout_addresses to TurnoutStatus labels
 
 {
     "type": "TurnoutStatus",
@@ -35,27 +35,27 @@ class TurnoutStatus(JSONable):
         label = jdict.get('label')
         block_label = jdict.get('block_label')
 
-        address = jdict.get('addr')
+        turnout_address = jdict.get('addr')
 
         # may raise KeyError
         position = TurnoutPosition[jdict.get('position')]
 
-        return cls(label, block_label, address, position)
+        return cls(label, block_label, turnout_address, position)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, block_label: str, address: int, position: TurnoutPosition):
+    def __init__(self, label: str, block_label: str, turnout_address: int, position: TurnoutPosition):
         self.__label = label
         self.__block_label = block_label
-        self.__address = address
+        self.__turnout_address = turnout_address
         self.__position = position
 
 
     def __eq__(self, other):
         try:
             return (self.label == other.label and self.block_label == other.block_label and
-                    self.address == other.address and self.position == other.position)
+                    self.turnout_address == other.turnout_address and self.position == other.position)
         except (AttributeError, TypeError):
             return False
 
@@ -80,7 +80,7 @@ class TurnoutStatus(JSONable):
 
         jdict['label'] = self.label
         jdict['block_label'] = self.block_label
-        jdict['addr'] = self.address
+        jdict['addr'] = self.turnout_address
         jdict['position'] = self.position.name
 
         return jdict
@@ -99,8 +99,8 @@ class TurnoutStatus(JSONable):
 
 
     @property
-    def address(self):
-        return self.__address
+    def turnout_address(self):
+        return self.__turnout_address
 
 
     @property
@@ -111,5 +111,5 @@ class TurnoutStatus(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'TurnoutStatus:{{label:{self.label}, block_label:{self.block_label}, address:{self.address}, '
-                f'position:{self.position.name}}}')
+        return (f'TurnoutStatus:{{label:{self.label}, block_label:{self.block_label}, '
+                f'turnout_address:{self.turnout_address}, position:{self.position.name}}}')

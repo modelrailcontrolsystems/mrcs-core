@@ -23,7 +23,7 @@ from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
 class TestMPUConfigurationReport(unittest.TestCase):
 
     def test_construct_mpu_configuration_report(self):
-        address = 3
+        mpu_address = 3
         functions = MPUFunctions([True, False, True])
         is_busy = False
         stepping = ThrottleSteps.STEPS_28
@@ -32,10 +32,10 @@ class TestMPUConfigurationReport(unittest.TestCase):
         double_traction = False
         smart_search = True
 
-        obj1 = MPUConfigurationReport(address, functions, is_busy=is_busy, stepping=stepping,
+        obj1 = MPUConfigurationReport(mpu_address, functions, is_busy=is_busy, stepping=stepping,
                                       speed_setting=speed_setting, reverse=reverse, double_traction=double_traction,
                                       smart_search=smart_search)
-        self.assertEqual(address, obj1.address)
+        self.assertEqual(mpu_address, obj1.mpu_address)
         self.assertEqual(functions, obj1.functions)
         self.assertEqual(is_busy, obj1.is_busy)
         self.assertEqual(stepping, obj1.stepping)
@@ -46,7 +46,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
 
 
     def test_mpu_configuration_report_percentage(self):
-        address = 3
+        mpu_address = 3
         functions = MPUFunctions([True, False, True])
         is_busy = False
         stepping = ThrottleSteps.STEPS_28
@@ -55,14 +55,14 @@ class TestMPUConfigurationReport(unittest.TestCase):
         double_traction = False
         smart_search = True
 
-        obj1 = MPUConfigurationReport(address, functions, is_busy=is_busy, stepping=stepping,
+        obj1 = MPUConfigurationReport(mpu_address, functions, is_busy=is_busy, stepping=stepping,
                                       speed_setting=speed_setting,
                                       reverse=reverse, double_traction=double_traction, smart_search=smart_search)
         self.assertEqual(43, obj1.speed_setting_percent)
 
 
     def test_mpu_configuration_report_str(self):
-        address = 3
+        mpu_address = 3
         functions = MPUFunctions([True, False, True])
         is_busy = False
         stepping = ThrottleSteps.STEPS_28
@@ -71,15 +71,15 @@ class TestMPUConfigurationReport(unittest.TestCase):
         double_traction = False
         smart_search = True
 
-        obj1 = MPUConfigurationReport(address, functions, is_busy=is_busy, stepping=stepping,
+        obj1 = MPUConfigurationReport(mpu_address, functions, is_busy=is_busy, stepping=stepping,
                                       speed_setting=speed_setting,
                                       reverse=reverse, double_traction=double_traction, smart_search=smart_search)
-        self.assertEqual('MPUConfigurationReport:{address:3, functions:+-+, is_busy:False, stepping:STEPS_28, '
+        self.assertEqual('MPUConfigurationReport:{mpu_address:3, functions:+-+, is_busy:False, stepping:STEPS_28, '
                          'speed_setting:12, reverse:True, double_traction:False, smart_search:True}', str(obj1))
 
 
     def test_mpu_configuration_report_json(self):
-        address = 3
+        mpu_address = 3
         functions = MPUFunctions([True, False, True])
         is_busy = False
         stepping = ThrottleSteps.STEPS_28
@@ -88,7 +88,7 @@ class TestMPUConfigurationReport(unittest.TestCase):
         double_traction = False
         smart_search = True
 
-        obj1 = MPUConfigurationReport(address, functions, is_busy=is_busy, stepping=stepping,
+        obj1 = MPUConfigurationReport(mpu_address, functions, is_busy=is_busy, stepping=stepping,
                                       speed_setting=speed_setting,
                                       reverse=reverse, double_traction=double_traction, smart_search=smart_search)
         jstr = JSONify.dumps(obj1)

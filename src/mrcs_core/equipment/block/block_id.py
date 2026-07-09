@@ -4,7 +4,7 @@ Created on 2 Jul 2026
 @author: Bruno Beloff (bbeloff@me.com)
 
 A unique identifier for a block, as defined by its detector
-Note that that (address, channel) for a PK, the reporter_id field is purely for validation.
+Note that that (detector_address, channel) for a PK, the reporter_id field is purely for validation.
 
 Based on the Roco 10808 detector:
 https://www.roco.cc/ren/products/control/accessories/10808-z21-detector.html
@@ -28,34 +28,34 @@ class BlockID(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> BlockID:
-        address = jdict.get('addr')
+        detector_address = jdict.get('addr')
         channel = jdict.get('channel')
         reporter_id = jdict.get('rid')
 
-        return cls(address, channel, reporter_id)
+        return cls(detector_address, channel, reporter_id)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, address: int, channel: int, reporter_id: int):
-        self._address = address
+    def __init__(self, detector_address: int, channel: int, reporter_id: int):
+        self._detector_address = detector_address
         self._channel = channel
         self._reporter_id = reporter_id
 
 
     def __eq__(self, other):
         try:
-            return (self.address == other.address and self.channel == other.channel and
+            return (self.detector_address == other.detector_address and self.channel == other.channel and
                     self.reporter_id == other.reporter_id)
         except (AttributeError, TypeError):
             return False
 
 
     def __lt__(self, other):
-        if self.address < other.address:
+        if self.detector_address < other.detector_address:
             return True
 
-        if self.address > other.address:
+        if self.detector_address > other.detector_address:
             return False
 
         return self.channel < other.channel
@@ -66,7 +66,7 @@ class BlockID(JSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['addr'] = self.address
+        jdict['addr'] = self.detector_address
         jdict['channel'] = self.channel
         jdict['rid'] = self.reporter_id
 
@@ -77,14 +77,14 @@ class BlockID(JSONable):
 
     @property
     def block_address(self):
-        return f'{self.address}/{self.channel}'
+        return f'{self.detector_address}/{self.channel}'
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def address(self):
-        return self._address
+    def detector_address(self):
+        return self._detector_address
 
 
     @property
@@ -101,4 +101,5 @@ class BlockID(JSONable):
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        return f'BlockID:{{address:{self.address}, channel:{self.channel}, reporter_id:0x{self.reporter_id:04x}}}'
+        return (f'BlockID:{{detector_address:{self.detector_address}, channel:{self.channel}, '
+                f'reporter_id:0x{self.reporter_id:04x}}}')

@@ -26,7 +26,7 @@ class TestTurnoutReport(unittest.TestCase):
         position = TurnoutPosition.P1
 
         obj1 = TurnoutReport(address, position)
-        self.assertEqual('TurnoutReport:{address:3, position:P1}', str(obj1))
+        self.assertEqual('TurnoutReport:{turnout_address:3, position:P1}', str(obj1))
 
 
     def test_turnout_report_is_valid(self):

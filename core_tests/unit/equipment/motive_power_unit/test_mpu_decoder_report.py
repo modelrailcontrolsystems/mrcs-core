@@ -22,19 +22,19 @@ class TestMPUDecoderReport(unittest.TestCase):
 
     @staticmethod
     def __sample_mpu_decoder_report():
-        address = 0x1234
+        mpu_address = 0x1234
         receive_count = 456
         error_count = 789
         opts = 0xab
         speed = 90
         qos = 5
 
-        return MPUDecoderReport(address, receive_count, error_count, opts, speed, qos)
+        return MPUDecoderReport(mpu_address, receive_count, error_count, opts, speed, qos)
 
 
     def test_construct_mpu_decoder_report(self):
         obj1 = self.__sample_mpu_decoder_report()
-        self.assertEqual('MPUDecoderReport:{address:4660, receive_count:456, error_count:789, opts:0xab, '
+        self.assertEqual('MPUDecoderReport:{mpu_address:4660, receive_count:456, error_count:789, opts:0xab, '
                          'speed:90, qos:5}', str(obj1))
 
 

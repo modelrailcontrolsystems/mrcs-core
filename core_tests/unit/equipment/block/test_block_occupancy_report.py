@@ -25,10 +25,10 @@ class TestBlockOccupancyReport(unittest.TestCase):
 
     @staticmethod
     def __sample_block_occupancy_report():
-        address = 5
+        detector_address = 5
         channel = 6
         reporter_id = 0x1234
-        block_id = BlockID(address, channel, reporter_id)
+        block_id = BlockID(detector_address, channel, reporter_id)
 
         occupant_group = 1
         occupants = [BlockOccupant(0x5678, BlockOccupantFace.REV)]
@@ -38,13 +38,13 @@ class TestBlockOccupancyReport(unittest.TestCase):
 
     def test_block_occupation_report_str(self):
         obj1 = self.__sample_block_occupancy_report()
-        self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{address:5, channel:6, reporter_id:0x1234}, '
-                         'occupant_group:1, occupants:[BlockOccupant:{address:22136, face:REV}]}', str(obj1))
+        self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{detector_address:5, channel:6, reporter_id:0x1234}, '
+                         'occupant_group:1, occupants:[BlockOccupant:{mpu_address:22136, face:REV}]}', str(obj1))
 
 
     def test_block_status_report_occupancy(self):
         obj1 = self.__sample_block_occupancy_report()
-        self.assertTrue(obj1.is_occupancy)
+        self.assertTrue(obj1.has_occupants)
 
 
     def test_block_occupation_report_jstr(self):
