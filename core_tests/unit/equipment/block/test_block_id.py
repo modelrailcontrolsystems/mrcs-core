@@ -8,6 +8,7 @@ python -m unittest -v unit/equipment/block/test_block_id.py
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
 """
+
 import json
 import unittest
 
