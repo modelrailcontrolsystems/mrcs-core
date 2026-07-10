@@ -34,5 +34,11 @@ class TurnoutPosition(IntEnum, metaclass=MetaEnum):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def is_valid(self) -> bool:
+        return self == TurnoutPosition.P0 or self == TurnoutPosition.P1
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __str__(self, *args, **kwargs):
         return f'{self.name}[{self.value}]'
