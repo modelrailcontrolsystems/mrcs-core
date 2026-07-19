@@ -17,27 +17,9 @@ from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 
 class SegmentLink(JSONable, ABC):
     """
-    A link between segments
+    The common interface for segment links
     """
 
-
-    @classmethod
-    def construct_from_jdict(cls, jdict) -> SegmentLink | None:
-        if jdict is None:
-            return None
-
-        type_name = jdict.get('type')
-
-        if type_name == TrackSegmentLink.type_name():
-            return TrackSegmentLink.construct_from_jdict(jdict)
-
-        if type_name == TurnoutSegmentLink.type_name():
-            return TurnoutSegmentLink.construct_from_jdict(jdict)
-
-        raise TypeError(f'invalid segment link type: {type_name}')
-
-
-    # ----------------------------------------------------------------------------------------------------------------
 
     @abstractmethod
     def link_for_config(self, position: TurnoutPosition | None) -> SegmentLink | None:
@@ -51,20 +33,18 @@ class SegmentLink(JSONable, ABC):
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class TrackSegmentLink(SegmentLink):
+class SimpleSegmentLink(SegmentLink):
     """
     A simple link between segments
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> TrackSegmentLink | None:
+    def construct_from_jdict(cls, jdict) -> SimpleSegmentLink | None:
         if jdict is None:
             return None
 
-        link = jdict.get('link')
-
-        return cls(link[0], link[1])
+        return cls(jdict[0], jdict[1])
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -90,12 +70,7 @@ class TrackSegmentLink(SegmentLink):
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):
-        jdict = OrderedDict()
-
-        jdict['type'] = self.type_name()
-        jdict['link'] = [self.block_label, self.segment_label]
-
-        return jdict
+        return [self.block_label, self.segment_label]
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -113,34 +88,34 @@ class TrackSegmentLink(SegmentLink):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'TrackSegmentLink:{{block_label:{self.block_label}, segment_label:{self.segment_label}}}'
+        return f'SimpleSegmentLink:{{block_label:{self.block_label}, segment_label:{self.segment_label}}}'
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class TurnoutSegmentLink(SegmentLink):
+class SwitchedSegmentLink(SegmentLink):
     """
     A link between segments, dependent on turnout position
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> SegmentLink | None:
+    def construct_from_jdict(cls, jdict) -> SwitchedSegmentLink | None:
         if jdict is None:
             return None
 
         p0 = jdict.get('p0')
-        link_p0 = None if p0 is None else TrackSegmentLink(p0[0], p0[1])
+        link_p0 = None if p0 is None else SimpleSegmentLink(p0[0], p0[1])
 
         p1 = jdict.get('p1')
-        link_p1 = None if p1 is None else TrackSegmentLink(p1[0], p1[1])
+        link_p1 = None if p1 is None else SimpleSegmentLink(p1[0], p1[1])
 
         return cls(link_p0, link_p1)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, link_p0: TrackSegmentLink | None, link_p1: TrackSegmentLink | None):
+    def __init__(self, link_p0: SimpleSegmentLink | None, link_p1: SimpleSegmentLink | None):
         self.__link_p0 = link_p0
         self.__link_p1 = link_p1
 
@@ -154,7 +129,7 @@ class TurnoutSegmentLink(SegmentLink):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def link_for_config(self, position: TurnoutPosition | None) -> TrackSegmentLink | None:
+    def link_for_config(self, position: TurnoutPosition | None) -> SegmentLink | None:
         if position == TurnoutPosition.P0:
             return self.link_p0
 
@@ -169,13 +144,8 @@ class TurnoutSegmentLink(SegmentLink):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['type'] = self.type_name()
-
-        link_p0 = self.link_p0
-        jdict['p0'] = None if link_p0 is None else [link_p0.block_label, link_p0.segment_label]
-
-        link_p1 = self.link_p1
-        jdict['p1'] = None if link_p1 is None else [link_p1.block_label, link_p1.segment_label]
+        jdict['p0'] = self.link_p0
+        jdict['p1'] = self.link_p1
 
         return jdict
 
@@ -195,4 +165,4 @@ class TurnoutSegmentLink(SegmentLink):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'TurnoutSegmentLink:{{link_p0:{self.link_p0}, link_p1:{self.link_p1}}}'
+        return f'SwitchedSegmentLink:{{link_p0:{self.link_p0}, link_p1:{self.link_p1}}}'

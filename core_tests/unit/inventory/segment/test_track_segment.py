@@ -15,7 +15,7 @@ import unittest
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.inventory.segment.segment import TrackSegment
-from mrcs_core.inventory.segment.segment_link import TrackSegmentLink
+from mrcs_core.inventory.segment.segment_link import SimpleSegmentLink
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -23,15 +23,15 @@ from mrcs_core.inventory.segment.segment_link import TrackSegmentLink
 class TestTrackSegment(unittest.TestCase):
 
     @classmethod
-    def __sample_track_segment_link(cls):
-        return TrackSegmentLink('BN01', 'S02')
+    def __sample_simple_segment_link(cls):
+        return SimpleSegmentLink('BN01', 'S02')
 
 
     @classmethod
     def __sample_track_segment(cls):
         label = 'S01'
         length = 60
-        up_link = cls.__sample_track_segment_link()
+        up_link = cls.__sample_simple_segment_link()
         down_link = None
         return TrackSegment(label, length, up_link, down_link)
 
@@ -39,14 +39,14 @@ class TestTrackSegment(unittest.TestCase):
     def test_track_segment_str(self):
         obj1 = self.__sample_track_segment()
         self.assertEqual('TrackSegment:{label:S01, length:60, '
-                         'up_link:TrackSegmentLink:{block_label:BN01, segment_label:S02}, down_link:None}', str(obj1))
+                         'up_link:SimpleSegmentLink:{block_label:BN01, segment_label:S02}, down_link:None}', str(obj1))
 
 
     def test_track_segment_jstr(self):
         obj1 = self.__sample_track_segment()
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"type": "TrackSegment", "label": "S01", "length": 60, '
-                         '"up_link": {"type": "TrackSegmentLink", "link": ["BN01", "S02"]}, "down_link": null}', jstr)
+                         '"up": ["BN01", "S02"], "down": null}', jstr)
 
 
     def test_track_segment_jstr_eq(self):
@@ -59,7 +59,7 @@ class TestTrackSegment(unittest.TestCase):
     def test_track_segment_up_link_for_config(self):
         obj1 = self.__sample_track_segment()
         conf = TurnoutConfiguration({})
-        self.assertEqual(obj1.up_link_for_config(conf), self.__sample_track_segment_link())
+        self.assertEqual(obj1.up_link_for_config(conf), self.__sample_simple_segment_link())
 
 
     def test_track_segment_down_link_for_config(self):
