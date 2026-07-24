@@ -10,6 +10,8 @@ A Block may have a fixed direction, or may be reversible.
 
 from collections import OrderedDict
 
+from mypy.types import Any
+
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_occupant import BlockOccupant
 from mrcs_core.inventory.block.block_operation import BlockOperation
@@ -46,7 +48,7 @@ class Block(JSONable):
         self.__segments = segments
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.label == other.label and self.segments == other.segments
         except (AttributeError, TypeError):

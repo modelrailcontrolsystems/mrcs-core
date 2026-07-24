@@ -21,6 +21,8 @@ Networking configuration of a DCC control router
 
 from collections import OrderedDict
 
+from mypy.types import Any
+
 from mrcs_core.data.json import PersistentJSONable
 from mrcs_core.equipment.control_router.control_router_subscription import ControlRouterSubscription
 from mrcs_core.sys.ipv4_address import IPv4Address
@@ -64,7 +66,7 @@ class ControlRouterConf(PersistentJSONable):
         self.__subscription = subscription
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.ip_address == other.ip_address and self.port == other.port and
                     self.timeout == other.timeout and self.subscription == other.subscription)
