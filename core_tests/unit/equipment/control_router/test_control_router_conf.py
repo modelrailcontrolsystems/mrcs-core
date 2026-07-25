@@ -29,23 +29,24 @@ class TestControlRouterConf(unittest.TestCase):
         ip_address = IPv4Address.construct('192.168.1.111')
         port = 21105
         timeout = 1.2
-        subsription = ControlRouterSubscription(Broadcast.TRACK, Broadcast.CAN_DETECTOR, Broadcast.X_LOCO_INFO_ALL)
+        subsription = ControlRouterSubscription(Broadcast.TRACK, Broadcast.CAN_DETECTOR,
+                                                Broadcast.RAILCOM_DATA_ALL, Broadcast.X_LOCO_INFO_ALL)
 
         return ControlRouterConf(ip_address, port, timeout, subsription)
 
 
     def test_control_router(self):
         obj1 = self.__sample_control_router_conf()
-        self.assertEqual('ControlRouterConf:{ip_address:IPv4Address:{192.168.1.111}, port:21105, timeout:1.2, '
-                         'subscription:ControlRouterSubscription:{flags:[CAN_DETECTOR, TRACK, X_LOCO_INFO_ALL]}}',
-                         str(obj1))
+        self.assertEqual('ControlRouterConf:{ip_address:IPv4Address:{192.168.1.111}, port:21105, '
+                         'timeout:1.2, subscription:ControlRouterSubscription:{flags:[CAN_DETECTOR, RAILCOM_DATA_ALL, '
+                         'TRACK, X_LOCO_INFO_ALL]}}', str(obj1))
 
 
     def test_control_router_json(self):
         obj1 = self.__sample_control_router_conf()
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"ip_address": "192.168.1.111", "port": 21105, "timeout": 1.2, '
-                         '"subscription": {"flags": ["CAN_DETECTOR", "TRACK", "X_LOCO_INFO_ALL"]}}',
+                         '"subscription": {"flags": ["CAN_DETECTOR", "RAILCOM_DATA_ALL", "TRACK", "X_LOCO_INFO_ALL"]}}',
                          jstr)
 
 

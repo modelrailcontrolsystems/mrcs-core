@@ -32,9 +32,8 @@ class ControlRouterSubscription(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> ControlRouterSubscription:
-        # may raise KeyError
+        # May raise KeyError
         flags = [Broadcast[flag] for flag in jdict.get('flags')]
-
         return cls(*flags)
 
 
