@@ -8,6 +8,7 @@ A link between segments
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
@@ -54,7 +55,7 @@ class SimpleSegmentLink(SegmentLink):
         self.__segment_label = segment_label
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.block_label == other.block_label and self.segment_label == other.segment_label
         except (AttributeError, TypeError):
@@ -120,7 +121,7 @@ class SwitchedSegmentLink(SegmentLink):
         self.__link_p1 = link_p1
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.link_p0 == other.link_p0 and self.link_p1 == other.link_p1
         except (AttributeError, TypeError):

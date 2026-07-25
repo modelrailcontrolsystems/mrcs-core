@@ -14,6 +14,7 @@ https://github.com/botmonster/z21aio/tree/main
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 
@@ -43,7 +44,7 @@ class BlockID(JSONable):
         self._reporter_id = reporter_id
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.detector_address == other.detector_address and self.channel == other.channel and
                     self.reporter_id == other.reporter_id)
@@ -51,7 +52,7 @@ class BlockID(JSONable):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         if self.detector_address < other.detector_address:
             return True
 

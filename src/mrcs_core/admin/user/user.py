@@ -18,7 +18,8 @@ A structured representation of a user
 """
 
 from collections import OrderedDict
-from enum import unique, StrEnum
+from enum import StrEnum, unique
+from typing import Any
 
 from mrcs_core.data.datum import Datum
 from mrcs_core.data.iso_datetime import ISODatetime
@@ -47,6 +48,7 @@ class User(JSONable):
     a structured representation of a user
     """
 
+
     @classmethod
     def construct_from_jdict(cls, jdict):
         if not jdict:
@@ -59,7 +61,7 @@ class User(JSONable):
 
         uid = jdict.get('uid')
         email = email
-        role = UserRole(jdict.get('role'))                      # may raise ValueError
+        role = UserRole(jdict.get('role'))  # may raise ValueError
         must_set_password = jdict.get('must_set_password')
         given_name = jdict.get('given_name')
         family_name = jdict.get('family_name')
@@ -85,14 +87,14 @@ class User(JSONable):
         self.__latest_login = latest_login
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.uid == other.uid
         except (AttributeError, TypeError):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         if self.family_name < other.family_name:
             return True
 

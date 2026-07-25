@@ -17,6 +17,7 @@ https://stackoverflow.com/questions/13484726/safe-enough-8-character-short-uniqu
 import json
 import uuid
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable, JSONify
 from mrcs_core.messaging.routing_key import PublicationRoutingKey, RoutingKey
@@ -140,14 +141,14 @@ class Message(JSONable):
         self.__body = body  # JSONable (jdict when constructed from callback)
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.origin == other.origin and self.routing_key == other.routing_key and self.body == other.body
         except (AttributeError, TypeError):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         if self.routing_key < other.routing_key:
             return True
 

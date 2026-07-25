@@ -19,6 +19,7 @@ A motive power unit (MPU) configuration
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.motive_power_unit.mpu_enums import ThrottleSteps
@@ -66,7 +67,7 @@ class MPUConfigurationReport(JSONable):
         self._smart_search = smart_search
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.mpu_address == other.mpu_address and self.functions == other.functions and
                     self.is_busy == other.is_busy and self.stepping == other.stepping and
@@ -76,7 +77,7 @@ class MPUConfigurationReport(JSONable):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.mpu_address < other.mpu_address
 
 
@@ -110,9 +111,6 @@ class MPUConfigurationReport(JSONable):
     # noinspection PyUnresolvedReferences
     @property
     def speed_setting_percent(self):
-        if self.stepping is None or self.speed_setting is None:
-            return None
-
         return round((self.speed_setting / self.stepping.max_speed) * 100.0)
 
 

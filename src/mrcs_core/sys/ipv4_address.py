@@ -5,7 +5,7 @@ Created on 2 Mar 2020
 
 "192.168.1.111"
 """
-from typing import List
+from typing import Any, List
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ class IPv4Address(object):
         self.__octets = octets
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.dot_decimal == other.dot_decimal
         except (AttributeError, TypeError):

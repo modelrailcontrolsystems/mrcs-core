@@ -14,6 +14,7 @@ Note that the cron components work in model time, not true time.
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.equipment_identity import EquipmentIdentifier
 from mrcs_core.data.iso_datetime import ISODatetime
@@ -50,7 +51,7 @@ class Cronjob(JSONable):
         self.__on_datetime = on_datetime  # the model datetime when the event should be performed
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.target == other.target and self.event_id == other.event_id and
                     self.on_datetime == other.on_datetime)
@@ -59,7 +60,7 @@ class Cronjob(JSONable):
 
 
     # noinspection PyUnresolvedReferences
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         if self.on_datetime < other.on_datetime:
             return True
 

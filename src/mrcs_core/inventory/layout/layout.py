@@ -7,6 +7,7 @@ A collection of Blocks, making up one complete layout
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_occupant import BlockOccupant
@@ -38,14 +39,14 @@ class Layout(JSONable):
         self.__blocks = blocks
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.label == other.label and self.blocks == other.blocks
         except (AttributeError, TypeError):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.label < other.label
 
 

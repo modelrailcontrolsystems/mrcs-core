@@ -8,6 +8,7 @@ A component of a Block
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
@@ -122,7 +123,7 @@ class TrackSegment(Segment):
         self.__down_link = down_link
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.label == other.label and self.length == other.length and
                     self.up_link == other.up_link and self.down_link == other.down_link)
@@ -204,7 +205,7 @@ class TurnoutSegment(Segment):
         self.__switched_link = switched_link
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.label == other.label and self.length == other.length and
                     self.turnout_address == other.turnout_address and self.switch_is_up == other.switch_is_up and

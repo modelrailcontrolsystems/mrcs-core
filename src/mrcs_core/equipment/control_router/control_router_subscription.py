@@ -17,6 +17,7 @@ Networking configuration of a DCC control router
 import operator
 from collections import OrderedDict
 from functools import reduce
+from typing import Any
 
 from mrcs_control.dcc.z21.command.broadcast import Broadcast
 from mrcs_core.data.json import JSONable
@@ -47,7 +48,7 @@ class ControlRouterSubscription(JSONable):
         self.__flags = set(flags)
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.flags == other.flags
         except (AttributeError, TypeError):

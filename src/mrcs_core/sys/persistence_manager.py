@@ -6,7 +6,6 @@ Created on 20 Oct 2020
 
 import os
 import time
-
 from abc import ABC, abstractmethod
 
 from mrcs_core.data.iso_datetime import ISODatetime
@@ -19,30 +18,36 @@ class PersistenceManager(ABC):
     classdocs
     """
 
+
     # ----------------------------------------------------------------------------------------------------------------
 
+    @classmethod
     @abstractmethod
-    def list(self, container, dirname):
+    def list(cls, container, dirname):
         pass
 
 
+    @classmethod
     @abstractmethod
-    def exists(self, dirname, filename):
+    def exists(cls, dirname, filename):
         pass
 
 
+    @classmethod
     @abstractmethod
-    def load(self, dirname, filename, encryption_key=None):
+    def load(cls, dirname, filename, encryption_key=None):
         pass
 
 
+    @classmethod
     @abstractmethod
-    def save(self, text, dirname, filename, encryption_key=None):
+    def save(cls, text, dirname, filename, encryption_key=None):
         pass
 
 
+    @classmethod
     @abstractmethod
-    def remove(self, dirname, filename):
+    def remove(cls, dirname, filename):
         pass
 
 
@@ -60,6 +65,7 @@ class FilesystemPersistenceManager(PersistenceManager, ABC):
     """
     classdocs
     """
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -90,7 +96,9 @@ class FilesystemPersistenceManager(PersistenceManager, ABC):
                 text = f.read()
 
             if encryption_key:
-                from mrcs_core.data.crypt import Crypt               # late import
+                from mrcs_core.data.crypt import Crypt  # late import
+
+
                 jstr = Crypt.decrypt(encryption_key, text)
             else:
                 jstr = text
@@ -116,7 +124,9 @@ class FilesystemPersistenceManager(PersistenceManager, ABC):
         tmp_filename = '.'.join((abs_filename, str(int(time.time()))))
 
         if encryption_key:
-            from mrcs_core.data.crypt import Crypt                   # late import
+            from mrcs_core.data.crypt import Crypt  # late import
+
+
             saved_text = Crypt.encrypt(encryption_key, text)
         else:
             saved_text = text + '\n'
@@ -148,4 +158,3 @@ class FilesystemPersistenceManager(PersistenceManager, ABC):
     @classmethod
     def abs_filename(cls, dirname, filename):
         return str(os.path.join(cls.mrcs_abs_dir(), dirname, filename))
-

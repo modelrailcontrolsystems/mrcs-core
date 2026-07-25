@@ -12,9 +12,10 @@ from enum import EnumMeta
 # --------------------------------------------------------------------------------------------------------------------
 
 class MetaEnum(EnumMeta):
-    def __contains__(cls, item):
+
+    def __contains__(cls, value):
         try:
-            cls(item)
+            cls(value)
         except ValueError:
             return False
         return True

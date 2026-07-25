@@ -21,6 +21,7 @@ dependent processes are updated with any clock configuration change.
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import PersistentJSONable
 from mrcs_core.operations.time.clock_iso_datetime import ClockISODatetime
@@ -85,7 +86,7 @@ class Clock(PersistentJSONable):
         self.__true_stop = true_stop
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.is_running == other.is_running and self.speed == other.speed and
                     self.model_start == other.model_start and self.true_start == other.true_start and
