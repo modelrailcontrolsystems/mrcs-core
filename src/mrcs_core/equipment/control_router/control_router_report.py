@@ -14,6 +14,8 @@ https://github.com/botmonster/z21aio/tree/main
 
 from collections import OrderedDict
 
+from mypy.types import Any
+
 from mrcs_core.data.json import JSONable
 
 
@@ -69,7 +71,7 @@ class ControlRouterReport(JSONable):
         self.__reserved = reserved
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.main_current == other.main_current and self.prog_current == other.prog_current and
                     self.filtered_main_current == other.filtered_main_current and
@@ -175,10 +177,12 @@ class ControlRouterReport(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    # noinspection string-format
     def __str__(self, *args, **kwargs):
+        reserved = None if self.reserved is None else f'0x{self.reserved:02x}'
         return (
             f'{self.__class__.__name__}:{{main_current:{self.main_current}, prog_current:{self.prog_current}, '
             f'filtered_main_current:{self.filtered_main_current}, supply_voltage:{self.supply_voltage}, '
             f'track_voltage:{self.track_voltage}, temperature:{self.temperature}, '
             f'central_state:0x{self.central_state:02x}, central_state_ext:0x{self.central_state_ext:02x}, '
-            f'capabilities:0x{self.capabilities:02x}, reserved:0x{self.reserved:02x}}}')
+            f'capabilities:0x{self.capabilities:02x}, reserved:{reserved}}}')

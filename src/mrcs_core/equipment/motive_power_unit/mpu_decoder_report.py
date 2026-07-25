@@ -21,6 +21,7 @@ Class 60    0x004   0000 0011   0000 1110      0000 0000    0001 1000        4  
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 
@@ -61,7 +62,7 @@ class MPUDecoderReport(JSONable):
         self._qos = qos
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.mpu_address == other.mpu_address and self.receive_count == other.receive_count and
                     self.error_count == other.error_count and self.opts == other.opts and
@@ -70,7 +71,7 @@ class MPUDecoderReport(JSONable):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.mpu_address < other.mpu_address
 
 

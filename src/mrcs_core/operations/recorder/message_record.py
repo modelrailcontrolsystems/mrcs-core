@@ -17,10 +17,11 @@ https://forum.xojo.com/t/sqlite-return-id-of-record-inserted/37896/3
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.messaging.message import Message
-from mrcs_core.messaging.routing_key import RoutingKey, PublicationRoutingKey
+from mrcs_core.messaging.routing_key import PublicationRoutingKey, RoutingKey
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ class MessageRecord(Message):
     """
     classdocs
     """
+
 
     @classmethod
     def construct_from_jdict(cls, jdict):
@@ -53,7 +55,7 @@ class MessageRecord(Message):
         self.__rec = rec
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.uid == other.uid and self.rec == other.rec and self.origin == other.origin and
                     self.routing_key == other.routing_key and self.body == other.body)
@@ -61,7 +63,7 @@ class MessageRecord(Message):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.uid < other.uid
 
 

@@ -10,6 +10,7 @@ https://www.z21.eu/en/products/z21
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_enums import BlockOccupantFace
@@ -40,14 +41,14 @@ class BlockOccupant(JSONable):
         self._face = face
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.mpu_address == other.mpu_address and self.face == other.face
         except (AttributeError, TypeError):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.mpu_address < other.mpu_address
 
 

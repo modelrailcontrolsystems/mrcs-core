@@ -10,6 +10,7 @@ https://docs.python.org/3/howto/enum.html
 
 from abc import ABC
 from enum import StrEnum, unique
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.data.meta_enum import MetaEnum
@@ -43,7 +44,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     VIS = 'VIS'  # sensor: vision
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.value < other.value
 
 
@@ -62,7 +63,7 @@ class EquipmentSpecification(JSONable, ABC):
         self.__serial_number = serial_number
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.equipment_type == other.equipment_type and self.sector_number == other.sector_number and
                     self.serial_number == other.serial_number)
@@ -71,7 +72,7 @@ class EquipmentSpecification(JSONable, ABC):
 
 
     # noinspection PyUnresolvedReferences
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         if self.equipment_type != other.equipment_type:
             if self.equipment_type is None and other.equipment_type is not None:
                 return True
@@ -183,6 +184,7 @@ class EquipmentIdentifier(EquipmentSpecification, JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    # noinspection string-format
     def as_json(self, **kwargs):
         equipment_type = self.equipment_type
         sector_number = '*' if self.sector_number is None else f'{self.sector_number:03d}'
@@ -243,6 +245,7 @@ class EquipmentFilter(EquipmentSpecification):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    # noinspection string-format
     def as_json(self, **kwargs):
         equipment_type = '*' if self.equipment_type is None else self.equipment_type
         sector_number = '*' if self.sector_number is None else f'{self.sector_number:03d}'

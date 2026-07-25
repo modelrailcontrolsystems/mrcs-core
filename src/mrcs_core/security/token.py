@@ -52,7 +52,7 @@ class TokenData(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def as_json(self, expiry=None):
+    def as_json(self, expiry=None, **kwargs):
         jdict = OrderedDict()
 
         jdict['sub'] = self.sub

@@ -21,6 +21,7 @@ https://www.rabbitmq.com/docs/http-api-reference
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 
@@ -31,6 +32,7 @@ class Queue(JSONable):
     """
     classdocs
     """
+
 
     @classmethod
     def construct_from_jdict(cls, jdict):
@@ -59,20 +61,20 @@ class Queue(JSONable):
                  messages, messages_ready, messages_unacknowledged):
         super().__init__()
 
-        self.__name = name                                                  # string
-        self.__queue_type = queue_type                                      # string
-        self.__durable = durable                                            # bool
-        self.__exclusive = exclusive                                        # bool
+        self.__name = name  # string
+        self.__queue_type = queue_type  # string
+        self.__durable = durable  # bool
+        self.__exclusive = exclusive  # bool
 
-        self.__state = state                                                # string
-        self.__consumers = consumers                                        # int
+        self.__state = state  # string
+        self.__consumers = consumers  # int
 
-        self.__messages = messages                                          # int
-        self.__messages_ready = messages_ready                              # int
-        self.__messages_unacknowledged = messages_unacknowledged            # int
+        self.__messages = messages  # int
+        self.__messages_ready = messages_ready  # int
+        self.__messages_unacknowledged = messages_unacknowledged  # int
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.name == other.name and self.queue_type == other.queue_type and
                     self.durable == other.durable and self.exclusive == other.exclusive and
@@ -83,8 +85,8 @@ class Queue(JSONable):
             return False
 
 
-    def __lt__(self, other):
-        return self.name < other.name           # names are unique within an exchange
+    def __lt__(self, other: Any):
+        return self.name < other.name  # names are unique within an exchange
 
 
     # ----------------------------------------------------------------------------------------------------------------

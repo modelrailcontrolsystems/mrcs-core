@@ -17,6 +17,7 @@ which maps TurnoutStatus turnout_addresses to TurnoutStatus labels
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
@@ -52,7 +53,7 @@ class TurnoutStatus(JSONable):
         self.__position = position
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.label == other.label and self.block_label == other.block_label and
                     self.turnout_address == other.turnout_address and self.position == other.position)
@@ -60,7 +61,7 @@ class TurnoutStatus(JSONable):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.label < other.label
 
 

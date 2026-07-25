@@ -10,6 +10,7 @@ https://github.com/botmonster/z21aio/tree/main
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.track.track_enums import TrackMode
@@ -42,7 +43,7 @@ class TrackReport(JSONable):
         self.__mode = mode
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.mode == other.mode
         except (AttributeError, TypeError):

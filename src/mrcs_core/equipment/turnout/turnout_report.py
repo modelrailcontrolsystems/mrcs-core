@@ -13,6 +13,7 @@ A reported turnout state
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
@@ -48,14 +49,14 @@ class TurnoutReport(JSONable):
         self.__position = position
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.turnout_address == other.turnout_address and self.position == other.position
         except (AttributeError, TypeError):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.turnout_address < other.turnout_address
 
 

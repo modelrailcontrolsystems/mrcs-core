@@ -68,14 +68,14 @@ class JSONify(json.JSONEncoder):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def default(self, obj):
-        if isinstance(obj, JSONable):
-            return obj.as_json(**self.__kwargs)
+    def default(self, o):
+        if isinstance(o, JSONable):
+            return o.as_json(**self.__kwargs)
 
-        if isinstance(obj, Decimal):
-            return float(obj) if Datum.is_float(str(obj)) else int(obj)
+        if isinstance(o, Decimal):
+            return float(o) if Datum.is_float(str(o)) else int(o)
 
-        return json.JSONEncoder.default(self, obj)
+        return json.JSONEncoder.default(self, o)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -172,10 +172,10 @@ class JSONReport(JSONable, ABC):
         os.remove(filename)
 
 
-    # noinspection PyUnusedLocal
+    # noinspection PyUnusedLocal,unused-parameter
     @classmethod
     @abstractmethod
-    def construct_from_jdict(cls, jdict):
+    def construct_from_jdict(cls, jdict: Any):
         return cls()
 
 
@@ -373,7 +373,7 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
 
     @classmethod
     @abstractmethod
-    def construct_from_jdict(cls, jdict):
+    def construct_from_jdict(cls, jdict: Any):
         pass
 
 
@@ -470,7 +470,7 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
 
     @classmethod
     @abstractmethod
-    def construct_from_jdict(cls, jdict, name=None):
+    def construct_from_jdict(cls, jdict: Any, name: str | None = None):
         pass
 
 

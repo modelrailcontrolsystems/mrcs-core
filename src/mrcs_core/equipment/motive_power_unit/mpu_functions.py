@@ -8,7 +8,7 @@ Motive power unit (MPU) function state
 "+-+-----"
 """
 
-from typing import List
+from typing import Any, List
 
 from mrcs_core.data.json import JSONable
 
@@ -32,7 +32,7 @@ class MPUFunctions(JSONable):
         self._funcs = funcs
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.funcs == other.funcs
         except (AttributeError, TypeError):

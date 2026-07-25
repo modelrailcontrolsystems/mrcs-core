@@ -18,6 +18,7 @@ The label of the MPUStatus is found from the MPU Inventory
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
@@ -55,7 +56,7 @@ class MPUStatus(JSONable):
         self._reverse = reverse
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.label == other.label and self.mpu_address == other.mpu_address and
                     self.functions == other.functions and self.speed_setting == other.speed_setting and
@@ -64,7 +65,7 @@ class MPUStatus(JSONable):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.label < other.label
 
 

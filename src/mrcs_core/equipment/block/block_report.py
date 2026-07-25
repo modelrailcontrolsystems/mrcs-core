@@ -15,6 +15,7 @@ https://github.com/botmonster/z21aio/tree/main
 
 from abc import ABC
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_enums import BlockVoltage
@@ -49,7 +50,7 @@ class BlockReport(JSONable, ABC):
         self._block_id = block_id
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.block_id < other.block_id
 
 
@@ -100,7 +101,7 @@ class BlockVoltageReport(BlockReport):
         self._voltage = voltage
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.block_id == other.block_id and self.voltage == other.voltage
         except (AttributeError, TypeError):
@@ -169,7 +170,7 @@ class BlockOccupancyReport(BlockReport):
         self._occupants = occupants
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.block_id == other.block_id and
                     self.occupant_group == other.occupant_group and self.occupants == other.occupants)

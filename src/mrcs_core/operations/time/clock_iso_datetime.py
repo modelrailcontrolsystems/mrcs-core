@@ -3,7 +3,6 @@ Created on 2 Jan 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 """
-
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import PersistentJSONable
 
@@ -21,11 +20,6 @@ class ClockISODatetime(ISODatetime, PersistentJSONable):
     @classmethod
     def persistence_location(cls):
         return cls.conf_dir(), cls.__FILENAME
-
-
-    @classmethod
-    def construct_from_jdict(cls, iso_string):
-        return super().construct_from_jdict(iso_string)  # raises TypeError, ValueError
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -21,6 +21,7 @@ https://www.rabbitmq.com/docs/http-api-reference
 """
 
 from collections import OrderedDict
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 
@@ -31,6 +32,7 @@ class Exchange(JSONable):
     """
     classdocs
     """
+
 
     @classmethod
     def construct_from_jdict(cls, jdict):
@@ -53,16 +55,16 @@ class Exchange(JSONable):
     def __init__(self, name, exchange_type, durable, internal, auto_delete, message_stats):
         super().__init__()
 
-        self.__name = name                                          # string
-        self.__exchange_type = exchange_type                        # string
-        self.__durable = durable                                    # bool
-        self.__internal = internal                                  # bool
-        self.__auto_delete = auto_delete                            # bool
+        self.__name = name  # string
+        self.__exchange_type = exchange_type  # string
+        self.__durable = durable  # bool
+        self.__internal = internal  # bool
+        self.__auto_delete = auto_delete  # bool
 
-        self.__message_stats = message_stats                        # MessageStats
+        self.__message_stats = message_stats  # MessageStats
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return (self.name == other.name and self.exchange_type == other.exchange_type and
                     self.durable == other.durable and self.internal == other.internal and
@@ -71,8 +73,8 @@ class Exchange(JSONable):
             return False
 
 
-    def __lt__(self, other):
-        return self.name < other.name           # names are unique within an exchange
+    def __lt__(self, other: Any):
+        return self.name < other.name  # names are unique within an exchange
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -137,6 +139,7 @@ class MessageStats(JSONable):
     classdocs
     """
 
+
     @classmethod
     def construct_from_jdict(cls, jdict):
         if not jdict:
@@ -153,11 +156,11 @@ class MessageStats(JSONable):
     def __init__(self, publish_in, publish_out):
         super().__init__()
 
-        self.__publish_in = publish_in                      # int
-        self.__publish_out = publish_out                    # int
+        self.__publish_in = publish_in  # int
+        self.__publish_out = publish_out  # int
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.publish_in == other.publish_in and self.publish_out == other.publish_out
         except (AttributeError, TypeError):

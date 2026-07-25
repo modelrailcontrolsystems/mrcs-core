@@ -11,8 +11,8 @@ https://stackoverflow.com/questions/4770297/convert-utc-datetime-string-to-local
 https://labex.io/tutorials/python-how-to-create-datetime-objects-from-iso-8601-date-strings-417942
 """
 
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from datetime import datetime, tzinfo
+from typing import Any
 
 import dateutil.tz
 
@@ -27,24 +27,24 @@ class ISODatetime(JSONable, datetime):
     """
 
     __UTC_ZONE = dateutil.tz.tzutc()
-    __LOCAL_ZONE: ZoneInfo = dateutil.tz.tzlocal()
+    __LOCAL_ZONE: tzinfo = dateutil.tz.tzlocal()
 
     __DB_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 
 
     @classmethod
-    def set_local_zone(cls, tz: ZoneInfo):  # should only be used to standardise unit tests across timezones
+    def set_local_zone(cls, tz: tzinfo):  # should only be used to standardise unit tests across timezones
         cls.__LOCAL_ZONE = tz
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def construct_from_jdict(cls, iso_string):
+    def construct_from_jdict(cls, iso_string: Any):
         if not iso_string:
             return None
 
-        iso = super().fromisoformat(iso_string)  # raises TypeError, ValueError
+        iso = cls.fromisoformat(iso_string)  # raises TypeError, ValueError
 
         return iso  # TODO: check if we need iso.astimezone(cls.__LOCAL_ZONE)  # raises TypeError
 
@@ -62,16 +62,17 @@ class ISODatetime(JSONable, datetime):
 
     @classmethod
     def construct_from_timestamp(cls, t, tz=None):
-        tzinfo = cls.__LOCAL_ZONE if tz is None else tz
+        zone = cls.__LOCAL_ZONE if tz is None else tz
 
-        return super().fromtimestamp(t, tzinfo)
+        return cls.fromtimestamp(t, zone)
 
 
     @classmethod
     def now(cls, tz=None):
-        tzinfo = cls.__LOCAL_ZONE if tz is None else tz
+        zone = cls.__LOCAL_ZONE if tz is None else tz
 
-        return super().now().replace(tzinfo=tzinfo)
+        # noinspection PyTypeChecker
+        return super().now().replace(tzinfo=zone)  # cls.now(..) would recurse - super() is required here
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -86,7 +87,7 @@ class ISODatetime(JSONable, datetime):
             return datetime.__new__(cls, *args, **kwargs)
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.isoformat() == other.isoformat()  # strip any existing microseconds
         except (AttributeError, TypeError):

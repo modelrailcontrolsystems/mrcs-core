@@ -10,6 +10,7 @@ VIS.001.001.MPU.001.*
 
 import re
 from abc import ABC
+from typing import Any
 
 from mrcs_core.data.equipment_identity import EquipmentFilter, EquipmentIdentifier, EquipmentSpecification
 from mrcs_core.data.json import JSONable
@@ -37,14 +38,14 @@ class RoutingKey(JSONable, ABC):
         self.__target = target  # EquipmentFilter
 
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         try:
             return self.source == other.source and self.target == other.target
         except (AttributeError, TypeError):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         if self.source < other.source:
             return True
 
