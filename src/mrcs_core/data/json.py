@@ -346,9 +346,9 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
 
         try:
             jstr, last_modified = manager.load(dirname, filename, encryption_key=encryption_key)
-        except (KeyError, ValueError) as ex:  # caused by incorrect encryption_key
+        except (KeyError, ValueError) as exc:  # caused by incorrect encryption_key
             time.sleep(cls._SECURITY_DELAY)
-            raise ex
+            raise exc
 
         try:
             obj = cls.construct_from_jdict(cls.loads(jstr))
@@ -443,9 +443,9 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
         try:
             jstr, last_modified = manager.load(dirname, filename, encryption_key=encryption_key)
 
-        except (KeyError, ValueError) as ex:  # caused by incorrect encryption_key
+        except (KeyError, ValueError) as exc:  # caused by incorrect encryption_key
             time.sleep(cls._SECURITY_DELAY)
-            raise ex
+            raise exc
 
         try:
             obj = cls.construct_from_jdict(cls.loads(jstr), name=name)
