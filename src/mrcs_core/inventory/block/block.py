@@ -55,7 +55,7 @@ class Block(JSONable):
             return False
 
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any):
         return self.label < other.label  # TODO: ordering is by linked list chain
 
 
