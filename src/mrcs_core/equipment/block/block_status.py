@@ -26,7 +26,7 @@ The label of the BlockStatus is found from the Block Inventory, which maps Block
 """
 
 from collections import OrderedDict
-from typing import Any
+from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_enums import BlockDirection, BlockVoltage
@@ -42,7 +42,7 @@ class BlockStatus(JSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> BlockStatus:
+    def construct_from_jdict(cls, jdict) -> Self:
         label = jdict.get('label')
         block_address = jdict.get('addr')
 
