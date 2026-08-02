@@ -17,7 +17,7 @@ which maps TurnoutStatus turnout_addresses to TurnoutStatus labels
 """
 
 from collections import OrderedDict
-from typing import Any
+from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
@@ -32,7 +32,7 @@ class TurnoutStatus(JSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> TurnoutStatus:
+    def construct_from_jdict(cls, jdict) -> Self:
         label = jdict.get('label')
         block_label = jdict.get('block_label')
 

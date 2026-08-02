@@ -18,7 +18,7 @@ The label of the MPUStatus is found from the MPU Inventory
 """
 
 from collections import OrderedDict
-from typing import Any
+from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
@@ -33,7 +33,7 @@ class MPUStatus(JSONable):
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> MPUStatus:
+    def construct_from_jdict(cls, jdict) -> Self:
         label = jdict.get('label')
         mpu_address = jdict.get('addr')
         functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
