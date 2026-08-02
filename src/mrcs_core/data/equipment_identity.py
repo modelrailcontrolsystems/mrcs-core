@@ -48,7 +48,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
         return self.value < other.value
 
 
-# TODO: create int enums of equipment numbers (for CRN)
+# TODO: create int enums of equipment numbers (for CRN and router interface)
 # --------------------------------------------------------------------------------------------------------------------
 
 class EquipmentSpecification(JSONable, ABC):
