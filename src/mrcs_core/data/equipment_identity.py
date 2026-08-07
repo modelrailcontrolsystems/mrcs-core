@@ -212,7 +212,7 @@ class EquipmentFilter(EquipmentSpecification):
             equipment_type = None if pieces[0] == '*' else EquipmentType(pieces[0])
             sector_number = None if pieces[1] == '*' else int(pieces[1])
             serial_number = None if pieces[2] == '*' else int(pieces[2])
-        except ValueError:
+        except (IndexError, ValueError):
             raise ValueError(jdict)
 
         return cls(equipment_type, sector_number, serial_number)
