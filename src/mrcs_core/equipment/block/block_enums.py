@@ -5,7 +5,7 @@ Created on 3 Jul 2026
 
 The enumerated types used by block equipment
 
-Classes in support of the Rocco Z21 DCC command station:
+Classes in support of the Rocco Z21 DCC control router station:
 https://www.z21.eu/en/products/z21
 """
 
