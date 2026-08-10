@@ -59,4 +59,4 @@ class ThrottleSteps(IntEnum, metaclass=MetaEnum):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'{self.name}[{self.value}]'
+        return f'{self.name}{{{self.value}}}'
