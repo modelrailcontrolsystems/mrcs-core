@@ -30,7 +30,7 @@ class BlockDirection(IntEnum, metaclass=MetaEnum):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'{self.name}[{self.value}]'
+        return f'{self.name}{{{self.value}}}'
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ class BlockOccupantFace(IntEnum, metaclass=MetaEnum):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'{self.name}[0x{self.value:02x}]'
+        return f'{self.name}{{0x{self.value:02x}}}'
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -72,4 +72,4 @@ class BlockVoltage(IntEnum, metaclass=MetaEnum):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'{self.name}[0x{self.value:04x}]'
+        return f'{self.name}{{0x{self.value:04x}}}'
