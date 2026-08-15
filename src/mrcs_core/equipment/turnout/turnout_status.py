@@ -4,8 +4,10 @@ Created on 6 Jul 2026
 @author: Bruno Beloff (bbeloff@me.com)
 
 The current status of a turnout
+Note that the turnout address is 1-based, not 0-based.
+
 The label of the TurnoutStatus is found from the Turnout Inventory,
-which maps TurnoutStatus turnout_addresses to TurnoutStatus labels
+which maps TurnoutStatus addresses to TurnoutStatus labels
 
 {
     "type": "TurnoutStatus",
@@ -112,5 +114,5 @@ class TurnoutStatus(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'TurnoutStatus:{{label:{self.label}, block_label:{self.block_label}, '
+        return (f'{self.__class__.__name__}:{{label:{self.label}, block_label:{self.block_label}, '
                 f'turnout_address:{self.turnout_address}, position:{self.position.name}}}')

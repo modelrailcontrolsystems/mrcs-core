@@ -16,6 +16,7 @@ from mrcs_core.data.equipment_identity import EquipmentFilter, EquipmentIdentifi
 from mrcs_core.data.json import JSONable
 
 
+# TODO: needs test coverage
 # --------------------------------------------------------------------------------------------------------------------
 
 class RoutingKey(JSONable, ABC):
@@ -34,8 +35,8 @@ class RoutingKey(JSONable, ABC):
     def __init__(self, source: EquipmentSpecification, target: EquipmentSpecification):
         super().__init__()
 
-        self.__source = source  # EquipmentIdentifier | EquipmentFilter
-        self.__target = target  # EquipmentFilter
+        self.__source = source
+        self.__target = target
 
 
     def __eq__(self, other: Any):

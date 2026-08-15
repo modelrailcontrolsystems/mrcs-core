@@ -21,6 +21,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
+# TODO: needs test coverage
 # --------------------------------------------------------------------------------------------------------------------
 
 class EnvPaths(object):
