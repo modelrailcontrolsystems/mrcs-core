@@ -23,6 +23,7 @@ from mrcs_core.data.json import JSONable, JSONify
 from mrcs_core.messaging.routing_key import PublicationRoutingKey, RoutingKey
 
 
+# TODO: needs test coverage
 # --------------------------------------------------------------------------------------------------------------------
 
 class Message(JSONable):
@@ -52,7 +53,7 @@ class Message(JSONable):
 
         # ------------------------------------------------------------------------------------------------------------
 
-        def __init__(self, origin, body):
+        def __init__(self, origin, body):  # TODO: set type of origin
             super().__init__()
 
             self.__origin = origin

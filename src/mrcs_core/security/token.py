@@ -16,6 +16,7 @@ import jwt
 from mrcs_core.data.json import JSONable
 
 
+# TODO: needs test coverage
 # --------------------------------------------------------------------------------------------------------------------
 
 class TokenData(JSONable):
