@@ -1,0 +1,9 @@
+{
+  "origin": "fe6114f0-c054",
+  "routing": "CRT.*.016.*.*.*",
+  "body": {
+    "type": "TurnoutReport",
+    "addr": 2,
+    "position": "P1"
+  }
+}
