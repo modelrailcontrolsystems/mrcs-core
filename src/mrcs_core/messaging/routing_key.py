@@ -25,8 +25,8 @@ class RoutingKey(JSONable, ABC):
 
 
     @staticmethod
-    def is_valid(routing):
-        return re.match(r'^[A-Z*]+\.[0-9*\-]+\.[0-9*]+.[A-Z*]+\.[0-9*\-]+\.[0-9*]+$', routing) is not None
+    def is_valid(routing: str) -> bool:
+        return bool(re.fullmatch(r'[A-Z*]+\.[0-9*-]+\.[0-9*]+\.[A-Z*]+\.[0-9*-]+\.[0-9*]+', routing))
 
 
     # ----------------------------------------------------------------------------------------------------------------
