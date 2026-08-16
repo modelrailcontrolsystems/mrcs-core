@@ -23,7 +23,6 @@ from mrcs_core.data.json import JSONable, JSONify
 from mrcs_core.messaging.routing_key import PublicationRoutingKey, RoutingKey
 
 
-# TODO: needs test coverage
 # --------------------------------------------------------------------------------------------------------------------
 
 class Message(JSONable):
@@ -96,19 +95,6 @@ class Message(JSONable):
         return str(uuid.uuid4())[:13]
 
 
-    @staticmethod
-    def is_valid(message: Message):
-        if not RoutingKey.is_valid(message.routing_key):
-            return False
-
-        try:
-            JSONify.dumps(message)
-        except RuntimeError:
-            return False
-
-        return True
-
-
     @classmethod
     def construct_from_callback(cls, routing_key: RoutingKey, raw_payload: bytes):
         payload = Message.Payload.construct_from_jdict(json.loads(raw_payload.decode()))
@@ -156,7 +142,7 @@ class Message(JSONable):
         if self.routing_key > other.routing_key:
             return False
 
-        return self.body < other.body
+        return JSONify.dumps(self.body) < JSONify.dumps(other.body)
 
 
     # ----------------------------------------------------------------------------------------------------------------
