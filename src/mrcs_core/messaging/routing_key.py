@@ -16,7 +16,6 @@ from mrcs_core.data.equipment_identity import EquipmentFilter, EquipmentIdentifi
 from mrcs_core.data.json import JSONable
 
 
-# TODO: needs test coverage
 # --------------------------------------------------------------------------------------------------------------------
 
 class RoutingKey(JSONable, ABC):
@@ -27,7 +26,7 @@ class RoutingKey(JSONable, ABC):
 
     @staticmethod
     def is_valid(routing):
-        return re.match(r'^[A-Z*]+\.[0-9*\-]+\.[0-9*]+.[A-Z*]+\.[0-9*\-]+\.[0-9*]+$', routing)
+        return re.match(r'^[A-Z*]+\.[0-9*\-]+\.[0-9*]+.[A-Z*]+\.[0-9*\-]+\.[0-9*]+$', routing) is not None
 
 
     # ----------------------------------------------------------------------------------------------------------------
