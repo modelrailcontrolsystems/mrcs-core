@@ -52,7 +52,7 @@ class Message(JSONable):
 
         # ------------------------------------------------------------------------------------------------------------
 
-        def __init__(self, origin, body):  # TODO: set type of origin
+        def __init__(self, origin: str, body):
             super().__init__()
 
             self.__origin = origin
@@ -119,7 +119,7 @@ class Message(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, routing_key: RoutingKey, body, origin=None):
+    def __init__(self, routing_key: RoutingKey, body, origin: str | None = None):
         super().__init__()
 
         self.__origin = origin if origin else self.truncated_uuid4()
