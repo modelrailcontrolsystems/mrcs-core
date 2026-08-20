@@ -60,6 +60,8 @@ class BlockVoltage(IntEnum, metaclass=MetaEnum):
     An enumeration of all the LAN_CAN_DETECTOR occupancy status values
     """
 
+    UNKNOWN = 0xffff
+
     FREE_NO_VOLTAGE = 0x0000
     FREE_WITH_VOLTAGE = 0x0100
     OCCUPIED_NO_VOLTAGE = 0x1000
