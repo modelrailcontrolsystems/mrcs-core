@@ -286,11 +286,17 @@ class AbstractPersistentJSONable(JSONable, ABC):
     _SECURITY_DELAY = 3.0  # seconds
 
     __CONF_DIR = 'conf'  # hard-coded rel path
+    __INVENTORY_DIR = 'inventory'  # hard-coded rel path
 
 
     @classmethod
     def conf_dir(cls):
         return cls.__CONF_DIR
+
+
+    @classmethod
+    def inventory_dir(cls):
+        return cls.__INVENTORY_DIR
 
 
     # ----------------------------------------------------------------------------------------------------------------
