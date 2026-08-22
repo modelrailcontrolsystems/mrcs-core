@@ -10,7 +10,7 @@ https://github.com/botmonster/z21aio/tree/main
 """
 
 from collections import OrderedDict
-from typing import Any
+from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.track.track_enums import TrackMode
@@ -20,16 +20,16 @@ from mrcs_core.equipment.track.track_enums import TrackMode
 
 class TrackReport(JSONable):
     """
-    The track state
+    the track state
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> TrackReport:
+    def construct_from_jdict(cls, jdict) -> Self:
         type_name = jdict.get('type')
 
-        if type_name != cls.__name__:
-            raise TypeError(f'required type:{cls.__name__} got:{type_name}')
+        if type_name != 'TrackReport' and type_name != cls.__name__:
+            raise TypeError(f'required type:TrackReport got:{type_name}')
 
         # may raise KeyError
         mode = TrackMode[jdict.get('mode')]
