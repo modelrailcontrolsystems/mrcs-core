@@ -21,7 +21,7 @@ dependent processes are updated with any clock configuration change.
 """
 
 from collections import OrderedDict
-from typing import Any
+from typing import Any, Self
 
 from mrcs_core.data.json import PersistentJSONable
 from mrcs_core.operations.time.clock_iso_datetime import ClockISODatetime
@@ -50,7 +50,7 @@ class Clock(PersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def construct_from_jdict(cls, jdict):
+    def construct_from_jdict(cls, jdict) -> Self:
         if not jdict:
             return cls(True, 1, None, None, None)
 
@@ -110,7 +110,7 @@ class Clock(PersistentJSONable):
         return self.model_start + model_period
 
 
-    def run(self):
+    def run(self) -> None:
         if not self.exists(Host):
             raise RuntimeError('run - no clock configuration exists')
 

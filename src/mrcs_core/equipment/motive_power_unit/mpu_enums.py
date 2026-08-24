@@ -21,6 +21,24 @@ from mrcs_core.data.meta_enum import MetaEnum
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
+class MPUDirection(IntEnum, metaclass=MetaEnum):
+    """
+    An enumeration of all the possible MPU directions
+    """
+
+    FORWARD = 0  # TODO: check this is correct
+    REVERSE = 1
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return f'{self.name}{{{self.value}}}'
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+@unique
 class ThrottleSteps(IntEnum, metaclass=MetaEnum):
     """
     An enumeration of all the possible DCC throttle step resolutions
