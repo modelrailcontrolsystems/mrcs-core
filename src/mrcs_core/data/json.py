@@ -13,8 +13,9 @@ import json
 import os
 import time
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from decimal import Decimal
-from typing import Any, Callable
+from typing import Any, Self
 
 from mrcs_core.data.datum import Datum
 
@@ -175,7 +176,7 @@ class JSONReport(JSONable, ABC):
     # noinspection PyUnusedLocal,unused-parameter
     @classmethod
     @abstractmethod
-    def construct_from_jdict(cls, jdict: Any):
+    def construct_from_jdict(cls, jdict: Any) -> Self:
         return cls()
 
 

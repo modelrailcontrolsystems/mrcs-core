@@ -10,7 +10,7 @@ https://docs.python.org/3/howto/enum.html
 
 from abc import ABC
 from enum import StrEnum, unique
-from typing import Any
+from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.data.meta_enum import MetaEnum
@@ -219,7 +219,7 @@ class EquipmentFilter(EquipmentSpecification):
 
     @classmethod
     def construct(cls, equipment_type_spec: EquipmentType | None, sector_number_spec: int | None,
-                  serial_number_spec: int | None):
+                  serial_number_spec: int | None) -> Self:
         try:
             equipment_type = None if equipment_type_spec is None else EquipmentType(equipment_type_spec)
         except ValueError:

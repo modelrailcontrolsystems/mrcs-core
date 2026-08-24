@@ -17,7 +17,7 @@ https://stackoverflow.com/questions/13484726/safe-enough-8-character-short-uniqu
 import json
 import uuid
 from collections import OrderedDict
-from typing import Any
+from typing import Any, Self
 
 from mrcs_core.data.json import JSONable, JSONify
 from mrcs_core.messaging.routing_key import PublicationRoutingKey, RoutingKey
@@ -96,7 +96,7 @@ class Message(JSONable):
 
 
     @classmethod
-    def construct_from_callback(cls, routing_key: RoutingKey, raw_payload: bytes):
+    def construct_from_callback(cls, routing_key: RoutingKey, raw_payload: bytes) -> Self:
         payload = Message.Payload.construct_from_jdict(json.loads(raw_payload.decode()))
 
         if not payload:

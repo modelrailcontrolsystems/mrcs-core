@@ -17,6 +17,7 @@ https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-a
 
 import os
 from pathlib import Path
+from typing import Self
 
 from dotenv import load_dotenv
 
@@ -52,7 +53,7 @@ class EnvPaths(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def construct(cls):
+    def construct(cls) -> Self:
         path = []
         python_path = []
 

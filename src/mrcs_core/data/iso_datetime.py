@@ -12,7 +12,7 @@ https://labex.io/tutorials/python-how-to-create-datetime-objects-from-iso-8601-d
 """
 
 from datetime import datetime, tzinfo
-from typing import Any
+from typing import Any, Self
 
 import dateutil.tz
 
@@ -61,7 +61,7 @@ class ISODatetime(JSONable, datetime):
 
 
     @classmethod
-    def construct_from_timestamp(cls, t, tz=None):
+    def construct_from_timestamp(cls, t, tz=None) -> Self:
         zone = cls.__LOCAL_ZONE if tz is None else tz
 
         return cls.fromtimestamp(t, zone)
