@@ -22,7 +22,6 @@ from typing import Self
 from dotenv import load_dotenv
 
 
-# TODO: needs test coverage
 # --------------------------------------------------------------------------------------------------------------------
 
 class EnvPaths(object):
