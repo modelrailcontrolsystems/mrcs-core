@@ -15,6 +15,7 @@ from datetime import timedelta
 
 import jwt
 
+from mrcs_api.security.scope import Scope
 from mrcs_core.data.json import JSONify
 from mrcs_core.security.token import AccessToken, JWT, TokenData
 
@@ -26,14 +27,14 @@ class TestToken(unittest.TestCase):
     # TokenData tests ------------------------------------------------------------------------------------------------
 
     def test_token_data_construct(self):
-        token_data = TokenData('user123', {'OBSERVE'})
+        token_data = TokenData('user123', {Scope.OBSERVE})
         self.assertEqual('user123', token_data.sub)
-        self.assertEqual({'OBSERVE'}, token_data.scopes)
-        self.assertEqual("TokenData:{sub:user123, scopes:{'OBSERVE'}}", str(token_data))
+        self.assertEqual({Scope.OBSERVE}, token_data.scopes)
+        self.assertEqual(f"TokenData:{{sub:user123, scopes:{{{repr(Scope.OBSERVE)}}}}}", str(token_data))
 
 
     def test_token_data_as_json_without_expiry(self):
-        token_data = TokenData('user123', {'OBSERVE'})
+        token_data = TokenData('user123', {Scope.OBSERVE})
         jdict = token_data.as_json()
 
         self.assertIsInstance(jdict, OrderedDict)
@@ -43,7 +44,7 @@ class TestToken(unittest.TestCase):
 
 
     def test_token_data_as_json_with_expiry(self):
-        token_data = TokenData('user123', {'OBSERVE'})
+        token_data = TokenData('user123', {Scope.OBSERVE})
         jdict = token_data.as_json(expiry=1700000000)
 
         self.assertIsInstance(jdict, OrderedDict)
@@ -53,7 +54,7 @@ class TestToken(unittest.TestCase):
 
 
     def test_token_data_jsonify(self):
-        token_data = TokenData('user123', {'OBSERVE'})
+        token_data = TokenData('user123', {Scope.OBSERVE})
         jstr = JSONify.dumps(token_data)
         self.assertEqual('{"sub": "user123", "scope": "OBSERVE"}', jstr)
 
@@ -67,7 +68,7 @@ class TestToken(unittest.TestCase):
 
         token_data = TokenData.decode(encoded)
         self.assertEqual('user123', token_data.sub)
-        self.assertEqual({'OBSERVE', 'ALTER_LAYOUT'}, token_data.scopes)
+        self.assertEqual({Scope.OBSERVE, Scope.ALTER_LAYOUT}, token_data.scopes)
 
 
     def test_token_data_decode_without_scopes(self):
@@ -101,14 +102,15 @@ class TestToken(unittest.TestCase):
     # AccessToken tests ----------------------------------------------------------------------------------------------
 
     def test_access_token_construct(self):
-        token_data = TokenData('user123', {'OBSERVE'})
+        token_data = TokenData('user123', {Scope.OBSERVE})
         delta = timedelta(hours=1)
         access_token = AccessToken(token_data, delta)
 
         self.assertEqual(token_data, access_token.data)
         self.assertEqual(delta, access_token.expires_delta)
-        self.assertEqual("AccessToken:{data:TokenData:{sub:user123, scopes:{'OBSERVE'}}, expires_delta:1:00:00}",
-                         str(access_token))
+        expected = (f"AccessToken:{{data:TokenData:{{sub:user123, scopes:{{{repr(Scope.OBSERVE)}}}}}, "
+                    f"expires_delta:1:00:00}}")
+        self.assertEqual(expected, str(access_token))
 
 
     def test_access_token_none_delta(self):
