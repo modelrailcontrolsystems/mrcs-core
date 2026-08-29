@@ -16,7 +16,6 @@ import jwt
 from mrcs_core.data.json import JSONable
 
 
-# TODO: needs test coverage
 # --------------------------------------------------------------------------------------------------------------------
 
 class TokenData(JSONable):
@@ -93,7 +92,7 @@ class AccessToken(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, data: TokenData, expires_delta: timedelta | None):
+    def __init__(self, data: TokenData | str, expires_delta: timedelta | None):
         self.__data = data
         self.__expires_delta = expires_delta
 
