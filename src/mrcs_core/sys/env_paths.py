@@ -11,7 +11,6 @@ HOME=/Users/bruno
 MRCS=Documents/Development/Python/MRCS/MRCSMacProject
 VENV=.venv14
 
-
 https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-applications-55a1
 """
 
