@@ -19,7 +19,6 @@ from collections import OrderedDict
 from mrcs_core.data.json import MultiPersistentJSONable
 
 
-# TODO: needs test coverage
 # --------------------------------------------------------------------------------------------------------------------
 
 class Server(MultiPersistentJSONable):
