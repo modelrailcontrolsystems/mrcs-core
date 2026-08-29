@@ -10,9 +10,11 @@ https://fastapi.tiangolo.com/advanced/security/oauth2-scopes/#verify-the-scopes
 
 from collections import OrderedDict
 from datetime import timedelta
+from typing import Set
 
 import jwt
 
+from mrcs_api.security.scope import Scope
 from mrcs_core.data.json import JSONable
 
 
@@ -38,14 +40,14 @@ class TokenData(JSONable):
             raise ValueError('the username may not be None')
 
         scope: str = payload.get('scope')
-        scopes = set(scope.split(' ')) if scope else set()
+        scopes = {Scope(s) for s in scope.split(' ')} if scope else set()
 
         return cls(username, scopes)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, sub: str, scopes: set):
+    def __init__(self, sub: str, scopes: Set[Scope]):
         self.__sub = sub
         self.__scopes = scopes
 
