@@ -13,6 +13,7 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
+from mrcs_core.equipment.motive_power_unit.mpu_enums import MPUDirection
 from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
 from mrcs_core.equipment.motive_power_unit.mpu_status import MPUStatus
 
@@ -28,22 +29,22 @@ class TestMPUStatus(unittest.TestCase):
         functions = MPUFunctions([True, False, True])
         speed_setting = 12
         speed = 7
-        reverse = True
+        direction = MPUDirection.REVERSE
 
-        return MPUStatus(label, mpu_address, functions, speed_setting, speed, reverse)
+        return MPUStatus(label, mpu_address, functions, speed_setting, speed, direction)
 
 
     def test_mpu_status_str(self):
         obj1 = self.__sample_mpu_status()
         self.assertEqual('MPUStatus:{label:EMR Class 08, mpu_address:3, functions:+-+, '
-                         'speed_setting:12, speed:7, reverse:True}', str(obj1))
+                         'speed_setting:12, speed:7, direction:REVERSE{1}}', str(obj1))
 
 
     def test_mpu_status_json(self):
         obj1 = self.__sample_mpu_status()
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"type": "MPUStatus", "label": "EMR Class 08", "addr": 3, "functions": "+-+", '
-                         '"speed_setting": 12, "speed": 7, "reverse": true}', jstr)
+                         '"speed_setting": 12, "speed": 7, "direction": "REVERSE"}', jstr)
 
 
     def test_mpu_status_json_eq(self):

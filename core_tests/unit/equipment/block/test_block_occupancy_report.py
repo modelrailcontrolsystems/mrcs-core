@@ -31,7 +31,7 @@ class TestBlockOccupancyReport(unittest.TestCase):
         block_id = BlockID(detector_address, channel, reporter_id)
 
         occupant_group = 1
-        occupants = [BlockOccupant(0x5678, BlockOccupantFace.REV)]
+        occupants = [BlockOccupant(0x5678, BlockOccupantFace.FACE_BACKWARD)]
 
         return BlockOccupancyReport(block_id, occupant_group, occupants)
 
@@ -39,7 +39,8 @@ class TestBlockOccupancyReport(unittest.TestCase):
     def test_block_occupation_report_str(self):
         obj1 = self.__sample_block_occupancy_report()
         self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{detector_address:5, channel:6, reporter_id:0x1234}, '
-                         'occupant_group:1, occupants:[BlockOccupant:{mpu_address:22136, face:REV}]}', str(obj1))
+                         'occupant_group:1, occupants:[BlockOccupant:{mpu_address:22136, face:FACE_BACKWARD}]}',
+                         str(obj1))
 
 
     def test_block_status_report_occupancy(self):
@@ -51,7 +52,7 @@ class TestBlockOccupancyReport(unittest.TestCase):
         obj1 = self.__sample_block_occupancy_report()
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"type": "BlockOccupancyReport", "id": {"addr": 5, "channel": 6, "rid": 4660}, '
-                         '"group": 1, "occupants": [{"addr": 22136, "face": "REV"}]}', jstr)
+                         '"group": 1, "occupants": [{"addr": 22136, "face": "FACE_BACKWARD"}]}', jstr)
 
 
     def test_block_occupation_report_jstr_eq(self):

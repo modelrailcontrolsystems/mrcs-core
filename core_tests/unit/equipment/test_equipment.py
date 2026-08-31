@@ -21,10 +21,11 @@ class TestEquipment(unittest.TestCase):
 
     def test_block_occupancy_report(self):
         jstr = ('{"type": "BlockOccupancyReport", "id": {"addr": 5, "channel": 6, "rid": 4660}, '
-                '"group": 1, "occupants": [{"addr": 22136, "face": "REV"}]}')
+                '"group": 1, "occupants": [{"addr": 22136, "face": "FACE_BACKWARD"}]}')
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
         self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{detector_address:5, channel:6, reporter_id:0x1234}, '
-                         'occupant_group:1, occupants:[BlockOccupant:{mpu_address:22136, face:REV}]}', str(obj1))
+                         'occupant_group:1, occupants:[BlockOccupant:{mpu_address:22136, face:FACE_BACKWARD}]}',
+                         str(obj1))
 
 
     def test_block_status_report(self):

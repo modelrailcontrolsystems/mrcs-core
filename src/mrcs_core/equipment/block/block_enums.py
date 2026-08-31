@@ -42,8 +42,8 @@ class BlockOccupantFace(IntEnum, metaclass=MetaEnum):
     """
 
     UNKNOWN = 0x00
-    FWD = 0x02
-    REV = 0x03
+    FACE_FORWARD = 0x02
+    FACE_BACKWARD = 0x03
 
 
     # ----------------------------------------------------------------------------------------------------------------
