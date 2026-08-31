@@ -46,8 +46,8 @@ class MPUStatus(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, mpu_address: int, functions: MPUFunctions, speed_setting: int, speed: int,
-                 reverse: bool):
+    def __init__(self, label: str, mpu_address: int, functions: MPUFunctions, speed_setting: int | None,
+                 speed: int | None, reverse: bool | None):
         self._label = label
         self._mpu_address = mpu_address
         self._functions = functions
