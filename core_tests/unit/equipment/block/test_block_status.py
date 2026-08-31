@@ -28,8 +28,8 @@ class TestBlockStatus(unittest.TestCase):
         block_address = '5/6'
         direction = BlockDirection.UP
         voltage = BlockVoltage.OCCUPIED_WITH_VOLTAGE
-        occupants = [BlockOccupant(0x1234, BlockOccupantFace.FWD),
-                     BlockOccupant(0x4567, BlockOccupantFace.REV)]
+        occupants = [BlockOccupant(0x1234, BlockOccupantFace.FACE_FORWARD),
+                     BlockOccupant(0x4567, BlockOccupantFace.FACE_BACKWARD)]
 
         return BlockStatus(label, block_address, direction, voltage, *occupants)
 
@@ -37,16 +37,16 @@ class TestBlockStatus(unittest.TestCase):
     def test_block_status_str(self):
         obj1 = self.__sample_block_status()
         self.assertEqual('BlockStatus:{label:N01, block_address:5/6, direction:UP, voltage:OCCUPIED_WITH_VOLTAGE, '
-                         'occupants:[BlockOccupant:{mpu_address:4660, face:FWD}, '
-                         'BlockOccupant:{mpu_address:17767, face:REV}]}', str(obj1))
+                         'occupants:[BlockOccupant:{mpu_address:4660, face:FACE_FORWARD}, '
+                         'BlockOccupant:{mpu_address:17767, face:FACE_BACKWARD}]}', str(obj1))
 
 
     def test_block_occupation_report_jstr(self):
         obj1 = self.__sample_block_status()
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"type": "BlockStatus", "label": "N01", "addr": "5/6", "direction": "UP", '
-                         '"voltage": "OCCUPIED_WITH_VOLTAGE", "occupants": [{"addr": 4660, "face": "FWD"}, '
-                         '{"addr": 17767, "face": "REV"}]}', jstr)
+                         '"voltage": "OCCUPIED_WITH_VOLTAGE", "occupants": [{"addr": 4660, "face": "FACE_FORWARD"}, '
+                         '{"addr": 17767, "face": "FACE_BACKWARD"}]}', jstr)
 
 
     def test_block_occupation_report_jstr_eq(self):

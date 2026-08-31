@@ -28,6 +28,12 @@ class MPUDirection(IntEnum, metaclass=MetaEnum):
 
     FORWARD = 0
     REVERSE = 1
+    UNKNOWN = 2
+
+
+    @classmethod
+    def from_reverse(cls, reverse: bool):
+        return cls.REVERSE if reverse else cls.FORWARD
 
 
     # ----------------------------------------------------------------------------------------------------------------

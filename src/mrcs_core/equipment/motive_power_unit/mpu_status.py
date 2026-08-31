@@ -13,7 +13,7 @@ The label of the MPUStatus is found from the MPU Inventory
     "functions": "+-+",
     "speed_setting": 12,
     "speed": 7,
-    "reverse": true
+    "direction": true
 }
 """
 
@@ -21,6 +21,7 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.motive_power_unit.mpu_enums import MPUDirection
 from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
 
 
@@ -39,28 +40,28 @@ class MPUStatus(JSONable):
         functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
         speed_setting = jdict.get('speed_setting')
         speed = jdict.get('speed')
-        reverse = jdict.get('reverse')
+        direction = MPUDirection[jdict.get('direction')]
 
-        return cls(label, mpu_address, functions, speed_setting, speed, reverse)
+        return cls(label, mpu_address, functions, speed_setting, speed, direction)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, label: str, mpu_address: int, functions: MPUFunctions, speed_setting: int | None,
-                 speed: int | None, reverse: bool | None):
+                 speed: int | None, direction: MPUDirection):
         self._label = label
         self._mpu_address = mpu_address
         self._functions = functions
         self._speed_setting = speed_setting
         self._speed = speed
-        self._reverse = reverse
+        self._direction = direction
 
 
     def __eq__(self, other: Any):
         try:
             return (self.label == other.label and self.mpu_address == other.mpu_address and
                     self.functions == other.functions and self.speed_setting == other.speed_setting and
-                    self.speed == other.speed and self.reverse == other.reverse)
+                    self.speed == other.speed and self.direction == other.direction)
         except (AttributeError, TypeError):
             return False
 
@@ -81,7 +82,7 @@ class MPUStatus(JSONable):
         jdict['functions'] = self.functions
         jdict['speed_setting'] = self.speed_setting
         jdict['speed'] = self.speed
-        jdict['reverse'] = self.reverse
+        jdict['direction'] = self.direction.name
 
         return jdict
 
@@ -114,8 +115,8 @@ class MPUStatus(JSONable):
 
 
     @property
-    def reverse(self):
-        return self._reverse
+    def direction(self):
+        return self._direction
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -124,4 +125,4 @@ class MPUStatus(JSONable):
     def __str__(self, *args, **kwargs):
         return (f'{self.type_name()}:{{label:{self.label}, mpu_address:{self.mpu_address}, '
                 f'functions:{self.functions.as_json()}, speed_setting:{self.speed_setting}, speed:{self.speed}, '
-                f'reverse:{self.reverse}}}')
+                f'direction:{self.direction}}}')
