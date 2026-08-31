@@ -26,7 +26,7 @@ class MPUDirection(IntEnum, metaclass=MetaEnum):
     An enumeration of all the possible MPU directions
     """
 
-    FORWARD = 0  # TODO: check this is correct
+    FORWARD = 0
     REVERSE = 1
 
 
