@@ -25,7 +25,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     """
 
     API = 'API'  # infrastructure: MRCS Web API
-    CLK = 'CLK'  # infrastructure: clock - cron, crontab, etc.
+    CLK = 'CLK'  # infrastructure: clock: cron, crontab, etc.
     CRT = 'CRT'  # infrastructure: control router
     REC = 'REC'  # infrastructure: message recorder
     TST = 'TST'  # infrastructure: test equipment
@@ -37,7 +37,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     SCH = 'SCH'  # operations: schedule controller
     SIG = 'SIG'  # operations: signal
     TEL = 'TEL'  # operations: motive power unit telemetry
-    TRN = 'TRN'  # operations: turnout (point)
+    TRK = 'TRK'  # operations: track: block, track, turnout
     TRS = 'TRS'  # operations: train set (may be multi-headed)
 
     BOS = 'BOS'  # sensor: block occupancy detector
