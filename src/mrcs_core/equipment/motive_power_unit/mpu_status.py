@@ -123,6 +123,6 @@ class MPUStatus(JSONable):
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        return (f'{self.type_name()}:{{label:{self.label}, mpu_address:{self.mpu_address}, '
+        return (f'{self.__class__.__name__}:{{label:{self.label}, mpu_address:{self.mpu_address}, '
                 f'functions:{self.functions.as_json()}, speed_setting:{self.speed_setting}, speed:{self.speed}, '
                 f'direction:{self.direction}}}')
