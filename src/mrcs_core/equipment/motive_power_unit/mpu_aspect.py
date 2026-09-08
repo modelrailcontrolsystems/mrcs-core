@@ -1,35 +1,25 @@
 """
-Created on 4 Jul 2026
+Created on 6 Sep 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A DCC motive power unit (MPU) state
-The label of the MPUStatus is found from the MPU Inventory
-
-{
-    "type": "MPUStatus",
-    "label": "EMR Class 08",
-    "addr": 3,
-    "functions": "+-+",
-    "speed_setting": 12,
-    "speed": 7,
-    "direction": true
-}
+A DCC motive power unit (MPU) aspect: its speed, heading, and location (distance to end of block)
+The label of the MPUAspect is found from the MPU Inventory
 """
 
 from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.equipment.motive_power_unit.mpu_enums import MPUDirection
-from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
+from mrcs_core.equipment.block.block_enums import BlockDirection
 
 
+# TODO: replace direction field with Occupancy facing and Block direction, and calculate heading?
 # --------------------------------------------------------------------------------------------------------------------
 
-class MPUStatus(JSONable):
+class MPUAspect(JSONable):
     """
-    A DCC motive power unit (MPU) state
+    A DCC motive power unit (MPU) aspect
     """
 
 
@@ -37,31 +27,28 @@ class MPUStatus(JSONable):
     def construct_from_jdict(cls, jdict) -> Self:
         label = jdict.get('label')
         mpu_address = jdict.get('addr')
-        functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
-        speed_setting = jdict.get('speed_setting')
         speed = jdict.get('speed')
-        direction = MPUDirection[jdict.get('direction')]
+        direction = BlockDirection[jdict.get('direction')]
+        location = jdict.get('location')
 
-        return cls(label, mpu_address, functions, speed_setting, speed, direction)
+        return cls(label, mpu_address, speed, direction, location)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, mpu_address: int, functions: MPUFunctions, speed_setting: int | None,
-                 speed: int | None, direction: MPUDirection):
+    def __init__(self, label: str, mpu_address: int, speed: int | None, direction: BlockDirection, location: int):
         self._label = label
         self._mpu_address = mpu_address
-        self._functions = functions
-        self._speed_setting = speed_setting
         self._speed = speed
         self._direction = direction
+        self._location = location
 
 
     def __eq__(self, other: Any):
         try:
             return (self.label == other.label and self.mpu_address == other.mpu_address and
-                    self.functions == other.functions and self.speed_setting == other.speed_setting and
-                    self.speed == other.speed and self.direction == other.direction)
+                    self.speed == other.speed and self.direction == other.direction and
+                    self.location == other.location)
         except (AttributeError, TypeError):
             return False
 
@@ -79,10 +66,9 @@ class MPUStatus(JSONable):
 
         jdict['label'] = self.label
         jdict['addr'] = self.mpu_address
-        jdict['functions'] = self.functions
-        jdict['speed_setting'] = self.speed_setting
         jdict['speed'] = self.speed
         jdict['direction'] = self.direction.name
+        jdict['location'] = self.location
 
         return jdict
 
@@ -100,16 +86,6 @@ class MPUStatus(JSONable):
 
 
     @property
-    def functions(self):
-        return self._functions
-
-
-    @property
-    def speed_setting(self):
-        return self._speed_setting
-
-
-    @property
     def speed(self):
         return self._speed
 
@@ -119,9 +95,13 @@ class MPUStatus(JSONable):
         return self._direction
 
 
+    @property
+    def location(self):
+        return self._location
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
         return (f'{self.__class__.__name__}:{{label:{self.label}, mpu_address:{self.mpu_address}, '
-                f'functions:{self.functions.as_json()}, speed_setting:{self.speed_setting}, speed:{self.speed}, '
-                f'direction:{self.direction}}}')
+                f'speed:{self.speed}, direction:{self.direction}, location:{self.location}}}')

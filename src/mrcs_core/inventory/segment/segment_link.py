@@ -14,6 +14,7 @@ from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 
 
+# TODO: add JSON examples to all JSONable class header comments
 # --------------------------------------------------------------------------------------------------------------------
 
 class SegmentLink(JSONable, ABC):
