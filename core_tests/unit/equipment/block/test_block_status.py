@@ -13,7 +13,7 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
-from mrcs_core.equipment.block.block_enums import BlockDirection, BlockOccupantFace, BlockVoltage
+from mrcs_core.equipment.block.block_enums import BlockHeading, BlockOccupantFace, BlockVoltage
 from mrcs_core.equipment.block.block_occupant import BlockOccupant
 from mrcs_core.equipment.block.block_status import BlockStatus
 
@@ -26,17 +26,17 @@ class TestBlockStatus(unittest.TestCase):
     def __sample_block_status():
         label = 'N01'
         block_address = '5/6'
-        direction = BlockDirection.UP
+        heading = BlockHeading.UP
         voltage = BlockVoltage.OCCUPIED_WITH_VOLTAGE
         occupants = [BlockOccupant(0x1234, BlockOccupantFace.FACE_FORWARD),
                      BlockOccupant(0x4567, BlockOccupantFace.FACE_BACKWARD)]
 
-        return BlockStatus(label, block_address, direction, voltage, *occupants)
+        return BlockStatus(label, block_address, heading, voltage, *occupants)
 
 
     def test_block_status_str(self):
         obj1 = self.__sample_block_status()
-        self.assertEqual('BlockStatus:{label:N01, block_address:5/6, direction:UP, voltage:OCCUPIED_WITH_VOLTAGE, '
+        self.assertEqual('BlockStatus:{label:N01, block_address:5/6, heading:UP, voltage:OCCUPIED_WITH_VOLTAGE, '
                          'occupants:[BlockOccupant:{mpu_address:4660, face:FACE_FORWARD}, '
                          'BlockOccupant:{mpu_address:17767, face:FACE_BACKWARD}]}', str(obj1))
 
@@ -44,7 +44,7 @@ class TestBlockStatus(unittest.TestCase):
     def test_block_occupation_report_jstr(self):
         obj1 = self.__sample_block_status()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "BlockStatus", "label": "N01", "addr": "5/6", "direction": "UP", '
+        self.assertEqual('{"type": "BlockStatus", "label": "N01", "addr": "5/6", "heading": "UP", '
                          '"voltage": "OCCUPIED_WITH_VOLTAGE", "occupants": [{"addr": 4660, "face": "FACE_FORWARD"}, '
                          '{"addr": 17767, "face": "FACE_BACKWARD"}]}', jstr)
 

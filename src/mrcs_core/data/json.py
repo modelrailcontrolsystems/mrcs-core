@@ -288,6 +288,7 @@ class AbstractPersistentJSONable(JSONable, ABC):
 
     __CONF_DIR = 'conf'  # hard-coded rel path
     __INVENTORY_DIR = 'inventory'  # hard-coded rel path
+    __LAYOUTS_DIR = 'layouts'  # hard-coded rel path
 
 
     @classmethod
@@ -298,6 +299,11 @@ class AbstractPersistentJSONable(JSONable, ABC):
     @classmethod
     def inventory_dir(cls):
         return cls.__INVENTORY_DIR
+
+
+    @classmethod
+    def layouts_dir(cls):
+        return cls.__LAYOUTS_DIR
 
 
     # ----------------------------------------------------------------------------------------------------------------

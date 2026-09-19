@@ -13,7 +13,7 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
-from mrcs_core.equipment.block.block_enums import BlockDirection
+from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.motive_power_unit.mpu_aspect import MPUAspect
 
 
@@ -26,23 +26,23 @@ class TestMPUAspect(unittest.TestCase):
         label = 'EMR Class 08'
         mpu_address = 3
         speed = 7
-        direction = BlockDirection.UP
+        heading = BlockHeading.UP
         location = 120
 
-        return MPUAspect(label, mpu_address, speed, direction, location)
+        return MPUAspect(label, mpu_address, speed, heading, location)
 
 
     def test_mpu_aspect_str(self):
         obj1 = self.__sample_mpu_aspect()
         self.assertEqual('MPUAspect:{label:EMR Class 08, mpu_address:3, '
-                         'speed:7, direction:UP{1}, location:120}', str(obj1))
+                         'speed:7, heading:UP{1}, location:120}', str(obj1))
 
 
     def test_mpu_aspect_json(self):
         obj1 = self.__sample_mpu_aspect()
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"type": "MPUAspect", "label": "EMR Class 08", "addr": 3, '
-                         '"speed": 7, "direction": "UP", "location": 120}', jstr)
+                         '"speed": 7, "heading": "UP", "location": 120}', jstr)
 
 
     def test_mpu_aspect_json_eq(self):

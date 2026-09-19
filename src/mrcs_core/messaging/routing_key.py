@@ -64,6 +64,10 @@ class RoutingKey(JSONable, ABC):
             return False
 
 
+    def reversed(self):
+        return self.__class__(self.target, self.source)
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):

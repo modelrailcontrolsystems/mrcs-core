@@ -11,10 +11,10 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.equipment.block.block_enums import BlockDirection
+from mrcs_core.equipment.block.block_enums import BlockHeading
 
 
-# TODO: replace direction field with Occupancy facing and Block direction, and calculate heading?
+# TODO: replace heading field with Occupancy facing and MPU direction, and calculate heading?
 # --------------------------------------------------------------------------------------------------------------------
 
 class MPUAspect(JSONable):
@@ -28,26 +28,26 @@ class MPUAspect(JSONable):
         label = jdict.get('label')
         mpu_address = jdict.get('addr')
         speed = jdict.get('speed')
-        direction = BlockDirection[jdict.get('direction')]
+        heading = BlockHeading[jdict.get('heading')]
         location = jdict.get('location')
 
-        return cls(label, mpu_address, speed, direction, location)
+        return cls(label, mpu_address, speed, heading, location)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, mpu_address: int, speed: int | None, direction: BlockDirection, location: int):
+    def __init__(self, label: str, mpu_address: int, speed: int | None, heading: BlockHeading, location: int):
         self._label = label
         self._mpu_address = mpu_address
         self._speed = speed
-        self._direction = direction
+        self._heading = heading
         self._location = location
 
 
     def __eq__(self, other: Any):
         try:
             return (self.label == other.label and self.mpu_address == other.mpu_address and
-                    self.speed == other.speed and self.direction == other.direction and
+                    self.speed == other.speed and self.heading == other.heading and
                     self.location == other.location)
         except (AttributeError, TypeError):
             return False
@@ -67,7 +67,7 @@ class MPUAspect(JSONable):
         jdict['label'] = self.label
         jdict['addr'] = self.mpu_address
         jdict['speed'] = self.speed
-        jdict['direction'] = self.direction.name
+        jdict['heading'] = self.heading.name
         jdict['location'] = self.location
 
         return jdict
@@ -91,8 +91,8 @@ class MPUAspect(JSONable):
 
 
     @property
-    def direction(self):
-        return self._direction
+    def heading(self):
+        return self._heading
 
 
     @property
@@ -104,4 +104,4 @@ class MPUAspect(JSONable):
 
     def __str__(self, *args, **kwargs):
         return (f'{self.__class__.__name__}:{{label:{self.label}, mpu_address:{self.mpu_address}, '
-                f'speed:{self.speed}, direction:{self.direction}, location:{self.location}}}')
+                f'speed:{self.speed}, heading:{self.heading}, location:{self.location}}}')

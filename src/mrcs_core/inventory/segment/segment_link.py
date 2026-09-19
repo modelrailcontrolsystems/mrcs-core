@@ -12,6 +12,7 @@ from typing import Any
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
+from mrcs_core.inventory.layout.location import Location
 
 
 # TODO: add JSON examples to all JSONable class header comments
@@ -23,74 +24,107 @@ class SegmentLink(JSONable, ABC):
     """
 
 
+    @classmethod
+    def construct_from_jdict(cls, jdict) -> SegmentLink | None:
+        if jdict is None:
+            return None
+
+        type_name = jdict.get('type')
+
+        if type_name == FixedSegmentLink.type_name():
+            return FixedSegmentLink.construct_from_jdict(jdict)
+
+        if type_name == SwitchedSegmentLink.type_name():
+            return SwitchedSegmentLink.construct_from_jdict(jdict)
+
+        raise TypeError(f'invalid segment type: {type_name}')
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     @abstractmethod
-    def link_for_config(self, position: TurnoutPosition | None) -> SegmentLink | None:
+    def selected_next_location(self, turnout_position: TurnoutPosition | None) -> Location | None:
         pass
 
 
-    def find_segment(self, layout):
-        # TODO: implement find_segment(..)
+    @abstractmethod
+    def next_locations(self) -> list[Location]:
         pass
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class SimpleSegmentLink(SegmentLink):
+class FixedSegmentLink(SegmentLink):
     """
     A simple link between segments
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> SimpleSegmentLink | None:
+    def type_name(cls) -> str:
+        return 'Fixed'
+
+
+    @classmethod
+    def construct_from_jdict(cls, jdict) -> FixedSegmentLink | None:
         if jdict is None:
             return None
 
-        return cls(jdict[0], jdict[1])
+        type_name = jdict.get('type')
+
+        if type_name != cls.type_name():
+            raise TypeError(f'required type:{cls.type_name()} got:{type_name}')
+
+        next_location = Location.construct_from_jdict(jdict.get('next'))
+
+        return cls(next_location)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, block_label: str, segment_label: str):
-        self.__block_label = block_label
-        self.__segment_label = segment_label
+    def __init__(self, next_location: Location):
+        self.__next_location = next_location
 
 
     def __eq__(self, other: Any):
         try:
-            return self.block_label == other.block_label and self.segment_label == other.segment_label
+            return self.next_location == other.next_location
         except (AttributeError, TypeError):
             return False
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def link_for_config(self, position: TurnoutPosition | None) -> SegmentLink | None:
-        return self
+    def selected_next_location(self, turnout_position: TurnoutPosition | None) -> Location | None:
+        return self.next_location
+
+
+    def next_locations(self) -> list[Location]:
+        return [] if self.next_location is None else [self.next_location]
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):
-        return [self.block_label, self.segment_label]
+        jdict = OrderedDict()
+
+        jdict['type'] = self.type_name()
+        jdict['next'] = self.next_location
+
+        return jdict
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def block_label(self):
-        return self.__block_label
-
-
-    @property
-    def segment_label(self):
-        return self.__segment_label
+    def next_location(self):
+        return self.__next_location
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'SimpleSegmentLink:{{block_label:{self.block_label}, segment_label:{self.segment_label}}}'
+        return f'FixedSegmentLink:{{next_location:{self.next_location}}}'
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -102,43 +136,57 @@ class SwitchedSegmentLink(SegmentLink):
 
 
     @classmethod
+    def type_name(cls) -> str:
+        return 'Switched'
+
+
+    @classmethod
     def construct_from_jdict(cls, jdict) -> SwitchedSegmentLink | None:
         if jdict is None:
             return None
 
-        p0 = jdict.get('p0')
-        link_p0 = None if p0 is None else SimpleSegmentLink(p0[0], p0[1])
+        p0 = jdict.get('p0-next')
+        p0_next_location = None if p0 is None else Location.construct_from_jdict(p0)
 
-        p1 = jdict.get('p1')
-        link_p1 = None if p1 is None else SimpleSegmentLink(p1[0], p1[1])
+        p1 = jdict.get('p1-next')
+        p1_next_location = None if p1 is None else Location.construct_from_jdict(p1)
 
-        return cls(link_p0, link_p1)
+        return cls(p0_next_location, p1_next_location)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, link_p0: SimpleSegmentLink | None, link_p1: SimpleSegmentLink | None):
-        self.__link_p0 = link_p0
-        self.__link_p1 = link_p1
+    def __init__(self, p0_next_location: Location | None, p1_next_location: Location | None):
+        self.__p0_next_location = p0_next_location
+        self.__p1_next_location = p1_next_location
 
 
     def __eq__(self, other: Any):
         try:
-            return self.link_p0 == other.link_p0 and self.link_p1 == other.link_p1
+            return self.p0_next_location == other.p0_next_location and self.p1_next_location == other.p1_next_location
         except (AttributeError, TypeError):
             return False
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def link_for_config(self, position: TurnoutPosition | None) -> SegmentLink | None:
-        if position == TurnoutPosition.P0:
-            return self.link_p0
+    # noinspection unresolved-references,unresolved-references
+    def selected_next_location(self, turnout_position: TurnoutPosition | None) -> Location | None:
+        if turnout_position == TurnoutPosition.P0:
+            return self.p0_next_location
 
-        if position == TurnoutPosition.P1:
-            return self.link_p1
+        if turnout_position == TurnoutPosition.P1:
+            return self.p1_next_location
 
-        raise ValueError(f'invalid position:{position}')
+        raise ValueError(f'cannot find selected_next_location for turnout position {turnout_position}')
+
+
+    # noinspection unresolved-references
+    def next_locations(self) -> list[Location]:
+        p0_next_location = [] if self.p0_next_location is None else [self.p0_next_location]
+        p1_next_location = [] if self.p1_next_location is None else [self.p1_next_location]
+
+        return p0_next_location + p1_next_location
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -146,8 +194,10 @@ class SwitchedSegmentLink(SegmentLink):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['p0'] = self.link_p0
-        jdict['p1'] = self.link_p1
+        jdict['type'] = self.type_name()
+
+        jdict['p0-next'] = self.p0_next_location
+        jdict['p1-next'] = self.p1_next_location
 
         return jdict
 
@@ -155,16 +205,17 @@ class SwitchedSegmentLink(SegmentLink):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def link_p0(self):
-        return self.__link_p0
+    def p0_next_location(self):
+        return self.__p0_next_location
 
 
     @property
-    def link_p1(self):
-        return self.__link_p1
+    def p1_next_location(self):
+        return self.__p1_next_location
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'SwitchedSegmentLink:{{link_p0:{self.link_p0}, link_p1:{self.link_p1}}}'
+        return (f'SwitchedSegmentLink:{{p0_next_location:{self.p0_next_location}, '
+                f'p1_next_location:{self.p1_next_location}}}')
