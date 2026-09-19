@@ -19,7 +19,9 @@ class BlockOperation(StrEnum, metaclass=MetaEnum):
     An enumeration of all the possible Block operation modes
     """
 
+    UP_FAVOURED = 'UP_FAVOURED'
     UP_ONLY = 'UP_ONLY'
+    DOWN_FAVOURED = 'DOWN_FAVOURED'
     DOWN_ONLY = 'DOWN_ONLY'
     REVERSIBLE = 'REVERSIBLE'
 

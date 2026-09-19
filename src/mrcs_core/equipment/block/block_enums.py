@@ -17,7 +17,7 @@ from mrcs_core.data.meta_enum import MetaEnum
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class BlockDirection(IntEnum, metaclass=MetaEnum):
+class BlockHeading(IntEnum, metaclass=MetaEnum):
     """
     An enumeration of all the block occupant directions
     """

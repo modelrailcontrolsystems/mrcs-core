@@ -9,8 +9,10 @@ https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
 """
 
+import json
 import unittest
 
+from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 from mrcs_core.equipment.turnout.turnout_status import TurnoutStatus
@@ -74,6 +76,19 @@ class TestTurnoutConfiguration(unittest.TestCase):
     def test_turnout_configuration_invalid(self):
         config = self.__sample_turnout_status_group_invalid()
         self.assertFalse(config.is_valid())
+
+
+    def test_turnout_configuration_jstr(self):
+        config = self.__sample_turnout_status_group_valid()
+        jstr = JSONify.dumps(config)
+        self.assertEqual('{"TE01": "P1", "TE02": "P0"}', jstr)
+
+
+    def test_turnout_configuration_jstr_eq(self):
+        config = self.__sample_turnout_status_group_valid()
+        jstr = JSONify.dumps(config)
+        config2 = TurnoutConfiguration.construct_from_jdict(json.loads(jstr))
+        self.assertEqual(config, config2)
 
 
 # --------------------------------------------------------------------------------------------------------------------

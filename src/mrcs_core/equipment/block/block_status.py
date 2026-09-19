@@ -10,7 +10,7 @@ The label of the BlockStatus is found from the Block Inventory, which maps Block
     "type": "BlockStatus",
     "label": "N01",
     "addr": "5/6",
-    "direction": "UP",
+    "heading": "UP",
     "voltage": "OCCUPIED_WITH_VOLTAGE",
     "occupants": [
         {
@@ -29,7 +29,7 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.equipment.block.block_enums import BlockDirection, BlockVoltage
+from mrcs_core.equipment.block.block_enums import BlockHeading, BlockVoltage
 from mrcs_core.equipment.block.block_occupant import BlockOccupant
 
 
@@ -47,7 +47,7 @@ class BlockStatus(JSONable):
         block_address = jdict.get('addr')
 
         # may raise KeyError
-        direction = BlockDirection[jdict.get('direction')]
+        heading = BlockHeading[jdict.get('heading')]
 
         # may raise KeyError
         voltage = BlockVoltage[jdict.get('voltage')]
@@ -55,16 +55,16 @@ class BlockStatus(JSONable):
         occupants = [BlockOccupant.construct_from_jdict(occupant_jdict) for occupant_jdict in
                      jdict.get('occupants', [])]
 
-        return cls(label, block_address, direction, voltage, *occupants)
+        return cls(label, block_address, heading, voltage, *occupants)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, block_address: str, direction: BlockDirection, voltage: BlockVoltage,
+    def __init__(self, label: str, block_address: str, heading: BlockHeading, voltage: BlockVoltage,
                  *occupants: BlockOccupant):
         self._label = label
         self._block_address = block_address
-        self._direction = direction
+        self._heading = heading
         self._voltage = voltage
         self._occupants = occupants
 
@@ -73,7 +73,7 @@ class BlockStatus(JSONable):
         try:
             return (
                     self.label == other.label and self.block_address == other.block_address and
-                    self.direction == other.direction and self.direction == other.direction and
+                    self.heading == other.heading and self.heading == other.heading and
                     self.occupants == other.occupants)
         except (AttributeError, TypeError):
             return False
@@ -92,7 +92,7 @@ class BlockStatus(JSONable):
 
         jdict['label'] = self.label
         jdict['addr'] = self.block_address
-        jdict['direction'] = self.direction.name
+        jdict['heading'] = self.heading.name
         jdict['voltage'] = self.voltage.name
         jdict['occupants'] = self.occupants
 
@@ -112,8 +112,8 @@ class BlockStatus(JSONable):
 
 
     @property
-    def direction(self):
-        return self._direction
+    def heading(self):
+        return self._heading
 
 
     @property
@@ -131,5 +131,5 @@ class BlockStatus(JSONable):
     def __str__(self, *args, **kwargs):
         occupants = '[' + ', '.join([str(occupant) for occupant in self.occupants]) + ']'
         return (
-            f'BlockStatus:{{label:{self.label}, block_address:{self.block_address}, direction:{self.direction.name}, '
+            f'BlockStatus:{{label:{self.label}, block_address:{self.block_address}, heading:{self.heading.name}, '
             f'voltage:{self.voltage.name}, occupants:{occupants}}}')

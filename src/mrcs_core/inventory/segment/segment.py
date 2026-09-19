@@ -11,8 +11,10 @@ from collections import OrderedDict
 from typing import Any
 
 from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
-from mrcs_core.inventory.segment.segment_link import SegmentLink, SimpleSegmentLink, SwitchedSegmentLink
+from mrcs_core.inventory.layout.location import Location
+from mrcs_core.inventory.segment.segment_link import SegmentLink
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -38,43 +40,50 @@ class Segment(JSONable, ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, length: int):
+    def __init__(self, label: str, length: int, up_link: SegmentLink | None, down_link: SegmentLink | None):
         self.__label = label
         self.__length = length  # mm
+        self.__up_link = up_link
+        self.__down_link = down_link
+
+
+    def __lt__(self, other: Any):
+        return self.label < other.label
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def up_link_for_config(self, config: TurnoutConfiguration) -> SegmentLink | None:
-        up_link = self.up_link
+    def next_location(self, config: TurnoutConfiguration, heading: BlockHeading) -> Location | None:
+        if heading == BlockHeading.UNASSIGNED:
+            raise ValueError('cannot get next segment for UNASSIGNED heading')
 
-        if up_link is None:
-            return None
-
-        return up_link.link_for_config(config.position(self.label))
+        return self.next_up_location(config) if heading == BlockHeading.UP else self.next_down_location(config)
 
 
-    def down_link_for_config(self, config: TurnoutConfiguration) -> SegmentLink | None:
-        down_link = self.down_link
+    @abstractmethod
+    def next_up_location(self, config: TurnoutConfiguration) -> Location | None:
+        pass
 
-        if down_link is None:
-            return None
 
-        return down_link.link_for_config(config.position(self.label))
+    @abstractmethod
+    def next_down_location(self, config: TurnoutConfiguration) -> Location | None:
+        pass
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    @property
-    @abstractmethod
-    def up_link(self):
-        pass
+    def next_locations(self):
+        return self.next_up_locations() + self.next_down_locations()
 
 
-    @property
-    @abstractmethod
-    def down_link(self):
-        pass
+    # noinspection unresolved-references
+    def next_up_locations(self) -> list[Location]:
+        return [] if self.up_link is None else self.up_link.next_locations()
+
+
+    # noinspection unresolved-references
+    def next_down_locations(self) -> list[Location]:
+        return [] if self.down_link is None else self.down_link.next_locations()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -87,6 +96,16 @@ class Segment(JSONable, ABC):
     @property
     def length(self):
         return self.__length
+
+
+    @property
+    def up_link(self):
+        return self.__up_link
+
+
+    @property
+    def down_link(self):
+        return self.__down_link
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -107,20 +126,16 @@ class TrackSegment(Segment):
         label = jdict.get('label')
         length = jdict.get('length')
 
-        up_link = SimpleSegmentLink.construct_from_jdict(jdict.get('up'))
-        down_link = SimpleSegmentLink.construct_from_jdict(jdict.get('down'))
+        up_link = SegmentLink.construct_from_jdict(jdict.get('up-link'))
+        down_link = SegmentLink.construct_from_jdict(jdict.get('down-link'))
 
         return cls(label, length, up_link, down_link)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, length: int,
-                 up_link: SimpleSegmentLink | None, down_link: SimpleSegmentLink | None):
-        super().__init__(label, length)
-
-        self.__up_link = up_link
-        self.__down_link = down_link
+    def __init__(self, label: str, length: int, up_link: SegmentLink | None, down_link: SegmentLink | None):
+        super().__init__(label, length, up_link, down_link)
 
 
     def __eq__(self, other: Any):
@@ -133,6 +148,24 @@ class TrackSegment(Segment):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    # noinspection unresolved-references
+    def next_up_location(self, config: TurnoutConfiguration) -> Location | None:
+        if self.up_link is None:
+            return None
+
+        return self.up_link.selected_next_location(None)
+
+
+    # noinspection unresolved-references
+    def next_down_location(self, config: TurnoutConfiguration) -> Location | None:
+        if self.down_link is None:
+            return None
+
+        return self.down_link.selected_next_location(None)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
@@ -141,22 +174,10 @@ class TrackSegment(Segment):
         jdict['label'] = self.label
         jdict['length'] = self.length
 
-        jdict['up'] = self.up_link
-        jdict['down'] = self.down_link
+        jdict['up-link'] = self.up_link
+        jdict['down-link'] = self.down_link
 
         return jdict
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def up_link(self):
-        return self.__up_link
-
-
-    @property
-    def down_link(self):
-        return self.__down_link
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -183,35 +204,46 @@ class TurnoutSegment(Segment):
 
         label = jdict.get('label')
         length = jdict.get('length')
+        turnout = jdict.get('turnout')
 
-        turnout_address = jdict.get('addr')
-        switch_is_up = jdict.get('switch_is_up')
-        simple_link = SimpleSegmentLink.construct_from_jdict(jdict.get('simple'))
-        switched_link = SwitchedSegmentLink.construct_from_jdict(jdict.get('switched'))
+        up_link = SegmentLink.construct_from_jdict(jdict.get('up-link'))
+        down_link = SegmentLink.construct_from_jdict(jdict.get('down-link'))
 
-        return cls(label, length, turnout_address, switch_is_up, simple_link, switched_link)
+        return cls(label, length, turnout, up_link, down_link)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, length: int, turnout_address: int, switch_is_up: bool,
-                 simple_link: SimpleSegmentLink | None, switched_link: SwitchedSegmentLink | None):
-        super().__init__(label, length)
-
-        self.__turnout_address = turnout_address
-        self.__switch_is_up = switch_is_up
-
-        self.__simple_link = simple_link
-        self.__switched_link = switched_link
+    def __init__(self, label: str, length: int, turnout: str, up_link: SegmentLink | None,
+                 down_link: SegmentLink | None):
+        super().__init__(label, length, up_link, down_link)
+        self.__turnout = turnout
 
 
     def __eq__(self, other: Any):
         try:
-            return (self.label == other.label and self.length == other.length and
-                    self.turnout_address == other.turnout_address and self.switch_is_up == other.switch_is_up and
+            return (self.label == other.label and self.length == other.length and self.turnout == other.turnout and
                     self.up_link == other.up_link and self.down_link == other.down_link)
         except (AttributeError, TypeError):
             return False
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    # noinspection unresolved-references
+    def next_up_location(self, config: TurnoutConfiguration) -> Location | None:
+        if self.up_link is None:
+            return None
+
+        return self.up_link.selected_next_location(config.position(self.turnout))
+
+
+    # noinspection unresolved-references
+    def next_down_location(self, config: TurnoutConfiguration) -> Location | None:
+        if self.down_link is None:
+            return None
+
+        return self.down_link.selected_next_location(config.position(self.turnout))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -223,11 +255,10 @@ class TurnoutSegment(Segment):
 
         jdict['label'] = self.label
         jdict['length'] = self.length
+        jdict['turnout'] = self.turnout
 
-        jdict['addr'] = self.turnout_address
-        jdict['switch_is_up'] = self.switch_is_up
-        jdict['simple'] = self.simple_link
-        jdict['switched'] = self.switched_link
+        jdict['up-link'] = self.up_link
+        jdict['down-link'] = self.down_link
 
         return jdict
 
@@ -235,40 +266,12 @@ class TurnoutSegment(Segment):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def up_link(self):
-        return self.switched_link if self.switch_is_up else self.simple_link
-
-
-    @property
-    def down_link(self):
-        return self.simple_link if self.switch_is_up else self.switched_link
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def turnout_address(self):
-        return self.__turnout_address
-
-
-    @property
-    def switch_is_up(self):
-        return self.__switch_is_up
-
-
-    @property
-    def simple_link(self):
-        return self.__simple_link
-
-
-    @property
-    def switched_link(self):
-        return self.__switched_link
+    def turnout(self):
+        return self.__turnout
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'TurnoutSegment:{{label:{self.label}, length:{self.length}, '
-                f'turnout_address:{self.turnout_address}, switch_is_up:{self.switch_is_up}, '
-                f'simple_link:{self.simple_link}, switched_link:{self.switched_link}}}')
+        return (f'TurnoutSegment:{{label:{self.label}, length:{self.length}, turnout:{self.turnout}, '
+                f'up_link:{self.up_link}, down_link:{self.down_link}}}')
