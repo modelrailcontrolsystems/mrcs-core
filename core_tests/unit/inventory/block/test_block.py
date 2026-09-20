@@ -38,19 +38,19 @@ class TestBlock(unittest.TestCase):
     @classmethod
     def __sample_track_segment_1(cls):
         label = 'S01'
-        length = 60
         up_link = cls.__sample_simple_segment_link_1()
         down_link = None
-        return TrackSegment(label, length, up_link, down_link)
+        length = 60
+        return TrackSegment(label, up_link, down_link, length)
 
 
     @classmethod
     def __sample_track_segment_2(cls):
         label = 'S02'
-        length = 80
         up_link = cls.__sample_simple_segment_link_1()
         down_link = cls.__sample_simple_segment_link_2()
-        return TrackSegment(label, length, up_link, down_link)
+        length = 80
+        return TrackSegment(label, up_link, down_link, length)
 
 
     @classmethod
@@ -89,18 +89,19 @@ class TestBlock(unittest.TestCase):
 
 
     def test_block_str(self):
+        self.maxDiff = None
         obj1 = self.__sample_block_1()
         self.assertEqual('Block:{label:BN01, address:1/1, operation:REVERSIBLE, '
-                         'segments:[TrackSegment:{label:S01, length:60, up_link:FixedSegmentLink:{next_location:'
-                         'Location:{block_label:BN01, segment_label:S02}}, down_link:None}]}', str(obj1))
+                         'segments:[TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:'
+                         'Location:{block_label:BN01, segment_label:S02}}, down_link:None, length:60}]}', str(obj1))
 
         obj2 = self.__sample_block_2()
         self.assertEqual('Block:{label:BN02, address:1/2, operation:UP_ONLY, '
-                         'segments:[TrackSegment:{label:S01, length:60, up_link:FixedSegmentLink:{next_location:'
-                         'Location:{block_label:BN01, segment_label:S02}}, down_link:None}, '
-                         'TrackSegment:{label:S02, length:80, up_link:FixedSegmentLink:{next_location:'
+                         'segments:[TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:'
+                         'Location:{block_label:BN01, segment_label:S02}}, down_link:None, length:60}, '
+                         'TrackSegment:{label:S02, up_link:FixedSegmentLink:{next_location:'
                          'Location:{block_label:BN01, segment_label:S02}}, down_link:FixedSegmentLink:{next_location:'
-                         'Location:{block_label:BN01, segment_label:S03}}}]}', str(obj2))
+                         'Location:{block_label:BN01, segment_label:S03}}, length:80}]}', str(obj2))
 
 
     def test_block_as_json(self):
@@ -120,20 +121,21 @@ class TestBlock(unittest.TestCase):
 
 
     def test_block_jstr(self):
+        self.maxDiff = None
         obj1 = self.__sample_block_1()
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"label": "BN01", "addr": "1/1", "operation": "REVERSIBLE", '
                          '"segments": [{"type": "TrackSegment", "label": "S01", "length": 60, '
-                         '"up-link": {"type": "Fixed", "next": ["BN01", "S02"]}, "down-link": null}]}', jstr)
+                         '"up-link": {"type": "Fixed", "next": "BN01/S02"}, "down-link": null}]}', jstr)
 
         obj2 = self.__sample_block_2()
         jstr2 = JSONify.dumps(obj2)
         self.assertEqual('{"label": "BN02", "addr": "1/2", "operation": "UP_ONLY", '
                          '"segments": [{"type": "TrackSegment", "label": "S01", "length": 60, '
-                         '"up-link": {"type": "Fixed", "next": ["BN01", "S02"]}, "down-link": null}, '
+                         '"up-link": {"type": "Fixed", "next": "BN01/S02"}, "down-link": null}, '
                          '{"type": "TrackSegment", "label": "S02", "length": 80, '
-                         '"up-link": {"type": "Fixed", "next": ["BN01", "S02"]}, '
-                         '"down-link": {"type": "Fixed", "next": ["BN01", "S03"]}}]}', jstr2)
+                         '"up-link": {"type": "Fixed", "next": "BN01/S02"}, '
+                         '"down-link": {"type": "Fixed", "next": "BN01/S03"}}]}', jstr2)
 
 
     def test_block_jstr_eq(self):

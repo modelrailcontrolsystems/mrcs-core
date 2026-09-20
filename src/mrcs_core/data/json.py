@@ -363,13 +363,14 @@ class PersistentJSONable(AbstractPersistentJSONable, ABC):
             time.sleep(cls._SECURITY_DELAY)
             raise exc
 
-        try:
-            obj = cls.construct_from_jdict(cls.loads(jstr))
-            obj._last_modified = last_modified
-            return obj
-
-        except (AttributeError, TypeError):
+        # a malformed document is reported by construct_from_jdict(..) - do not mask it as a missing document
+        obj = cls.construct_from_jdict(cls.loads(jstr))
+        if obj is None:
             return None
+
+        obj._last_modified = last_modified
+
+        return obj
 
 
     @classmethod
@@ -460,13 +461,14 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
             time.sleep(cls._SECURITY_DELAY)
             raise exc
 
-        try:
-            obj = cls.construct_from_jdict(cls.loads(jstr), name=name)
-            obj._last_modified = last_modified
-            return obj
-
-        except (AttributeError, TypeError):
+        # a malformed document is reported by construct_from_jdict(..) - do not mask it as a missing document
+        obj = cls.construct_from_jdict(cls.loads(jstr), name=name)
+        if obj is None:
             return None
+
+        obj._last_modified = last_modified
+
+        return obj
 
 
     @classmethod

@@ -1,9 +1,9 @@
 """
-Created on 12 Sep 2026
+Created on 19 Sep 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A location on a layout, identifying a segment within a block
+The label for a Platform, in the form StationName/PlatformNumber
 """
 
 from typing import Any, Self
@@ -13,9 +13,9 @@ from mrcs_core.data.json import JSONable
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Location(JSONable):
+class PlatformLabel(JSONable):
     """
-    A location on a layout
+    the label for a Platform, in the form StationName/PlatformNumber
     """
 
 
@@ -26,7 +26,7 @@ class Location(JSONable):
         if len(pieces) != 2 or not pieces[0] or not pieces[1]:
             raise ValueError(shortform)
 
-        return cls(pieces[0], pieces[1])
+        return cls(pieces[0], int(pieces[1]))
 
 
     @classmethod
@@ -36,30 +36,31 @@ class Location(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, block_label: str, segment_label: str):
-        self.__block_label = block_label
-        self.__segment_label = segment_label
+    def __init__(self, station: str, number: int):
+        self.__station = station
+        self.__number = number
 
 
     def __hash__(self):
-        return hash((self.block_label, self.segment_label))
+        return hash((self.station, self.number))
 
 
+    # noinspection PyProtectedMember
     def __eq__(self, other: Any):
         try:
-            return self.block_label == other.block_label and self.segment_label == other.segment_label
+            return self.station == other.station and self.number == other.number
         except (AttributeError, TypeError):
             return False
 
 
-    def __lt__(self, other: Any):
-        if self.block_label < other.block_label:
+    def __lt__(self, other):
+        if self.station < other.station:
             return True
 
-        if self.block_label > other.block_label:
+        if self.station > other.station:
             return False
 
-        return self.segment_label < other.segment_label
+        return self.number < other.number
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -71,13 +72,13 @@ class Location(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def block_label(self):
-        return self.__block_label
+    def station(self):
+        return self.__station
 
 
     @property
-    def segment_label(self):
-        return self.__segment_label
+    def number(self):
+        return self.__number
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -85,8 +86,8 @@ class Location(JSONable):
 
     @property
     def shortform(self):
-        return '/'.join((self.block_label, self.segment_label))
+        return '/'.join((self.station, str(self.number)))
 
 
     def __str__(self, *args, **kwargs):
-        return f'Location:{{block_label:{self.block_label}, segment_label:{self.segment_label}}}'
+        return f'PlatformLabel:{{station:{self.station}, number:{self.number}}}'

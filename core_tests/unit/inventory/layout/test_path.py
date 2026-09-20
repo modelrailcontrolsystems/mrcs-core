@@ -13,6 +13,7 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
+from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.layout.path import Path, PathEdge
 from mrcs_core.inventory.segment.segment import TrackSegment
@@ -26,19 +27,24 @@ class TestPath(unittest.TestCase):
     @classmethod
     def __sample_track_segment_1(cls):
         label = 'S01'
-        length = 60
         up_link = FixedSegmentLink(Location('BN01', 'S02'))
         down_link = None
-        return TrackSegment(label, length, up_link, down_link)
+        length = 60
+        return TrackSegment(label, up_link, down_link, length)
 
 
     @classmethod
     def __sample_track_segment_2(cls):
         label = 'S02'
-        length = 80
         up_link = FixedSegmentLink(Location('BN01', 'S03'))
         down_link = None
-        return TrackSegment(label, length, up_link, down_link)
+        length = 80
+        return TrackSegment(label, up_link, down_link, length)
+
+
+    @classmethod
+    def __sample_turnout_configuration(cls):
+        return TurnoutConfiguration({})
 
 
     @classmethod
@@ -67,7 +73,7 @@ class TestPath(unittest.TestCase):
 
     def test_path_edge_construct_from_segment(self):
         segment = self.__sample_track_segment_1()
-        obj1 = PathEdge.construct('BN01', segment)
+        obj1 = PathEdge.construct(self.__sample_turnout_configuration(), 'BN01', segment)
 
         self.assertEqual('TrackSegment', obj1.segment_type_name)
         self.assertEqual(60, obj1.length)
@@ -78,7 +84,7 @@ class TestPath(unittest.TestCase):
         jdict = {
             'type': 'TrackSegment',
             'length': 60,
-            'location': ['BN01', 'S01']
+            'location': 'BN01/S01'
         }
         obj1 = PathEdge.construct_from_jdict(jdict)
 
@@ -105,7 +111,7 @@ class TestPath(unittest.TestCase):
     def test_path_edge_jstr(self):
         obj1 = self.__sample_path_edge_1()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "TrackSegment", "length": 60, "location": ["BN01", "S01"]}', jstr)
+        self.assertEqual('{"type": "TrackSegment", "length": 60, "location": "BN01/S01"}', jstr)
 
 
     def test_path_edge_jstr_eq(self):
@@ -151,8 +157,8 @@ class TestPath(unittest.TestCase):
 
     def test_path_construct_from_jdict(self):
         jdict = [
-            {'type': 'TrackSegment', 'length': 60, 'location': ['BN01', 'S01']},
-            {'type': 'TrackSegment', 'length': 80, 'location': ['BN01', 'S02']}
+            {'type': 'TrackSegment', 'length': 60, 'location': 'BN01/S01'},
+            {'type': 'TrackSegment', 'length': 80, 'location': 'BN01/S02'}
         ]
         obj = Path.construct_from_jdict(jdict)
 
@@ -162,14 +168,15 @@ class TestPath(unittest.TestCase):
 
     def test_path_append(self):
         obj = Path()
+        conf = self.__sample_turnout_configuration()
         segment1 = self.__sample_track_segment_1()
         segment2 = self.__sample_track_segment_2()
 
-        obj.append('BN01', segment1)
+        obj.append(conf, 'BN01', segment1)
         self.assertEqual([self.__sample_path_edge_1()], obj.edges)
         self.assertEqual(60, obj.total_length)
 
-        obj.append('BN01', segment2)
+        obj.append(conf, 'BN01', segment2)
         self.assertEqual([self.__sample_path_edge_1(), self.__sample_path_edge_2()], obj.edges)
         self.assertEqual(140, obj.total_length)
 
@@ -201,8 +208,8 @@ class TestPath(unittest.TestCase):
         edge2 = self.__sample_path_edge_2()
         obj = Path(edge1, edge2)
         jstr = JSONify.dumps(obj)
-        self.assertEqual('[{"type": "TrackSegment", "length": 60, "location": ["BN01", "S01"]}, '
-                         '{"type": "TrackSegment", "length": 80, "location": ["BN01", "S02"]}]', jstr)
+        self.assertEqual('[{"type": "TrackSegment", "length": 60, "location": "BN01/S01"}, '
+                         '{"type": "TrackSegment", "length": 80, "location": "BN01/S02"}]', jstr)
 
 
     def test_path_jstr_eq(self):
