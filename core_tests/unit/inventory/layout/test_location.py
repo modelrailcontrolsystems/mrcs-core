@@ -46,15 +46,38 @@ class TestLocation(unittest.TestCase):
         self.assertEqual('Location:{block_label:BN01, segment_label:S01}', str(obj1))
 
 
+    def test_location_shortform(self):
+        obj1 = self.__sample_location_1()
+        self.assertEqual('BN01/S01', obj1.shortform)
+
+
     def test_location_as_json(self):
         obj1 = self.__sample_location_1()
-        self.assertEqual(['BN01', 'S01'], obj1.as_json())
+        self.assertEqual('BN01/S01', obj1.as_json())
 
 
     def test_location_jstr(self):
         obj1 = self.__sample_location_1()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('["BN01", "S01"]', jstr)
+        self.assertEqual('"BN01/S01"', jstr)
+
+
+    def test_location_construct_from_shortform(self):
+        self.assertEqual(self.__sample_location_1(), Location.construct_from_shortform('BN01/S01'))
+
+        # short labels are accepted
+        self.assertEqual(Location('B1', 'S1'), Location.construct_from_shortform('B1/S1'))
+
+        for malformed in ('BN01', 'BN01/S01/X', '', '/S01', 'BN01/'):
+            with self.assertRaises(ValueError):
+                Location.construct_from_shortform(malformed)
+
+
+    def test_location_construct_from_jdict(self):
+        self.assertEqual(self.__sample_location_1(), Location.construct_from_jdict('BN01/S01'))
+
+        with self.assertRaises(ValueError):
+            Location.construct_from_jdict('BN01')
 
 
     def test_location_jstr_eq(self):

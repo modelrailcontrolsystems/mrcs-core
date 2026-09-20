@@ -178,7 +178,7 @@ class SwitchedSegmentLink(SegmentLink):
         if turnout_position == TurnoutPosition.P1:
             return self.p1_next_location
 
-        raise ValueError(f'cannot find selected_next_location for turnout position {turnout_position}')
+        raise ValueError(f'selected_next_location cannot be determined for turnout position {turnout_position}')
 
 
     # noinspection unresolved-references

@@ -13,6 +13,7 @@ from typing import Any
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
+from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.segment.segment_link import SegmentLink
 
@@ -40,9 +41,8 @@ class Segment(JSONable, ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, length: int, up_link: SegmentLink | None, down_link: SegmentLink | None):
+    def __init__(self, label: str, up_link: SegmentLink | None, down_link: SegmentLink | None):
         self.__label = label
-        self.__length = length  # mm
         self.__up_link = up_link
         self.__down_link = down_link
 
@@ -70,6 +70,11 @@ class Segment(JSONable, ABC):
         pass
 
 
+    @abstractmethod
+    def length(self, config: TurnoutConfiguration) -> int:
+        pass
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def next_locations(self):
@@ -94,11 +99,6 @@ class Segment(JSONable, ABC):
 
 
     @property
-    def length(self):
-        return self.__length
-
-
-    @property
     def up_link(self):
         return self.__up_link
 
@@ -106,6 +106,11 @@ class Segment(JSONable, ABC):
     @property
     def down_link(self):
         return self.__down_link
+
+
+    @property
+    def turnout_label(self):
+        return None
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -129,19 +134,22 @@ class TrackSegment(Segment):
         up_link = SegmentLink.construct_from_jdict(jdict.get('up-link'))
         down_link = SegmentLink.construct_from_jdict(jdict.get('down-link'))
 
-        return cls(label, length, up_link, down_link)
+        return cls(label, up_link, down_link, length)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, length: int, up_link: SegmentLink | None, down_link: SegmentLink | None):
-        super().__init__(label, length, up_link, down_link)
+    def __init__(self, label: str, up_link: SegmentLink | None, down_link: SegmentLink | None, length: int):
+        super().__init__(label, up_link, down_link)
+
+        self._length = length
 
 
+    # noinspection PyProtectedMember
     def __eq__(self, other: Any):
         try:
-            return (self.label == other.label and self.length == other.length and
-                    self.up_link == other.up_link and self.down_link == other.down_link)
+            return (self.label == other.label and self.up_link == other.up_link and self.down_link == other.down_link
+                    and self._length == other._length)
         except (AttributeError, TypeError):
             return False
 
@@ -164,6 +172,10 @@ class TrackSegment(Segment):
         return self.down_link.selected_next_location(None)
 
 
+    def length(self, config: TurnoutConfiguration) -> int:
+        return self._length
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):
@@ -172,7 +184,7 @@ class TrackSegment(Segment):
         jdict['type'] = self.type_name()
 
         jdict['label'] = self.label
-        jdict['length'] = self.length
+        jdict['length'] = self._length
 
         jdict['up-link'] = self.up_link
         jdict['down-link'] = self.down_link
@@ -183,10 +195,12 @@ class TrackSegment(Segment):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'TrackSegment:{{label:{self.label}, length:{self.length}, '
-                f'up_link:{self.up_link}, down_link:{self.down_link}}}')
+        return (
+            f'TrackSegment:{{label:{self.label}, up_link:{self.up_link}, down_link:{self.down_link}, '
+            f'length:{self._length}}}')
 
 
+# TODO: TurnoutSegment needs turnout_address
 # --------------------------------------------------------------------------------------------------------------------
 
 class TurnoutSegment(Segment):
@@ -203,27 +217,32 @@ class TurnoutSegment(Segment):
             raise TypeError(f'required type:{cls.type_name()} got:{type_name}')
 
         label = jdict.get('label')
-        length = jdict.get('length')
-        turnout = jdict.get('turnout')
+        p0_length = jdict.get('p0-length')
+        p1_length = jdict.get('p1-length')
+        turnout_label = jdict.get('turnout')
 
         up_link = SegmentLink.construct_from_jdict(jdict.get('up-link'))
         down_link = SegmentLink.construct_from_jdict(jdict.get('down-link'))
 
-        return cls(label, length, turnout, up_link, down_link)
+        return cls(label, up_link, down_link, p0_length, p1_length, turnout_label)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, length: int, turnout: str, up_link: SegmentLink | None,
-                 down_link: SegmentLink | None):
-        super().__init__(label, length, up_link, down_link)
-        self.__turnout = turnout
+    def __init__(self, label: str, up_link: SegmentLink | None, down_link: SegmentLink | None,
+                 p0_length: int, p1_length: int, turnout_label: str):
+        super().__init__(label, up_link, down_link)
+
+        self.__p0_length = p0_length
+        self.__p1_length = p1_length
+        self._turnout_label = turnout_label
 
 
     def __eq__(self, other: Any):
         try:
-            return (self.label == other.label and self.length == other.length and self.turnout == other.turnout and
-                    self.up_link == other.up_link and self.down_link == other.down_link)
+            return (self.label == other.label and self.up_link == other.up_link and self.down_link == other.down_link
+                    and self.__p0_length == other.__p0_length and self.__p1_length == other.__p1_length and
+                    self.turnout_label == other.turnout_label)
         except (AttributeError, TypeError):
             return False
 
@@ -235,7 +254,7 @@ class TurnoutSegment(Segment):
         if self.up_link is None:
             return None
 
-        return self.up_link.selected_next_location(config.position(self.turnout))
+        return self.up_link.selected_next_location(config.position(self.turnout_label))
 
 
     # noinspection unresolved-references
@@ -243,7 +262,19 @@ class TurnoutSegment(Segment):
         if self.down_link is None:
             return None
 
-        return self.down_link.selected_next_location(config.position(self.turnout))
+        return self.down_link.selected_next_location(config.position(self.turnout_label))
+
+
+    def length(self, config: TurnoutConfiguration) -> int:
+        turnout_position = config.position(self.turnout_label)
+
+        if turnout_position == TurnoutPosition.P0:
+            return self.__p0_length
+
+        if turnout_position == TurnoutPosition.P1:
+            return self.__p1_length
+
+        raise ValueError(f'length cannot be determined for turnout position {turnout_position}')
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -254,8 +285,10 @@ class TurnoutSegment(Segment):
         jdict['type'] = self.type_name()
 
         jdict['label'] = self.label
-        jdict['length'] = self.length
-        jdict['turnout'] = self.turnout
+
+        jdict['p0-length'] = self.__p0_length
+        jdict['p1-length'] = self.__p1_length
+        jdict['turnout'] = self.turnout_label
 
         jdict['up-link'] = self.up_link
         jdict['down-link'] = self.down_link
@@ -266,12 +299,12 @@ class TurnoutSegment(Segment):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def turnout(self):
-        return self.__turnout
+    def turnout_label(self):
+        return self._turnout_label
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'TurnoutSegment:{{label:{self.label}, length:{self.length}, turnout:{self.turnout}, '
-                f'up_link:{self.up_link}, down_link:{self.down_link}}}')
+        return (f'TurnoutSegment:{{label:{self.label}, up_link:{self.up_link}, down_link:{self.down_link}, '
+                f'p0_length:{self.__p0_length}, p1_length:{self.__p1_length}, turnout_label:{self.turnout_label}}}')

@@ -10,6 +10,7 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.segment.segment import Segment
 
@@ -32,8 +33,8 @@ class PathEdge(JSONable):
 
 
     @classmethod
-    def construct(cls, block_label: str, segment: Segment) -> Self:
-        return cls(segment.type_name(), segment.length, Location(block_label, segment.label))
+    def construct(cls, config: TurnoutConfiguration, block_label: str, segment: Segment) -> Self:
+        return cls(segment.type_name(), segment.length(config), Location(block_label, segment.label))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -117,8 +118,8 @@ class Path(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def append(self, block_label: str, segment: Segment):
-        self.edges.append(PathEdge.construct(block_label, segment))
+    def append(self, config: TurnoutConfiguration, block_label: str, segment: Segment):
+        self.edges.append(PathEdge.construct(config, block_label, segment))
 
 
     # ----------------------------------------------------------------------------------------------------------------
