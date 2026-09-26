@@ -40,13 +40,6 @@ class LayoutNavigator(ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def validate(self) -> None:
-        # are all block labels unique?
-        labels = []
-        for block in self.blocks:
-            if block.label in labels:
-                raise ValueError(f"Duplicate block label {block.label}.")
-            labels.append(block.label)
-
         # are all block addresses unique?
         addresses = []
         for block in self.blocks:
@@ -56,7 +49,7 @@ class LayoutNavigator(ABC):
 
         # are all turnout labels unique?
         turnout_labels = []
-        for block_label, segment in self.__block_segments():
+        for block_label, segment in self.block_segments():
             if segment.turnout_label is None:
                 continue
             if segment.turnout_label in turnout_labels:
@@ -72,9 +65,9 @@ class LayoutNavigator(ABC):
                 labels.append(segment.label)
 
         # does every segment link have a location in the layout?
-        for block_label, segment in self.__block_segments():
+        for block_label, segment in self.block_segments():
             for next_location in segment.next_locations():
-                found = self.__block_segment(next_location)
+                found = self.block_segment(next_location)
                 if found is None:
                     raise ValueError(f'Segment {segment.label} in block {block_label} has an invalid '
                                      f'next_location: {next_location}.')
@@ -84,12 +77,12 @@ class LayoutNavigator(ABC):
                     raise ValueError(f'Segment {segment.label} in block {block_label} is pointing to itself.')
 
         # does every segment have a reciprocal link?
-        for block_label, segment in self.__block_segments():
+        for block_label, segment in self.block_segments():
             this_location = Location(block_label, segment.label)
 
             reciprocal = False
             for next_location in segment.next_locations():
-                next_segment = self.__segment(next_location)
+                next_segment = self.segment(next_location)
                 next_locations = [] if next_segment is None else next_segment.next_locations()
 
                 if this_location in next_locations:
@@ -99,13 +92,17 @@ class LayoutNavigator(ABC):
             if not reciprocal:
                 raise ValueError(f"No reciprocal link for segment label {segment.label} in block {block_label}.")
 
-        # TODO: validate platforms
+        # do platform origins exist in the layout?
+        for platform in self.platforms:
+            if self.segment(platform.origin) is None:
+                raise ValueError(f'The platform {platform.label.shortform} has a non-existent origin '
+                                 f'{platform.origin.shortform}.')
 
 
-    def path(self, config: TurnoutConfiguration, heading: BlockHeading, start: Location, end: Location) -> Path:
+    def segment_path(self, config: TurnoutConfiguration, heading: BlockHeading, start: Location, end: Location) -> Path:
         path = Path()
 
-        found = self.__block_segment(start)
+        found = self.block_segment(start)
         if found is None:
             raise ValueError(f'Start location not found:{start.shortform}.')
 
@@ -122,18 +119,34 @@ class LayoutNavigator(ABC):
                 raise ValueError(f'End location {end.shortform} is not reachable from location {start.shortform} '
                                  f'with heading {heading.name} - turnout configuration may be incorrect.')
 
-            found = self.__block_segment(next_location)
+            found = self.block_segment(next_location)
             if found is None:
                 raise ValueError(f'Malformed layout - segment not found for next location {next_location.shortform}.')
 
             block_label, segment = found
 
 
-    # TODO: platform path
+    def platform_path(self, config: TurnoutConfiguration, heading: BlockHeading, start: PlatformLabel,
+                      end: PlatformLabel) -> Path:
+        start_platform = self.platform(start)
+        if start_platform is None:
+            raise ValueError(f'Start platform not found:{start.shortform}.')
+
+        end_platform = self.platform(end)
+        if end_platform is None:
+            raise ValueError(f'End platform not found:{end.shortform}.')
+
+        # TODO: length calculation depends on platform offset, platform length and heading
+
+        # start_segment = self.segment(start_platform.origin)
+        # end_segment = self.segment(end_platform.origin)
+
+        return self.segment_path(config, heading, start_platform.origin, end_platform.origin)
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __segment(self, location: Location) -> Segment | None:
+    def segment(self, location: Location) -> Segment | None:
         block = self.block(location.block_label)
         if block is None:
             return None
@@ -141,15 +154,19 @@ class LayoutNavigator(ABC):
         return block.segment(location.segment_label)
 
 
-    def __block_segment(self, location: Location) -> tuple[str, Segment] | None:
+    def block_segment(self, location: Location) -> tuple[str, Segment] | None:
         block = self.block(location.block_label)
         if block is None:
             return None
 
-        return block.label, block.segment(location.segment_label)
+        segment = block.segment(location.segment_label)
+        if segment is None:
+            return None
+
+        return block.label, segment
 
 
-    def __block_segments(self):
+    def block_segments(self):
         for block in self.blocks:
             for segment in block.segments:
                 yield block.label, segment
@@ -183,6 +200,11 @@ class LayoutNavigator(ABC):
     @property
     def platforms(self):
         return tuple(self.__platforms.values())
+
+
+    @property
+    def platform_labels(self):
+        return tuple(self.__platforms.keys())
 
 
     def platform(self, label: PlatformLabel):
