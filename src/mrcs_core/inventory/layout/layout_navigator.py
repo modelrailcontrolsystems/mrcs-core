@@ -56,13 +56,12 @@ class LayoutNavigator(ABC):
 
         # are all turnout labels unique?
         turnout_labels = []
-        for block in self.blocks:
-            for segment in block.segments:
-                if segment.turnout_label is None:
-                    continue
-                if segment.turnout_label in turnout_labels:
-                    raise ValueError(f"Duplicate turnout {segment.turnout_label} in {block.label}.")
-                turnout_labels.append(segment.turnout_label)
+        for block_label, segment in self.__block_segments():
+            if segment.turnout_label is None:
+                continue
+            if segment.turnout_label in turnout_labels:
+                raise ValueError(f"Duplicate turnout label {segment.turnout_label} in {block_label}.")
+            turnout_labels.append(segment.turnout_label)
 
         # are all segment labels unique within their block?
         for block in self.blocks:
@@ -73,34 +72,32 @@ class LayoutNavigator(ABC):
                 labels.append(segment.label)
 
         # does every segment link have a location in the layout?
-        for block in self.blocks:
-            for segment in block.segments:
-                for next_location in segment.next_locations():
-                    found = self.__block_segment(next_location)
-                    if found is None:
-                        raise ValueError(f'Segment {segment.label} in block {block.label} has an invalid '
-                                         f'next_location: {next_location}.')
+        for block_label, segment in self.__block_segments():
+            for next_location in segment.next_locations():
+                found = self.__block_segment(next_location)
+                if found is None:
+                    raise ValueError(f'Segment {segment.label} in block {block_label} has an invalid '
+                                     f'next_location: {next_location}.')
 
-                    next_block_label, next_segment = found
-                    if block.label == next_block_label and segment.label == next_segment.label:
-                        raise ValueError(f'Segment {segment.label} in block {block.label} is pointing to itself.')
+                next_block_label, next_segment = found
+                if block_label == next_block_label and segment.label == next_segment.label:
+                    raise ValueError(f'Segment {segment.label} in block {block_label} is pointing to itself.')
 
         # does every segment have a reciprocal link?
-        for block in self.blocks:
-            for segment in block.segments:
-                this_location = Location(block.label, segment.label)
+        for block_label, segment in self.__block_segments():
+            this_location = Location(block_label, segment.label)
 
-                reciprocal = False
-                for next_location in segment.next_locations():
-                    next_segment = self.__segment(next_location)
-                    next_locations = [] if next_segment is None else next_segment.next_locations()
+            reciprocal = False
+            for next_location in segment.next_locations():
+                next_segment = self.__segment(next_location)
+                next_locations = [] if next_segment is None else next_segment.next_locations()
 
-                    if this_location in next_locations:
-                        reciprocal = True
-                        break
+                if this_location in next_locations:
+                    reciprocal = True
+                    break
 
-                if not reciprocal:
-                    raise ValueError(f"No reciprocal link for segment label {segment.label} in block {block.label}.")
+            if not reciprocal:
+                raise ValueError(f"No reciprocal link for segment label {segment.label} in block {block_label}.")
 
         # TODO: validate platforms
 
@@ -150,6 +147,12 @@ class LayoutNavigator(ABC):
             return None
 
         return block.label, block.segment(location.segment_label)
+
+
+    def __block_segments(self):
+        for block in self.blocks:
+            for segment in block.segments:
+                yield block.label, segment
 
 
     # ----------------------------------------------------------------------------------------------------------------
