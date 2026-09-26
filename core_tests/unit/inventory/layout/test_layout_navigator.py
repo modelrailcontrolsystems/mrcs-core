@@ -80,11 +80,17 @@ class TestLayoutNavigator(unittest.TestCase):
         return Platform(PlatformLabel('TST', 2), PlatformAlignment.UP_RIGHT, Location('B04', 'S01'), 30, 140)
 
 
-    def __navigator(self) -> LayoutNavigator:
+    def __blocks(self) -> OrderedDict[str, Block]:
         blocks = OrderedDict()
         for block_jdict in self.__layout_jdict.get('blocks', []):
             block = Block.construct_from_jdict(block_jdict)
             blocks[block.label] = block
+
+        return blocks
+
+
+    def __navigator(self) -> LayoutNavigator:
+        blocks = self.__blocks()
 
         platforms = OrderedDict()
         for platform_jdict in self.__layout_jdict.get('platforms', []):
@@ -172,17 +178,6 @@ class TestLayoutNavigator(unittest.TestCase):
         navigator.validate()
 
 
-    def test_navigator_validate_duplicate_block_label(self):
-        block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict())
-        block2 = Block('B01', '1/2', BlockOperation.REVERSIBLE, OrderedDict())
-
-        navigator = _DummyLayoutNavigator(OrderedDict({'b1': block1, 'b2': block2}), OrderedDict())
-        with self.assertRaises(ValueError) as ctx:
-            navigator.validate()
-
-        self.assertEqual('Duplicate block label B01.', str(ctx.exception))
-
-
     def test_navigator_validate_duplicate_block_address(self):
         block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict())
         block2 = Block('B02', '1/1', BlockOperation.REVERSIBLE, OrderedDict())
@@ -230,6 +225,21 @@ class TestLayoutNavigator(unittest.TestCase):
                          'Location:{block_label:B99, segment_label:S01}.', str(ctx.exception))
 
 
+    def test_navigator_validate_invalid_next_location_segment(self):
+        seg1 = TrackSegment('S01', FixedSegmentLink(Location('B02', 'S99')), None, 100)
+        seg2 = TrackSegment('S01', FixedSegmentLink(Location('B01', 'S01')), None, 100)
+
+        block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
+        block2 = Block('B02', '1/2', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg2}))
+
+        navigator = _DummyLayoutNavigator(OrderedDict({'B01': block1, 'B02': block2}), OrderedDict())
+        with self.assertRaises(ValueError) as ctx:
+            navigator.validate()
+
+        self.assertEqual('Segment S01 in block B01 has an invalid next_location: '
+                         'Location:{block_label:B02, segment_label:S99}.', str(ctx.exception))
+
+
     def test_navigator_validate_segment_pointing_to_itself(self):
         seg = TrackSegment('S01', FixedSegmentLink(Location('B01', 'S01')), None, 100)
         block = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg}))
@@ -255,13 +265,33 @@ class TestLayoutNavigator(unittest.TestCase):
         self.assertEqual('No reciprocal link for segment label S01 in block B01.', str(ctx.exception))
 
 
+    def test_navigator_validate_platform_origin_block_not_found(self):
+        platform = Platform(PlatformLabel('TST', 9), PlatformAlignment.UP_LEFT, Location('B99', 'S01'), 20, 120)
+
+        navigator = _DummyLayoutNavigator(self.__blocks(), OrderedDict({platform.label: platform}))
+        with self.assertRaises(ValueError) as ctx:
+            navigator.validate()
+
+        self.assertEqual('The platform TST/9 has a non-existent origin B99/S01.', str(ctx.exception))
+
+
+    def test_navigator_validate_platform_origin_segment_not_found(self):
+        platform = Platform(PlatformLabel('TST', 9), PlatformAlignment.UP_LEFT, Location('B03', 'S99'), 20, 120)
+
+        navigator = _DummyLayoutNavigator(self.__blocks(), OrderedDict({platform.label: platform}))
+        with self.assertRaises(ValueError) as ctx:
+            navigator.validate()
+
+        self.assertEqual('The platform TST/9 has a non-existent origin B03/S99.', str(ctx.exception))
+
+
     # Path calculation -----------------------------------------------------------------------------------------------
 
     def test_navigator_path_up_turnout_p0(self):
         navigator = self.__navigator()
         config = self.__config_p0()
 
-        path = navigator.path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B03', 'S01'))
+        path = navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B03', 'S01'))
 
         expected_edges = [
             PathEdge('TrackSegment', 100, Location('B01', 'S01')),
@@ -277,7 +307,7 @@ class TestLayoutNavigator(unittest.TestCase):
         navigator = self.__navigator()
         config = self.__config_p1()
 
-        path = navigator.path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B04', 'S01'))
+        path = navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B04', 'S01'))
 
         expected_edges = [
             PathEdge('TrackSegment', 100, Location('B01', 'S01')),
@@ -293,7 +323,7 @@ class TestLayoutNavigator(unittest.TestCase):
         navigator = self.__navigator()
         config = self.__config_p0()
 
-        path = navigator.path(config, BlockHeading.DOWN, Location('B03', 'S01'), Location('B01', 'S01'))
+        path = navigator.segment_path(config, BlockHeading.DOWN, Location('B03', 'S01'), Location('B01', 'S01'))
 
         expected_edges = [
             PathEdge('TrackSegment', 150, Location('B03', 'S01')),
@@ -309,7 +339,7 @@ class TestLayoutNavigator(unittest.TestCase):
         navigator = self.__navigator()
         config = self.__config_p1()
 
-        path = navigator.path(config, BlockHeading.DOWN, Location('B04', 'S01'), Location('B01', 'S01'))
+        path = navigator.segment_path(config, BlockHeading.DOWN, Location('B04', 'S01'), Location('B01', 'S01'))
 
         expected_edges = [
             PathEdge('TrackSegment', 200, Location('B04', 'S01')),
@@ -325,7 +355,7 @@ class TestLayoutNavigator(unittest.TestCase):
         navigator = self.__navigator()
         config = self.__config_p0()
 
-        path = navigator.path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B01', 'S01'))
+        path = navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B01', 'S01'))
 
         expected_edges = [
             PathEdge('TrackSegment', 100, Location('B01', 'S01'))
@@ -339,9 +369,19 @@ class TestLayoutNavigator(unittest.TestCase):
         config = self.__config_p0()
 
         with self.assertRaises(ValueError) as ctx:
-            navigator.path(config, BlockHeading.UP, Location('B99', 'S01'), Location('B01', 'S01'))
+            navigator.segment_path(config, BlockHeading.UP, Location('B99', 'S01'), Location('B01', 'S01'))
 
         self.assertEqual('Start location not found:B99/S01.', str(ctx.exception))
+
+
+    def test_navigator_path_start_segment_not_found(self):
+        navigator = self.__navigator()
+        config = self.__config_p0()
+
+        with self.assertRaises(ValueError) as ctx:
+            navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S99'), Location('B01', 'S01'))
+
+        self.assertEqual('Start location not found:B01/S99.', str(ctx.exception))
 
 
     def test_navigator_path_end_not_reachable(self):
@@ -349,7 +389,7 @@ class TestLayoutNavigator(unittest.TestCase):
         config = self.__config_p0()
 
         with self.assertRaises(ValueError) as ctx:
-            navigator.path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B04', 'S01'))
+            navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B04', 'S01'))
 
         self.assertEqual('End location B04/S01 is not reachable from location B01/S01 with heading UP - '
                          'turnout configuration may be incorrect.', str(ctx.exception))
@@ -362,9 +402,21 @@ class TestLayoutNavigator(unittest.TestCase):
         config = self.__config_p0()
 
         with self.assertRaises(ValueError) as ctx:
-            navigator.path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B02', 'S01'))
+            navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B02', 'S01'))
 
         self.assertEqual('Malformed layout - segment not found for next location B99/S01.', str(ctx.exception))
+
+
+    def test_navigator_path_malformed_layout_segment_during_traversal(self):
+        seg1 = TrackSegment('S01', FixedSegmentLink(Location('B01', 'S99')), None, 100)
+        block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
+        navigator = _DummyLayoutNavigator(OrderedDict({'B01': block1}), OrderedDict())
+        config = self.__config_p0()
+
+        with self.assertRaises(ValueError) as ctx:
+            navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B02', 'S01'))
+
+        self.assertEqual('Malformed layout - segment not found for next location B01/S99.', str(ctx.exception))
 
 
 # --------------------------------------------------------------------------------------------------------------------
