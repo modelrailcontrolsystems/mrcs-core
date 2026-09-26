@@ -203,7 +203,7 @@ class TestLayoutNavigator(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             navigator.validate()
 
-        self.assertEqual('Duplicate turnout TE01 in B01.', str(ctx.exception))
+        self.assertEqual('Duplicate turnout label TE01 in B01.', str(ctx.exception))
 
 
     def test_navigator_validate_duplicate_segment_label(self):
