@@ -17,8 +17,9 @@ from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 from mrcs_core.inventory.layout.location import Location
-from mrcs_core.inventory.segment.segment import Segment, TrackSegment
-from mrcs_core.inventory.segment.segment_link import FixedSegmentLink
+from mrcs_core.inventory.segment.segment_builder import SegmentBuilder
+from mrcs_core.inventory.segment.track_segment import TrackSegment
+from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -125,12 +126,12 @@ class TestTrackSegment(unittest.TestCase):
     def test_segment_construct_from_jdict(self):
         obj1 = self.__sample_track_segment_1()
         jstr = JSONify.dumps(obj1)
-        obj2 = Segment.construct_from_jdict(json.loads(jstr))
+        obj2 = SegmentBuilder.construct_from_jdict(json.loads(jstr))
         self.assertIsInstance(obj2, TrackSegment)
         self.assertEqual(obj2, obj1)
 
         with self.assertRaises(TypeError):
-            Segment.construct_from_jdict({'type': 'InvalidType'})
+            SegmentBuilder.construct_from_jdict({'type': 'InvalidType'})
 
 
     def test_track_segment_eq(self):

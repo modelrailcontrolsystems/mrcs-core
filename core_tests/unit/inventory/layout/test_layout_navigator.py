@@ -16,6 +16,7 @@ from pathlib import Path
 
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
+from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 from mrcs_core.equipment.turnout.turnout_status import TurnoutStatus
 from mrcs_core.inventory.block.block import Block
 from mrcs_core.inventory.block.block_operation import BlockOperation
@@ -25,8 +26,9 @@ from mrcs_core.inventory.layout.path import PathEdge
 from mrcs_core.inventory.platform.platform import Platform
 from mrcs_core.inventory.platform.platform_alignment import PlatformAlignment
 from mrcs_core.inventory.platform.platform_label import PlatformLabel
-from mrcs_core.inventory.segment.segment import TrackSegment, TurnoutSegment
-from mrcs_core.inventory.segment.segment_link import FixedSegmentLink
+from mrcs_core.inventory.segment.track_segment import TrackSegment
+from mrcs_core.inventory.segment.turnout_segment import TurnoutSegment
+from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -134,6 +136,13 @@ class TestLayoutNavigator(unittest.TestCase):
         self.assertEqual((self.__sample_platform_1(), self.__sample_platform_2()), navigator.platforms)
 
 
+    def test_navigator_platform_labels(self):
+        navigator = self.__navigator()
+
+        self.assertEqual(2, len(navigator.platform_labels))
+        self.assertEqual((PlatformLabel('TST', 1), PlatformLabel('TST', 2)), navigator.platform_labels)
+
+
     def test_navigator_platform(self):
         navigator = self.__navigator()
 
@@ -171,6 +180,70 @@ class TestLayoutNavigator(unittest.TestCase):
         self.assertEqual(5, len(locations))
 
 
+    def test_navigator_segment(self):
+        navigator = self.__navigator()
+
+        seg = navigator.segment(Location('B01', 'S01'))
+        self.assertIsNotNone(seg)
+        assert seg is not None
+        self.assertEqual('S01', seg.label)
+
+        self.assertIsNone(navigator.segment(Location('B99', 'S01')))
+        self.assertIsNone(navigator.segment(Location('B01', 'S99')))
+
+
+    def test_navigator_block_segment(self):
+        navigator = self.__navigator()
+
+        found = navigator.block_segment(Location('B01', 'S01'))
+        self.assertIsNotNone(found)
+        assert found is not None
+        block_label, seg = found
+        self.assertEqual('B01', block_label)
+        self.assertEqual('S01', seg.label)
+
+        self.assertIsNone(navigator.block_segment(Location('B99', 'S01')))
+        self.assertIsNone(navigator.block_segment(Location('B01', 'S99')))
+
+
+    def test_navigator_block_segments(self):
+        navigator = self.__navigator()
+
+        segments = list(navigator.block_segments())
+        self.assertEqual(5, len(segments))
+        labels = [(block_label, seg.label) for block_label, seg in segments]
+        expected = [
+            ('B01', 'S01'),
+            ('B02', 'S01'),
+            ('B02', 'S02'),
+            ('B03', 'S01'),
+            ('B04', 'S01')
+        ]
+        self.assertEqual(expected, labels)
+
+
+    # Inventories ----------------------------------------------------------------------------------------------------
+
+    def test_navigator_block_inventory(self):
+        navigator = self.__navigator()
+        inventory = navigator.block_inventory()
+
+        self.assertEqual(4, len(inventory))
+        self.assertEqual(('B01', 'B02', 'B03', 'B04'), tuple(b.label for b in inventory.items))
+
+
+    def test_navigator_turnout_inventory(self):
+        navigator = self.__navigator()
+        inventory = navigator.turnout_inventory()
+
+        self.assertEqual(1, len(inventory))
+        turnout = inventory.items[0]
+        self.assertEqual('S02', turnout.label)
+        self.assertEqual('B02', turnout.block_label)
+        self.assertEqual(1, turnout.turnout_address)
+        self.assertEqual(TurnoutPosition.UNKNOWN, turnout.position)
+
+
     # Validation -----------------------------------------------------------------------------------------------------
 
     def test_navigator_validate_valid(self):
@@ -189,16 +262,16 @@ class TestLayoutNavigator(unittest.TestCase):
         self.assertEqual('Duplicate block address 1/1 in B02.', str(ctx.exception))
 
 
-    def test_navigator_validate_duplicate_turnout_label(self):
-        seg1 = TurnoutSegment('S01', None, None, 50, 70, 'TE01')
-        seg2 = TurnoutSegment('S02', None, None, 50, 70, 'TE01')
-        block = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'s1': seg1, 's2': seg2}))
+    def test_navigator_validate_duplicate_turnout_address(self):
+        seg1 = TurnoutSegment('S01', 1, None, None, 50, 70)
+        seg2 = TurnoutSegment('S02', 1, None, None, 50, 70)
+        block = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1, 'S02': seg2}))
 
-        navigator = _DummyLayoutNavigator(OrderedDict({'b1': block}), OrderedDict())
+        navigator = _DummyLayoutNavigator(OrderedDict({'B01': block}), OrderedDict())
         with self.assertRaises(ValueError) as ctx:
             navigator.validate()
 
-        self.assertEqual('Duplicate turnout label TE01 in B01.', str(ctx.exception))
+        self.assertEqual('Duplicate turnout address 1 in S02.', str(ctx.exception))
 
 
     def test_navigator_validate_duplicate_segment_label(self):
@@ -417,6 +490,41 @@ class TestLayoutNavigator(unittest.TestCase):
             navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B02', 'S01'))
 
         self.assertEqual('Malformed layout - segment not found for next location B01/S99.', str(ctx.exception))
+
+
+    # Platform path --------------------------------------------------------------------------------------------------
+
+    def test_navigator_platform_path(self):
+        navigator = self.__navigator()
+        config = self.__config_p0()
+
+        path = navigator.platform_path(config, BlockHeading.UP, PlatformLabel('TST', 1), PlatformLabel('TST', 1))
+
+        expected_edges = [
+            PathEdge('TrackSegment', 150, Location('B03', 'S01'))
+        ]
+        self.assertEqual(expected_edges, path.edges)
+        self.assertEqual(150, path.total_length)
+
+
+    def test_navigator_platform_path_start_not_found(self):
+        navigator = self.__navigator()
+        config = self.__config_p0()
+
+        with self.assertRaises(ValueError) as ctx:
+            navigator.platform_path(config, BlockHeading.UP, PlatformLabel('TST', 9), PlatformLabel('TST', 2))
+
+        self.assertEqual('Start platform not found:TST/9.', str(ctx.exception))
+
+
+    def test_navigator_platform_path_end_not_found(self):
+        navigator = self.__navigator()
+        config = self.__config_p0()
+
+        with self.assertRaises(ValueError) as ctx:
+            navigator.platform_path(config, BlockHeading.UP, PlatformLabel('TST', 1), PlatformLabel('TST', 9))
+
+        self.assertEqual('End platform not found:TST/9.', str(ctx.exception))
 
 
 # --------------------------------------------------------------------------------------------------------------------

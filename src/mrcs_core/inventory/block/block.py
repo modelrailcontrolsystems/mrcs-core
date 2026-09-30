@@ -12,8 +12,11 @@ from collections import OrderedDict
 from mypy.types import Any
 
 from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.block.block_enums import BlockHeading, BlockVoltage
+from mrcs_core.equipment.block.block_status import BlockStatus
 from mrcs_core.inventory.block.block_operation import BlockOperation
 from mrcs_core.inventory.segment.segment import Segment
+from mrcs_core.inventory.segment.segment_builder import SegmentBuilder
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -32,7 +35,7 @@ class Block(JSONable):
 
         segments = OrderedDict()
         for segment_jdict in jdict.get('segments', []):
-            segment = Segment.construct_from_jdict(segment_jdict)
+            segment = SegmentBuilder.construct_from_jdict(segment_jdict)
             segments[segment.label] = segment
 
         return cls(label, address, operation, segments)
@@ -56,6 +59,12 @@ class Block(JSONable):
 
     def __lt__(self, other: Any):
         return self.label < other.label
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def status(self):
+        return BlockStatus(self.label, self.address, BlockHeading.UNASSIGNED, BlockVoltage.UNKNOWN)
 
 
     # ----------------------------------------------------------------------------------------------------------------

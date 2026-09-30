@@ -422,14 +422,14 @@ class MultiPersistentJSONable(AbstractPersistentJSONable, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def list(cls, manager):
+    def list(cls, manager):  # TODO: identify manager as PersistenceManager throughout
         try:
             dirname, filename = cls.persistence_location(None)
         except NotImplementedError:
             return None
 
         suffix_len = len(filename) + 1
-        items = manager.list(manager.scs_path(), dirname)
+        items = manager.list(manager.mrcs_abs_dir(), dirname)
 
         return tuple(item[:-suffix_len] for item in items if item.endswith(filename))
 
