@@ -15,11 +15,14 @@ from collections import OrderedDict
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.inventory.block.block import Block
+from mrcs_core.inventory.block.block_inventory import BlockInventory
 from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.layout.path import Path
 from mrcs_core.inventory.platform.platform import Platform
 from mrcs_core.inventory.platform.platform_label import PlatformLabel
 from mrcs_core.inventory.segment.segment import Segment
+from mrcs_core.inventory.segment.turnout_inventory import TurnoutInventory
+from mrcs_core.inventory.segment.turnout_segment import TurnoutSegment
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -47,14 +50,14 @@ class LayoutNavigator(ABC):
                 raise ValueError(f"Duplicate block address {block.address} in {block.label}.")
             addresses.append(block.address)
 
-        # are all turnout labels unique?
-        turnout_labels = []
+        # are all turnout addresses unique?
+        addresses = []
         for block_label, segment in self.block_segments():
-            if segment.turnout_label is None:
+            if segment.address is None:
                 continue
-            if segment.turnout_label in turnout_labels:
-                raise ValueError(f"Duplicate turnout label {segment.turnout_label} in {block_label}.")
-            turnout_labels.append(segment.turnout_label)
+            if segment.address in addresses:
+                raise ValueError(f"Duplicate turnout address {segment.address} in {segment.label}.")
+            addresses.append(segment.address)
 
         # are all segment labels unique within their block?
         for block in self.blocks:
@@ -99,6 +102,8 @@ class LayoutNavigator(ABC):
                                  f'{platform.origin.shortform}.')
 
 
+    # ----------------------------------------------------------------------------------------------------------------
+
     def segment_path(self, config: TurnoutConfiguration, heading: BlockHeading, start: Location, end: Location) -> Path:
         path = Path()
 
@@ -142,6 +147,21 @@ class LayoutNavigator(ABC):
         # end_segment = self.segment(end_platform.origin)
 
         return self.segment_path(config, heading, start_platform.origin, end_platform.origin)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def block_inventory(self) -> BlockInventory:
+        block_statuses = [block.status() for block in self.blocks]
+
+        return BlockInventory(block_statuses)
+
+
+    def turnout_inventory(self) -> TurnoutInventory:
+        turnout_statuses = [segment.status(block_label) for block_label, segment in self.block_segments() if
+                            isinstance(segment, TurnoutSegment)]
+
+        return TurnoutInventory(turnout_statuses)
 
 
     # ----------------------------------------------------------------------------------------------------------------

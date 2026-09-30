@@ -32,7 +32,7 @@ from mrcs_core.sys.ipv4_address import IPv4Address
 
 class ControlRouterConf(PersistentJSONable):
     """
-    classdocs
+    networking configuration of a DCC control router
     """
 
     __FILENAME = "control_router_conf.json"

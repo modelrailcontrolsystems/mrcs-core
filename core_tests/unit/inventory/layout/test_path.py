@@ -16,8 +16,8 @@ from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.layout.path import Path, PathEdge
-from mrcs_core.inventory.segment.segment import TrackSegment
-from mrcs_core.inventory.segment.segment_link import FixedSegmentLink
+from mrcs_core.inventory.segment.track_segment import TrackSegment
+from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
 
 
 # --------------------------------------------------------------------------------------------------------------------

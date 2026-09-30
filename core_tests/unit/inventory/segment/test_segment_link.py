@@ -15,7 +15,9 @@ import unittest
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 from mrcs_core.inventory.layout.location import Location
-from mrcs_core.inventory.segment.segment_link import FixedSegmentLink, SegmentLink, SwitchedSegmentLink
+from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
+from mrcs_core.inventory.segment_link.segment_link_builder import SegmentLinkBuilder
+from mrcs_core.inventory.segment_link.switched_segment_link import SwitchedSegmentLink
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -56,7 +58,7 @@ class TestSegmentLink(unittest.TestCase):
     def test_track_segment_jstr_eq(self):
         obj1 = self.__sample_simple_segment_link_1()
         jstr = JSONify.dumps(obj1)
-        obj2 = SegmentLink.construct_from_jdict(json.loads(jstr))
+        obj2 = SegmentLinkBuilder.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj2, obj1)
 
 
@@ -86,7 +88,7 @@ class TestSegmentLink(unittest.TestCase):
     def test_turnout_segment_link_jstr_eq(self):
         obj1 = self.__sample_switched_segment_link()
         jstr = JSONify.dumps(obj1)
-        obj2 = SegmentLink.construct_from_jdict(json.loads(jstr))
+        obj2 = SegmentLinkBuilder.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj2, obj1)
 
 
@@ -133,14 +135,14 @@ class TestSegmentLink(unittest.TestCase):
 
 
     def test_segment_link_construct_from_none(self):
-        self.assertIsNone(SegmentLink.construct_from_jdict(None))
+        self.assertIsNone(SegmentLinkBuilder.construct_from_jdict(None))
         self.assertIsNone(FixedSegmentLink.construct_from_jdict(None))
         self.assertIsNone(SwitchedSegmentLink.construct_from_jdict(None))
 
 
     def test_segment_link_construct_from_jdict_invalid_type(self):
         with self.assertRaises(TypeError):
-            SegmentLink.construct_from_jdict({'type': 'InvalidType'})
+            SegmentLinkBuilder.construct_from_jdict({'type': 'InvalidType'})
 
         with self.assertRaises(TypeError):
             FixedSegmentLink.construct_from_jdict({'type': 'Switched'})
