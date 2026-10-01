@@ -47,7 +47,7 @@ class LayoutNavigator(ABC):
         addresses = []
         for block in self.blocks:
             if block.address in addresses:
-                raise ValueError(f"Duplicate block address {block.address} in {block.label}.")
+                raise ValueError(f"Duplicate block address {block.address.shortform} in {block.label}.")
             addresses.append(block.address)
 
         # are all turnout addresses unique?

@@ -14,6 +14,8 @@ import unittest
 from collections import OrderedDict
 
 from mrcs_core.data.json import JSONify
+from mrcs_core.equipment.block.block_address import BlockAddress
+from mrcs_core.equipment.block.block_enums import BlockHeading, BlockVoltage
 from mrcs_core.inventory.block.block import Block
 from mrcs_core.inventory.block.block_operation import BlockOperation
 from mrcs_core.inventory.layout.location import Location
@@ -56,7 +58,7 @@ class TestBlock(unittest.TestCase):
     @classmethod
     def __sample_block_1(cls):
         label = 'BN01'
-        address = '1/1'
+        address = BlockAddress(1, 1)
         operation = BlockOperation.REVERSIBLE
         segment1 = cls.__sample_track_segment_1()
         segments = OrderedDict({segment1.label: segment1})
@@ -66,7 +68,7 @@ class TestBlock(unittest.TestCase):
     @classmethod
     def __sample_block_2(cls):
         label = 'BN02'
-        address = '1/2'
+        address = BlockAddress(1, 2)
         operation = BlockOperation.UP_ONLY
         segment1 = cls.__sample_track_segment_1()
         segment2 = cls.__sample_track_segment_2()
@@ -77,13 +79,13 @@ class TestBlock(unittest.TestCase):
     def test_block_construct(self):
         obj1 = self.__sample_block_1()
         self.assertEqual('BN01', obj1.label)
-        self.assertEqual('1/1', obj1.address)
+        self.assertEqual(BlockAddress(1, 1), obj1.address)
         self.assertEqual(BlockOperation.REVERSIBLE, obj1.operation)
         self.assertEqual((self.__sample_track_segment_1(),), obj1.segments)
 
         obj2 = self.__sample_block_2()
         self.assertEqual('BN02', obj2.label)
-        self.assertEqual('1/2', obj2.address)
+        self.assertEqual(BlockAddress(1, 2), obj2.address)
         self.assertEqual(BlockOperation.UP_ONLY, obj2.operation)
         self.assertEqual((self.__sample_track_segment_1(), self.__sample_track_segment_2()), obj2.segments)
 
@@ -91,12 +93,12 @@ class TestBlock(unittest.TestCase):
     def test_block_str(self):
         self.maxDiff = None
         obj1 = self.__sample_block_1()
-        self.assertEqual('Block:{label:BN01, address:1/1, operation:REVERSIBLE, '
+        self.assertEqual('Block:{label:BN01, address:BlockAddress:{detector:1, channel:1}, operation:REVERSIBLE, '
                          'segments:[TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:'
                          'Location:{block_label:BN01, segment_label:S02}}, down_link:None, length:60}]}', str(obj1))
 
         obj2 = self.__sample_block_2()
-        self.assertEqual('Block:{label:BN02, address:1/2, operation:UP_ONLY, '
+        self.assertEqual('Block:{label:BN02, address:BlockAddress:{detector:1, channel:2}, operation:UP_ONLY, '
                          'segments:[TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:'
                          'Location:{block_label:BN01, segment_label:S02}}, down_link:None, length:60}, '
                          'TrackSegment:{label:S02, up_link:FixedSegmentLink:{next_location:'
@@ -108,14 +110,14 @@ class TestBlock(unittest.TestCase):
         obj1 = self.__sample_block_1()
         jdict = obj1.as_json()
         self.assertEqual('BN01', jdict['label'])
-        self.assertEqual('1/1', jdict['addr'])
+        self.assertEqual(BlockAddress(1, 1), jdict['addr'])
         self.assertEqual('REVERSIBLE', jdict['operation'])
         self.assertEqual((self.__sample_track_segment_1(),), jdict['segments'])
 
         obj2 = self.__sample_block_2()
         jdict2 = obj2.as_json()
         self.assertEqual('BN02', jdict2['label'])
-        self.assertEqual('1/2', jdict2['addr'])
+        self.assertEqual(BlockAddress(1, 2), jdict2['addr'])
         self.assertEqual('UP_ONLY', jdict2['operation'])
         self.assertEqual((self.__sample_track_segment_1(), self.__sample_track_segment_2()), jdict2['segments'])
 
@@ -158,21 +160,21 @@ class TestBlock(unittest.TestCase):
         # Different label
         segment1 = self.__sample_track_segment_1()
         segments = OrderedDict({segment1.label: segment1})
-        self.assertNotEqual(obj1, Block('BN99', '1/1', BlockOperation.REVERSIBLE, segments))
+        self.assertNotEqual(obj1, Block('BN99', BlockAddress(1, 1), BlockOperation.REVERSIBLE, segments))
 
         # Different address
         segment1 = self.__sample_track_segment_1()
         segments = OrderedDict({segment1.label: segment1})
-        self.assertNotEqual(obj1, Block('BN01', '9/9', BlockOperation.REVERSIBLE, segments))
+        self.assertNotEqual(obj1, Block('BN01', BlockAddress(9, 9), BlockOperation.REVERSIBLE, segments))
 
         # Different segments
         segment2 = self.__sample_track_segment_2()
         segments = OrderedDict({segment2.label: segment2})
-        self.assertNotEqual(obj1, Block('BN01', '1/1', BlockOperation.REVERSIBLE, segments))
+        self.assertNotEqual(obj1, Block('BN01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, segments))
 
         # Empty segments
         segments = OrderedDict({})
-        self.assertNotEqual(obj1, Block('BN01', '1/1', BlockOperation.REVERSIBLE, segments))
+        self.assertNotEqual(obj1, Block('BN01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, segments))
 
         # Different type / None
         self.assertNotEqual(obj1, None)
@@ -185,6 +187,15 @@ class TestBlock(unittest.TestCase):
 
         self.assertTrue(obj1 < obj2)
         self.assertFalse(obj2 < obj1)
+
+
+    def test_block_status(self):
+        obj1 = self.__sample_block_1()
+        status = obj1.status()
+        self.assertEqual('BN01', status.label)
+        self.assertEqual(BlockAddress(1, 1), status.address)
+        self.assertEqual(BlockHeading.UNASSIGNED, status.heading)
+        self.assertEqual(BlockVoltage.UNKNOWN, status.voltage)
 
 
     def test_block_segment(self):

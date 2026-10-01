@@ -15,6 +15,7 @@ from collections import OrderedDict
 from pathlib import Path
 
 from mrcs_core.data.json import JSONify
+from mrcs_core.equipment.block.block_address import BlockAddress
 from mrcs_core.inventory.block.block import Block
 from mrcs_core.inventory.block.block_operation import BlockOperation
 from mrcs_core.inventory.layout.layout import Layout
@@ -57,7 +58,7 @@ class TestLayout(unittest.TestCase):
     # Construction & properties --------------------------------------------------------------------------------------
 
     def test_layout_construct(self):
-        block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict())
+        block1 = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict())
         blocks = OrderedDict({'B01': block1})
         platform1 = self.__sample_platform_1()
         platforms = OrderedDict({platform1.label: platform1})
@@ -151,11 +152,11 @@ class TestLayout(unittest.TestCase):
 
         expected = (
             'Layout:{name:test_001, label:TST001, description:Test layout 001, blocks:['
-            'Block:{label:B01, address:1/1, operation:REVERSIBLE, segments:['
+            'Block:{label:B01, address:BlockAddress:{detector:1, channel:1}, operation:REVERSIBLE, segments:['
             'TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:Location:{'
             'block_label:B02, segment_label:S01}}, down_link:None, length:100}'
             ']}, '
-            'Block:{label:B02, address:1/2, operation:REVERSIBLE, segments:['
+            'Block:{label:B02, address:BlockAddress:{detector:1, channel:2}, operation:REVERSIBLE, segments:['
             'TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:Location:{'
             'block_label:B02, segment_label:S02}}, down_link:FixedSegmentLink:{next_location:Location:{'
             'block_label:B01, segment_label:S01}}, length:100}, '
@@ -165,11 +166,11 @@ class TestLayout(unittest.TestCase):
             'next_location:Location:{block_label:B02, segment_label:S01}}, '
             'p0_length:50, p1_length:70}'
             ']}, '
-            'Block:{label:B03, address:1/3, operation:REVERSIBLE, segments:['
+            'Block:{label:B03, address:BlockAddress:{detector:1, channel:3}, operation:REVERSIBLE, segments:['
             'TrackSegment:{label:S01, up_link:None, down_link:FixedSegmentLink:{'
             'next_location:Location:{block_label:B02, segment_label:S02}}, length:150}'
             ']}, '
-            'Block:{label:B04, address:1/4, operation:REVERSIBLE, segments:['
+            'Block:{label:B04, address:BlockAddress:{detector:1, channel:4}, operation:REVERSIBLE, segments:['
             'TrackSegment:{label:S01, up_link:None, down_link:FixedSegmentLink:{'
             'next_location:Location:{block_label:B02, segment_label:S02}}, length:200}'
             ']}'

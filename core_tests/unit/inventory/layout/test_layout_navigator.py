@@ -14,6 +14,7 @@ import unittest
 from collections import OrderedDict
 from pathlib import Path
 
+from mrcs_core.equipment.block.block_address import BlockAddress
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
@@ -252,8 +253,8 @@ class TestLayoutNavigator(unittest.TestCase):
 
 
     def test_navigator_validate_duplicate_block_address(self):
-        block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict())
-        block2 = Block('B02', '1/1', BlockOperation.REVERSIBLE, OrderedDict())
+        block1 = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict())
+        block2 = Block('B02', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict())
 
         navigator = _DummyLayoutNavigator(OrderedDict({'b1': block1, 'b2': block2}), OrderedDict())
         with self.assertRaises(ValueError) as ctx:
@@ -265,7 +266,7 @@ class TestLayoutNavigator(unittest.TestCase):
     def test_navigator_validate_duplicate_turnout_address(self):
         seg1 = TurnoutSegment('S01', 1, None, None, 50, 70)
         seg2 = TurnoutSegment('S02', 1, None, None, 50, 70)
-        block = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1, 'S02': seg2}))
+        block = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1, 'S02': seg2}))
 
         navigator = _DummyLayoutNavigator(OrderedDict({'B01': block}), OrderedDict())
         with self.assertRaises(ValueError) as ctx:
@@ -277,7 +278,7 @@ class TestLayoutNavigator(unittest.TestCase):
     def test_navigator_validate_duplicate_segment_label(self):
         seg1 = TrackSegment('S01', None, None, 100)
         seg2 = TrackSegment('S01', None, None, 100)
-        block = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'s1': seg1, 's2': seg2}))
+        block = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict({'s1': seg1, 's2': seg2}))
 
         navigator = _DummyLayoutNavigator(OrderedDict({'B01': block}), OrderedDict())
         with self.assertRaises(ValueError) as ctx:
@@ -288,7 +289,7 @@ class TestLayoutNavigator(unittest.TestCase):
 
     def test_navigator_validate_invalid_next_location(self):
         seg = TrackSegment('S01', FixedSegmentLink(Location('B99', 'S01')), None, 100)
-        block = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg}))
+        block = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict({'S01': seg}))
 
         navigator = _DummyLayoutNavigator(OrderedDict({'B01': block}), OrderedDict())
         with self.assertRaises(ValueError) as ctx:
@@ -302,8 +303,8 @@ class TestLayoutNavigator(unittest.TestCase):
         seg1 = TrackSegment('S01', FixedSegmentLink(Location('B02', 'S99')), None, 100)
         seg2 = TrackSegment('S01', FixedSegmentLink(Location('B01', 'S01')), None, 100)
 
-        block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
-        block2 = Block('B02', '1/2', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg2}))
+        block1 = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
+        block2 = Block('B02', BlockAddress(1, 2), BlockOperation.REVERSIBLE, OrderedDict({'S01': seg2}))
 
         navigator = _DummyLayoutNavigator(OrderedDict({'B01': block1, 'B02': block2}), OrderedDict())
         with self.assertRaises(ValueError) as ctx:
@@ -315,7 +316,7 @@ class TestLayoutNavigator(unittest.TestCase):
 
     def test_navigator_validate_segment_pointing_to_itself(self):
         seg = TrackSegment('S01', FixedSegmentLink(Location('B01', 'S01')), None, 100)
-        block = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg}))
+        block = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict({'S01': seg}))
 
         navigator = _DummyLayoutNavigator(OrderedDict({'B01': block}), OrderedDict())
         with self.assertRaises(ValueError) as ctx:
@@ -328,8 +329,8 @@ class TestLayoutNavigator(unittest.TestCase):
         seg1 = TrackSegment('S01', FixedSegmentLink(Location('B02', 'S01')), None, 100)
         seg2 = TrackSegment('S01', None, None, 100)
 
-        block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
-        block2 = Block('B02', '1/2', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg2}))
+        block1 = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
+        block2 = Block('B02', BlockAddress(1, 2), BlockOperation.REVERSIBLE, OrderedDict({'S01': seg2}))
 
         navigator = _DummyLayoutNavigator(OrderedDict({'B01': block1, 'B02': block2}), OrderedDict())
         with self.assertRaises(ValueError) as ctx:
@@ -470,7 +471,7 @@ class TestLayoutNavigator(unittest.TestCase):
 
     def test_navigator_path_malformed_layout_during_traversal(self):
         seg1 = TrackSegment('S01', FixedSegmentLink(Location('B99', 'S01')), None, 100)
-        block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
+        block1 = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
         navigator = _DummyLayoutNavigator(OrderedDict({'B01': block1}), OrderedDict())
         config = self.__config_p0()
 
@@ -482,7 +483,7 @@ class TestLayoutNavigator(unittest.TestCase):
 
     def test_navigator_path_malformed_layout_segment_during_traversal(self):
         seg1 = TrackSegment('S01', FixedSegmentLink(Location('B01', 'S99')), None, 100)
-        block1 = Block('B01', '1/1', BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
+        block1 = Block('B01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict({'S01': seg1}))
         navigator = _DummyLayoutNavigator(OrderedDict({'B01': block1}), OrderedDict())
         config = self.__config_p0()
 

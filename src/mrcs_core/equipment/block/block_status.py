@@ -29,6 +29,7 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.block.block_address import BlockAddress
 from mrcs_core.equipment.block.block_enums import BlockHeading, BlockVoltage
 from mrcs_core.equipment.block.block_occupant import BlockOccupant
 
@@ -44,7 +45,7 @@ class BlockStatus(JSONable):
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
         label = jdict.get('label')
-        block_address = jdict.get('addr')
+        address = BlockAddress.construct_from_jdict(jdict.get('addr'))
 
         # may raise KeyError
         heading = BlockHeading[jdict.get('heading')]
@@ -55,15 +56,15 @@ class BlockStatus(JSONable):
         occupants = [BlockOccupant.construct_from_jdict(occupant_jdict) for occupant_jdict in
                      jdict.get('occupants', [])]
 
-        return cls(label, block_address, heading, voltage, *occupants)
+        return cls(label, address, heading, voltage, *occupants)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, block_address: str, heading: BlockHeading, voltage: BlockVoltage,
+    def __init__(self, label: str, address: BlockAddress, heading: BlockHeading, voltage: BlockVoltage,
                  *occupants: BlockOccupant):
         self._label = label
-        self._block_address = block_address
+        self._address = address
         self._heading = heading
         self._voltage = voltage
         self._occupants = occupants
@@ -72,8 +73,8 @@ class BlockStatus(JSONable):
     def __eq__(self, other: Any):
         try:
             return (
-                    self.label == other.label and self.block_address == other.block_address and
-                    self.heading == other.heading and self.heading == other.heading and
+                    self.label == other.label and self.address == other.address and
+                    self.heading == other.heading and self.voltage == other.voltage and
                     self.occupants == other.occupants)
         except (AttributeError, TypeError):
             return False
@@ -91,7 +92,7 @@ class BlockStatus(JSONable):
         jdict['type'] = self.type_name()
 
         jdict['label'] = self.label
-        jdict['addr'] = self.block_address
+        jdict['addr'] = self.address
         jdict['heading'] = self.heading.name
         jdict['voltage'] = self.voltage.name
         jdict['occupants'] = self.occupants
@@ -107,8 +108,8 @@ class BlockStatus(JSONable):
 
 
     @property
-    def block_address(self):
-        return self._block_address
+    def address(self):
+        return self._address
 
 
     @property
@@ -131,5 +132,5 @@ class BlockStatus(JSONable):
     def __str__(self, *args, **kwargs):
         occupants = '[' + ', '.join([str(occupant) for occupant in self.occupants]) + ']'
         return (
-            f'BlockStatus:{{label:{self.label}, block_address:{self.block_address}, heading:{self.heading.name}, '
+            f'BlockStatus:{{label:{self.label}, address:{self.address}, heading:{self.heading.name}, '
             f'voltage:{self.voltage.name}, occupants:{occupants}}}')

@@ -13,6 +13,7 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
+from mrcs_core.equipment.block.block_address import BlockAddress
 from mrcs_core.equipment.block.block_enums import BlockVoltage
 from mrcs_core.equipment.block.block_id import BlockID
 from mrcs_core.equipment.block.block_report import BlockVoltageReport
@@ -24,10 +25,9 @@ class TestBlockVoltageReport(unittest.TestCase):
 
     @staticmethod
     def __sample_block_voltage_report():
-        detector_address = 5
-        channel = 6
+        address = BlockAddress(5, 6)
         reporter_id = 0x1234
-        block_id = BlockID(detector_address, channel, reporter_id)
+        block_id = BlockID(address, reporter_id)
 
         voltage = BlockVoltage.OCCUPIED_OVERLOAD_1
 
@@ -36,14 +36,19 @@ class TestBlockVoltageReport(unittest.TestCase):
 
     def test_block_voltage_report_str(self):
         obj1 = self.__sample_block_voltage_report()
-        self.assertEqual('BlockVoltageReport:{block_id:BlockID:{detector_address:5, channel:6, '
+        self.assertEqual('BlockVoltageReport:{block_id:BlockID:{address:BlockAddress:{detector:5, channel:6}, '
                          'reporter_id:0x1234}, voltage:OCCUPIED_OVERLOAD_1}', str(obj1))
+
+
+    def test_block_voltage_report_address(self):
+        obj1 = self.__sample_block_voltage_report()
+        self.assertEqual(BlockAddress(5, 6), obj1.address)
 
 
     def test_block_voltage_report_jstr(self):
         obj1 = self.__sample_block_voltage_report()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "BlockVoltageReport", "id": {"addr": 5, "channel": 6, "rid": 4660}, '
+        self.assertEqual('{"type": "BlockVoltageReport", "id": {"addr": "5/6", "rid": 4660}, '
                          '"voltage": "OCCUPIED_OVERLOAD_1"}', jstr)
 
 

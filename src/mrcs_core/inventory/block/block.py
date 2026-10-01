@@ -8,10 +8,10 @@ Blocks contain track and turnout segments. A Block may have a fixed direction, o
 """
 
 from collections import OrderedDict
-
-from mypy.types import Any
+from typing import Any
 
 from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.block.block_address import BlockAddress
 from mrcs_core.equipment.block.block_enums import BlockHeading, BlockVoltage
 from mrcs_core.equipment.block.block_status import BlockStatus
 from mrcs_core.inventory.block.block_operation import BlockOperation
@@ -30,7 +30,7 @@ class Block(JSONable):
     @classmethod
     def construct_from_jdict(cls, jdict) -> Block:
         label = jdict.get('label')
-        address = jdict.get('addr')
+        address = BlockAddress.construct_from_jdict(jdict.get('addr'))
         operation = BlockOperation(jdict.get('operation'))
 
         segments = OrderedDict()
@@ -43,7 +43,8 @@ class Block(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, address: str, operation: BlockOperation, segments: OrderedDict[str, Segment]):
+    def __init__(self, label: str, address: BlockAddress, operation: BlockOperation,
+                 segments: OrderedDict[str, Segment]):
         self.__label = label
         self.__address = address
         self.__operation = operation

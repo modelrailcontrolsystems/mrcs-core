@@ -13,6 +13,7 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
+from mrcs_core.equipment.block.block_address import BlockAddress
 from mrcs_core.equipment.block.block_enums import BlockOccupantFace
 from mrcs_core.equipment.block.block_id import BlockID
 from mrcs_core.equipment.block.block_occupant import BlockOccupant
@@ -25,10 +26,9 @@ class TestBlockOccupancyReport(unittest.TestCase):
 
     @staticmethod
     def __sample_block_occupancy_report():
-        detector_address = 5
-        channel = 6
+        address = BlockAddress(5, 6)
         reporter_id = 0x1234
-        block_id = BlockID(detector_address, channel, reporter_id)
+        block_id = BlockID(address, reporter_id)
 
         occupant_group = 1
         occupants = [BlockOccupant(0x5678, BlockOccupantFace.FACE_BACKWARD)]
@@ -38,9 +38,15 @@ class TestBlockOccupancyReport(unittest.TestCase):
 
     def test_block_occupation_report_str(self):
         obj1 = self.__sample_block_occupancy_report()
-        self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{detector_address:5, channel:6, reporter_id:0x1234}, '
-                         'occupant_group:1, occupants:[BlockOccupant:{mpu_address:22136, face:FACE_BACKWARD}]}',
+        self.assertEqual('BlockOccupancyReport:{block_id:BlockID:{address:BlockAddress:{detector:5, channel:6}, '
+                         'reporter_id:0x1234}, occupant_group:1, '
+                         'occupants:[BlockOccupant:{mpu_address:22136, face:FACE_BACKWARD}]}',
                          str(obj1))
+
+
+    def test_block_occupation_report_address(self):
+        obj1 = self.__sample_block_occupancy_report()
+        self.assertEqual(BlockAddress(5, 6), obj1.address)
 
 
     def test_block_status_report_occupancy(self):
@@ -51,7 +57,7 @@ class TestBlockOccupancyReport(unittest.TestCase):
     def test_block_occupation_report_jstr(self):
         obj1 = self.__sample_block_occupancy_report()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "BlockOccupancyReport", "id": {"addr": 5, "channel": 6, "rid": 4660}, '
+        self.assertEqual('{"type": "BlockOccupancyReport", "id": {"addr": "5/6", "rid": 4660}, '
                          '"group": 1, "occupants": [{"addr": 22136, "face": "FACE_BACKWARD"}]}', jstr)
 
 
