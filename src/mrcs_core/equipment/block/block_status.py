@@ -131,6 +131,5 @@ class BlockStatus(JSONable):
 
     def __str__(self, *args, **kwargs):
         occupants = '[' + ', '.join([str(occupant) for occupant in self.occupants]) + ']'
-        return (
-            f'BlockStatus:{{label:{self.label}, address:{self.address}, heading:{self.heading.name}, '
-            f'voltage:{self.voltage.name}, occupants:{occupants}}}')
+        return (f'BlockStatus:{{label:{self.label}, address:{self.address}, heading:{self.heading.name}, '
+                f'voltage:{self.voltage.name}, occupants:{occupants}}}')

@@ -3,7 +3,7 @@ Created on 1 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-The address of a Block, in the form DetectorNumber/ChannelNumber
+The address of a Block, in the form detector address / channel number
 """
 
 from typing import Any, Self
@@ -15,7 +15,7 @@ from mrcs_core.data.json import JSONable
 
 class BlockAddress(JSONable):
     """
-    the address of a Block, in the form DetectorNumber/ChannelNumber
+    the address of a Block, in the form detector address / channel number
     """
 
 
