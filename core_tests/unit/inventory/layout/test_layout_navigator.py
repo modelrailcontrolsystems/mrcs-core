@@ -23,7 +23,7 @@ from mrcs_core.inventory.block.block import Block
 from mrcs_core.inventory.block.block_operation import BlockOperation
 from mrcs_core.inventory.layout.layout import Layout
 from mrcs_core.inventory.layout.layout_navigator import LayoutNavigator
-from mrcs_core.inventory.layout.path import Path, PathEdge
+from mrcs_core.inventory.layout.route import Route, RouteSegment
 from mrcs_core.inventory.platform.platform import Platform
 from mrcs_core.inventory.platform.platform_alignment import PlatformAlignment
 from mrcs_core.inventory.platform.platform_location import PlatformLocation
@@ -191,37 +191,37 @@ class TestLayoutNavigator(unittest.TestCase):
         self.assertEqual('Platform 1 in station Alpha has a non-existent origin B99.S01.', str(ctx.exception))
 
 
-    # segment_path ---------------------------------------------------------------------------------------------------
+    # segment_route ---------------------------------------------------------------------------------------------------
 
-    def test_segment_path_up_p0(self):
-        path = self.__layout.segment_path(self.__turnouts_p0, BlockHeading.UP,
-                                          SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
+    def test_segment_route_up_p0(self):
+        path = self.__layout.segment_route(self.__turnouts_p0, BlockHeading.UP,
+                                           SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
 
-        expected = Path(PathEdge('TrackSegment', 100, SegmentLocation('B01', 'S01')),
-                        PathEdge('TrackSegment', 100, SegmentLocation('B02', 'S01')),
-                        PathEdge('TurnoutSegment', 50, SegmentLocation('B02', 'S02')),
-                        PathEdge('TrackSegment', 150, SegmentLocation('B03', 'S01')))
+        expected = Route(RouteSegment('TrackSegment', 100, SegmentLocation('B01', 'S01')),
+                         RouteSegment('TrackSegment', 100, SegmentLocation('B02', 'S01')),
+                         RouteSegment('TurnoutSegment', 50, SegmentLocation('B02', 'S02')),
+                         RouteSegment('TrackSegment', 150, SegmentLocation('B03', 'S01')))
 
         self.assertEqual(expected, path)
         self.assertEqual(400, path.total_length)
 
 
-    def test_segment_path_up_p1(self):
-        path = self.__layout.segment_path(self.__turnouts_p1, BlockHeading.UP,
-                                          SegmentLocation('B01', 'S01'), SegmentLocation('B04', 'S01'))
+    def test_segment_route_up_p1(self):
+        path = self.__layout.segment_route(self.__turnouts_p1, BlockHeading.UP,
+                                           SegmentLocation('B01', 'S01'), SegmentLocation('B04', 'S01'))
 
-        expected = Path(PathEdge('TrackSegment', 100, SegmentLocation('B01', 'S01')),
-                        PathEdge('TrackSegment', 100, SegmentLocation('B02', 'S01')),
-                        PathEdge('TurnoutSegment', 70, SegmentLocation('B02', 'S02')),
-                        PathEdge('TrackSegment', 200, SegmentLocation('B04', 'S01')))
+        expected = Route(RouteSegment('TrackSegment', 100, SegmentLocation('B01', 'S01')),
+                         RouteSegment('TrackSegment', 100, SegmentLocation('B02', 'S01')),
+                         RouteSegment('TurnoutSegment', 70, SegmentLocation('B02', 'S02')),
+                         RouteSegment('TrackSegment', 200, SegmentLocation('B04', 'S01')))
 
         self.assertEqual(expected, path)
         self.assertEqual(470, path.total_length)
 
 
-    def test_segment_path_down(self):
-        path = self.__layout.segment_path(self.__turnouts_p0, BlockHeading.DOWN,
-                                          SegmentLocation('B03', 'S01'), SegmentLocation('B01', 'S01'))
+    def test_segment_route_down(self):
+        path = self.__layout.segment_route(self.__turnouts_p0, BlockHeading.DOWN,
+                                           SegmentLocation('B03', 'S01'), SegmentLocation('B01', 'S01'))
 
         self.assertEqual([SegmentLocation('B03', 'S01'), SegmentLocation('B02', 'S02'),
                           SegmentLocation('B02', 'S01'), SegmentLocation('B01', 'S01')],
@@ -229,72 +229,72 @@ class TestLayoutNavigator(unittest.TestCase):
         self.assertEqual(400, path.total_length)
 
 
-    def test_segment_path_start_is_end(self):
-        path = self.__layout.segment_path(self.__turnouts_p0, BlockHeading.UP,
-                                          SegmentLocation('B01', 'S01'), SegmentLocation('B01', 'S01'))
+    def test_segment_route_start_is_end(self):
+        path = self.__layout.segment_route(self.__turnouts_p0, BlockHeading.UP,
+                                           SegmentLocation('B01', 'S01'), SegmentLocation('B01', 'S01'))
 
-        self.assertEqual(Path(PathEdge('TrackSegment', 100, SegmentLocation('B01', 'S01'))), path)
+        self.assertEqual(Route(RouteSegment('TrackSegment', 100, SegmentLocation('B01', 'S01'))), path)
 
 
-    def test_segment_path_start_not_found(self):
+    def test_segment_route_start_not_found(self):
         with self.assertRaises(ValueError) as ctx:
-            self.__layout.segment_path(self.__turnouts_p0, BlockHeading.UP,
-                                       SegmentLocation('B99', 'S01'), SegmentLocation('B03', 'S01'))
+            self.__layout.segment_route(self.__turnouts_p0, BlockHeading.UP,
+                                        SegmentLocation('B99', 'S01'), SegmentLocation('B03', 'S01'))
 
         self.assertEqual('Start location not found:B99.S01.', str(ctx.exception))
 
 
-    def test_segment_path_unreachable(self):
+    def test_segment_route_unreachable(self):
         # with the turnout at P1, B03 is not reachable
         with self.assertRaises(ValueError) as ctx:
-            self.__layout.segment_path(self.__turnouts_p1, BlockHeading.UP,
-                                       SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
+            self.__layout.segment_route(self.__turnouts_p1, BlockHeading.UP,
+                                        SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
 
         self.assertEqual('End location B03.S01 is not reachable from location B01.S01 with heading UP - '
                          'turnout configuration may be incorrect.', str(ctx.exception))
 
 
-    def test_segment_path_wrong_heading(self):
+    def test_segment_route_wrong_heading(self):
         with self.assertRaises(ValueError):
-            self.__layout.segment_path(self.__turnouts_p0, BlockHeading.DOWN,
-                                       SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
+            self.__layout.segment_route(self.__turnouts_p0, BlockHeading.DOWN,
+                                        SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
 
 
-    def test_segment_path_unassigned_heading(self):
+    def test_segment_route_unassigned_heading(self):
         with self.assertRaises(ValueError):
-            self.__layout.segment_path(self.__turnouts_p0, BlockHeading.UNASSIGNED,
-                                       SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
+            self.__layout.segment_route(self.__turnouts_p0, BlockHeading.UNASSIGNED,
+                                        SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
 
 
-    def test_segment_path_unknown_turnout_position(self):
+    def test_segment_route_unknown_turnout_position(self):
         config = TurnoutConfiguration({'S02': TurnoutPosition.UNKNOWN})
 
         with self.assertRaises(ValueError):
-            self.__layout.segment_path(config, BlockHeading.UP,
-                                       SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
+            self.__layout.segment_route(config, BlockHeading.UP,
+                                        SegmentLocation('B01', 'S01'), SegmentLocation('B03', 'S01'))
 
 
-    # platform_path --------------------------------------------------------------------------------------------------
+    # platform_route --------------------------------------------------------------------------------------------------
 
-    def test_platform_path(self):
-        path = self.__layout.platform_path(self.__turnouts_p0, BlockHeading.DOWN,
-                                           PlatformLocation('Alpha', 1), PlatformLocation('Alpha', 1))
+    def test_platform_route(self):
+        path = self.__layout.platform_route(self.__turnouts_p0, BlockHeading.DOWN,
+                                            PlatformLocation('Alpha', 1), PlatformLocation('Alpha', 1))
 
-        self.assertEqual(Path(PathEdge('TrackSegment', 150, SegmentLocation('B03', 'S01'))), path)
+        self.assertEqual(Route(RouteSegment('TrackSegment', 150, SegmentLocation('B03', 'S01'))), path)
 
 
-    def test_platform_path_start_not_found(self):
+    def test_platform_route_start_not_found(self):
         with self.assertRaises(ValueError) as ctx:
-            self.__layout.platform_path(self.__turnouts_p0, BlockHeading.UP,
-                                        PlatformLocation('Beta', 1), PlatformLocation('Alpha', 1))
+            self.__layout.platform_route(self.__turnouts_p0, BlockHeading.UP,
+                                         PlatformLocation('Beta', 1), PlatformLocation('Alpha', 1))
 
         self.assertEqual('Start platform not found:Beta.1.', str(ctx.exception))
 
 
-    def test_platform_path_end_not_found(self):
+    def test_platform_route_end_not_found(self):
         with self.assertRaises(ValueError) as ctx:
-            self.__layout.platform_path(self.__turnouts_p0, BlockHeading.UP,
-                                        PlatformLocation('Alpha', 1), PlatformLocation('Alpha', 9))
+            self.__layout.platform_route(self.__turnouts_p0, BlockHeading.UP,
+                                         PlatformLocation('Alpha', 1), PlatformLocation('Alpha', 9))
 
         self.assertEqual('End platform not found:Alpha.9.', str(ctx.exception))
 
@@ -317,74 +317,74 @@ class TestLayoutNavigator(unittest.TestCase):
         self.assertEqual(TurnoutStatus('S02', 'B02', 1, TurnoutPosition.UNKNOWN), inventory.items[0])
 
 
-    # segment_report -------------------------------------------------------------------------------------------------
+    # block_report -------------------------------------------------------------------------------------------------
 
-    def test_segment_report_all(self):
-        report = self.__layout.segment_report(None, None)
+    def test_block_report_all(self):
+        report = self.__layout.block_report(None, None)
 
         self.assertEqual(list(self.__layout.blocks), report)
 
 
-    def test_segment_report_block(self):
-        report = self.__layout.segment_report('B02', None)
+    def test_block_report_block(self):
+        report = self.__layout.block_report('B02', None)
 
         self.assertEqual([self.__layout.block('B02')], report)
 
 
-    def test_segment_report_block_segment(self):
-        report = self.__layout.segment_report('B02', 'S02')
+    def test_block_report_block_segment(self):
+        report = self.__layout.block_report('B02', 'S02')
 
         self.assertEqual(1, len(report))
         self.assertEqual('B02', report[0].label)
         self.assertEqual((self.__layout.segment(SegmentLocation('B02', 'S02')),), report[0].segments)
 
 
-    def test_segment_report_block_not_found(self):
+    def test_block_report_block_not_found(self):
         with self.assertRaises(KeyError) as ctx:
-            self.__layout.segment_report('B99', None)
+            self.__layout.block_report('B99', None)
 
         self.assertEqual('B99', ctx.exception.args[0])
 
 
-    def test_segment_report_segment_not_found(self):
+    def test_block_report_segment_not_found(self):
         with self.assertRaises(KeyError) as ctx:
-            self.__layout.segment_report('B02', 'S99')
+            self.__layout.block_report('B02', 'S99')
 
         self.assertEqual('B02.S99', ctx.exception.args[0])
 
 
-    # platform_report ------------------------------------------------------------------------------------------------
+    # station_report ------------------------------------------------------------------------------------------------
 
-    def test_platform_report_all(self):
-        report = self.__layout.platform_report(None, None)
+    def test_station_report_all(self):
+        report = self.__layout.station_report(None, None)
 
         self.assertEqual(list(self.__layout.stations), report)
 
 
-    def test_platform_report_station(self):
-        report = self.__layout.platform_report('Alpha', None)
+    def test_station_report_station(self):
+        report = self.__layout.station_report('Alpha', None)
 
         self.assertEqual([self.__layout.station('Alpha')], report)
 
 
-    def test_platform_report_station_platform(self):
-        report = self.__layout.platform_report('Alpha', 2)
+    def test_station_report_station_platform(self):
+        report = self.__layout.station_report('Alpha', 2)
 
         self.assertEqual(1, len(report))
         self.assertEqual('Alpha', report[0].label)
         self.assertEqual((self.__layout.platform(PlatformLocation('Alpha', 2)),), report[0].platforms)
 
 
-    def test_platform_report_station_not_found(self):
+    def test_station_report_station_not_found(self):
         with self.assertRaises(KeyError) as ctx:
-            self.__layout.platform_report('Beta', None)
+            self.__layout.station_report('Beta', None)
 
         self.assertEqual('Beta', ctx.exception.args[0])
 
 
-    def test_platform_report_platform_not_found(self):
+    def test_station_report_platform_not_found(self):
         with self.assertRaises(KeyError) as ctx:
-            self.__layout.platform_report('Alpha', 9)
+            self.__layout.station_report('Alpha', 9)
 
         self.assertEqual('Alpha.9', ctx.exception.args[0])
 

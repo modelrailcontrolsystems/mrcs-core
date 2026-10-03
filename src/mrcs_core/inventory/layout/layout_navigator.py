@@ -17,7 +17,7 @@ from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.inventory.block.block import Block
 from mrcs_core.inventory.block.block_inventory import BlockInventory
-from mrcs_core.inventory.layout.path import Path
+from mrcs_core.inventory.layout.route import Route
 from mrcs_core.inventory.platform.platform import Platform
 from mrcs_core.inventory.platform.platform_location import PlatformLocation
 from mrcs_core.inventory.segment.segment import Segment
@@ -107,9 +107,9 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def segment_path(self, config: TurnoutConfiguration, heading: BlockHeading, start: SegmentLocation,
-                     end: SegmentLocation) -> Path:
-        path = Path()
+    def segment_route(self, config: TurnoutConfiguration, heading: BlockHeading, start: SegmentLocation,
+                      end: SegmentLocation) -> Route:
+        path = Route()
 
         found = self.block_segment(start)
         if found is None:
@@ -135,8 +135,8 @@ class LayoutNavigator(ABC):
             block_label, segment = found
 
 
-    def platform_path(self, config: TurnoutConfiguration, heading: BlockHeading, start: PlatformLocation,
-                      end: PlatformLocation) -> Path:
+    def platform_route(self, config: TurnoutConfiguration, heading: BlockHeading, start: PlatformLocation,
+                       end: PlatformLocation) -> Route:
         start_platform = self.platform(start)
         if start_platform is None:
             raise ValueError(f'Start platform not found:{start.dot_path}.')
@@ -150,7 +150,7 @@ class LayoutNavigator(ABC):
         # start_segment = self.segment(start_station.origin)
         # end_segment = self.segment(end_station.origin)
 
-        return self.segment_path(config, heading, start_platform.origin, end_platform.origin)
+        return self.segment_route(config, heading, start_platform.origin, end_platform.origin)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def segment_report(self, block_label: str | None, segment_label: str | None) -> list[Block]:
+    def block_report(self, block_label: str | None, segment_label: str | None) -> list[Block]:
         if block_label is None:
             return [block.segment_report(None) for block in self.blocks]
 
@@ -182,7 +182,7 @@ class LayoutNavigator(ABC):
             raise KeyError(Dot.path(block_label, exc.args[0]))
 
 
-    def platform_report(self, station_label: str | None, platform_label: int | None) -> list[Station]:
+    def station_report(self, station_label: str | None, platform_label: int | None) -> list[Station]:
         if station_label is None:
             return [station.platform_report(None) for station in self.stations]
 

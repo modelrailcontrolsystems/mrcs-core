@@ -3,7 +3,7 @@ Created on 14 Sep 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A route through a Layout, made up of a sequence of path edges
+A route through a Layout, made up of a sequence of route (block) segments
 """
 
 from collections import OrderedDict
@@ -15,10 +15,9 @@ from mrcs_core.inventory.segment.segment import Segment
 from mrcs_core.inventory.segment.segment_location import SegmentLocation
 
 
-# TODO: rename Route / RouteSegment
 # --------------------------------------------------------------------------------------------------------------------
 
-class PathEdge(JSONable):
+class RouteSegment(JSONable):
     """
     a path component
     """
@@ -86,13 +85,13 @@ class PathEdge(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'PathEdge:{{segment_type_name:{self.segment_type_name}, length:{self.length}, '
+        return (f'RouteSegment:{{segment_type_name:{self.segment_type_name}, length:{self.length}, '
                 f'location:{self.location}}}')
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class Path(JSONable):
+class Route(JSONable):
     """
     a route through a Layout
     """
@@ -100,13 +99,13 @@ class Path(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
-        edges = [PathEdge.construct_from_jdict(edge_jdict) for edge_jdict in jdict]
+        edges = [RouteSegment.construct_from_jdict(edge_jdict) for edge_jdict in jdict]
         return cls(*edges)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, *edges: PathEdge):
+    def __init__(self, *edges: RouteSegment):
         self.__edges = list(edges)
 
 
@@ -120,7 +119,7 @@ class Path(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def append(self, config: TurnoutConfiguration, block_label: str, segment: Segment):
-        self.edges.append(PathEdge.construct(config, block_label, segment))
+        self.edges.append(RouteSegment.construct(config, block_label, segment))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -145,4 +144,4 @@ class Path(JSONable):
 
     def __str__(self, *args, **kwargs):
         edges = '[' + ', '.join([str(edge) for edge in self.edges]) + ']'
-        return f'Path:{{edges:{edges}}}'
+        return f'Route:{{edges:{edges}}}'
