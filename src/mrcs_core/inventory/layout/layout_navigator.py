@@ -12,6 +12,7 @@ implemented by the Layout class.
 from abc import ABC
 from collections import OrderedDict
 
+from mrcs_core.data.dot_dict import DotDict
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.inventory.block.block import Block
@@ -193,6 +194,21 @@ class LayoutNavigator(ABC):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    def segment_report(self, block_label: str | None, segment_label: str | None) -> list[Block]:
+        if block_label is None:
+            return [block.segment_report(None) for block in self.blocks]
+
+        block = self.__blocks[block_label]  # may raise KeyError(block_label)
+
+        try:
+            return [block.segment_report(segment_label)]
+        except KeyError as exc:
+            raise KeyError(DotDict.path(block_label, exc.args[0]))
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
 
     @property
     def blocks(self):

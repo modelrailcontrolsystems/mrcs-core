@@ -70,6 +70,17 @@ class Block(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def segment_report(self, segment_label: str | None) -> Block:
+        try:
+            segments = self.__segments if segment_label is None else {segment_label: self.__segments[segment_label]}
+        except KeyError:
+            raise KeyError(segment_label)
+
+        return Block(self.label, self.address, self.operation, OrderedDict(segments))
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
