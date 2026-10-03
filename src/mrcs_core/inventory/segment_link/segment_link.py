@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
-from mrcs_core.inventory.layout.location import Location
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -24,10 +24,10 @@ class SegmentLink(JSONable, ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     @abstractmethod
-    def selected_next_location(self, turnout_position: TurnoutPosition | None) -> Location | None:
+    def selected_next_location(self, turnout_position: TurnoutPosition | None) -> SegmentLocation | None:
         pass
 
 
     @abstractmethod
-    def next_locations(self) -> list[Location]:
+    def next_locations(self) -> list[SegmentLocation]:
         pass

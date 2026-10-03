@@ -16,8 +16,8 @@ from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
-from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.segment.segment_builder import SegmentBuilder
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment.track_segment import TrackSegment
 from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
 
@@ -28,12 +28,12 @@ class TestTrackSegment(unittest.TestCase):
 
     @classmethod
     def __sample_simple_segment_link_1(cls):
-        return FixedSegmentLink(Location('BN01', 'S02'))
+        return FixedSegmentLink(SegmentLocation('BN01', 'S02'))
 
 
     @classmethod
     def __sample_simple_segment_link_2(cls):
-        return FixedSegmentLink(Location('BN01', 'S03'))
+        return FixedSegmentLink(SegmentLocation('BN01', 'S03'))
 
 
     @classmethod
@@ -86,7 +86,7 @@ class TestTrackSegment(unittest.TestCase):
     def test_track_segment_str(self):
         self.maxDiff = None
         obj1 = self.__sample_track_segment_1()
-        self.assertEqual('TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:Location:'
+        self.assertEqual('TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:SegmentLocation:'
                          '{block_label:BN01, segment_label:S02}}, down_link:None, length:60}', str(obj1))
 
 
@@ -165,7 +165,7 @@ class TestTrackSegment(unittest.TestCase):
         obj1 = self.__sample_track_segment_1()
         conf = self.__sample_turnout_configuration()
 
-        self.assertEqual(Location('BN01', 'S02'), obj1.next_location(conf, BlockHeading.UP))
+        self.assertEqual(SegmentLocation('BN01', 'S02'), obj1.next_location(conf, BlockHeading.UP))
         self.assertIsNone(obj1.next_location(conf, BlockHeading.DOWN))
 
         with self.assertRaises(ValueError):
@@ -175,7 +175,7 @@ class TestTrackSegment(unittest.TestCase):
     def test_track_segment_next_up_location(self):
         obj1 = self.__sample_track_segment_1()
         conf = self.__sample_turnout_configuration()
-        self.assertEqual(Location('BN01', 'S02'), obj1.next_up_location(conf))
+        self.assertEqual(SegmentLocation('BN01', 'S02'), obj1.next_up_location(conf))
 
         obj_no_link = TrackSegment('S01', None, None, 60)
         self.assertIsNone(obj_no_link.next_up_location(conf))
@@ -187,19 +187,20 @@ class TestTrackSegment(unittest.TestCase):
         self.assertIsNone(obj1.next_down_location(conf))
 
         obj2 = self.__sample_track_segment_2()
-        self.assertEqual(Location('BN01', 'S03'), obj2.next_down_location(conf))
+        self.assertEqual(SegmentLocation('BN01', 'S03'), obj2.next_down_location(conf))
 
 
     def test_track_segment_next_locations(self):
         obj1 = self.__sample_track_segment_1()
-        self.assertEqual([Location('BN01', 'S02')], obj1.next_up_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S02')], obj1.next_up_locations())
         self.assertEqual([], obj1.next_down_locations())
-        self.assertEqual([Location('BN01', 'S02')], obj1.next_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S02')], obj1.next_locations())
 
         obj2 = self.__sample_track_segment_2()
-        self.assertEqual([Location('BN01', 'S02')], obj2.next_up_locations())
-        self.assertEqual([Location('BN01', 'S03')], obj2.next_down_locations())
-        self.assertEqual([Location('BN01', 'S02'), Location('BN01', 'S03')], obj2.next_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S02')], obj2.next_up_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S03')], obj2.next_down_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S02'),
+                          SegmentLocation('BN01', 'S03')], obj2.next_locations())
 
         obj_no_links = TrackSegment('S01', None, None, 60)
         self.assertEqual([], obj_no_links.next_up_locations())

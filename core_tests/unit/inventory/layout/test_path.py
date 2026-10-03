@@ -14,8 +14,8 @@ import unittest
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
-from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.layout.path import Path, PathEdge
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment.track_segment import TrackSegment
 from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
 
@@ -27,7 +27,7 @@ class TestPath(unittest.TestCase):
     @classmethod
     def __sample_track_segment_1(cls):
         label = 'S01'
-        up_link = FixedSegmentLink(Location('BN01', 'S02'))
+        up_link = FixedSegmentLink(SegmentLocation('BN01', 'S02'))
         down_link = None
         length = 60
         return TrackSegment(label, up_link, down_link, length)
@@ -36,7 +36,7 @@ class TestPath(unittest.TestCase):
     @classmethod
     def __sample_track_segment_2(cls):
         label = 'S02'
-        up_link = FixedSegmentLink(Location('BN01', 'S03'))
+        up_link = FixedSegmentLink(SegmentLocation('BN01', 'S03'))
         down_link = None
         length = 80
         return TrackSegment(label, up_link, down_link, length)
@@ -49,17 +49,17 @@ class TestPath(unittest.TestCase):
 
     @classmethod
     def __sample_path_edge_1(cls):
-        return PathEdge('TrackSegment', 60, Location('BN01', 'S01'))
+        return PathEdge('TrackSegment', 60, SegmentLocation('BN01', 'S01'))
 
 
     @classmethod
     def __sample_path_edge_2(cls):
-        return PathEdge('TrackSegment', 80, Location('BN01', 'S02'))
+        return PathEdge('TrackSegment', 80, SegmentLocation('BN01', 'S02'))
 
 
     @classmethod
     def __sample_path_edge_3(cls):
-        return PathEdge('TrackSegment', 100, Location('BN02', 'S01'))
+        return PathEdge('TrackSegment', 100, SegmentLocation('BN02', 'S01'))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ class TestPath(unittest.TestCase):
         obj1 = self.__sample_path_edge_1()
         self.assertEqual('TrackSegment', obj1.segment_type_name)
         self.assertEqual(60, obj1.length)
-        self.assertEqual(Location('BN01', 'S01'), obj1.location)
+        self.assertEqual(SegmentLocation('BN01', 'S01'), obj1.location)
 
 
     def test_path_edge_construct_from_segment(self):
@@ -77,7 +77,7 @@ class TestPath(unittest.TestCase):
 
         self.assertEqual('TrackSegment', obj1.segment_type_name)
         self.assertEqual(60, obj1.length)
-        self.assertEqual(Location('BN01', 'S01'), obj1.location)
+        self.assertEqual(SegmentLocation('BN01', 'S01'), obj1.location)
 
 
     def test_path_edge_construct_from_jdict(self):
@@ -90,13 +90,13 @@ class TestPath(unittest.TestCase):
 
         self.assertEqual('TrackSegment', obj1.segment_type_name)
         self.assertEqual(60, obj1.length)
-        self.assertEqual(Location('BN01', 'S01'), obj1.location)
+        self.assertEqual(SegmentLocation('BN01', 'S01'), obj1.location)
 
 
     def test_path_edge_str(self):
         obj1 = self.__sample_path_edge_1()
         self.assertEqual('PathEdge:{segment_type_name:TrackSegment, length:60, '
-                         'location:Location:{block_label:BN01, segment_label:S01}}', str(obj1))
+                         'location:SegmentLocation:{block_label:BN01, segment_label:S01}}', str(obj1))
 
 
     def test_path_edge_as_json(self):
@@ -105,7 +105,7 @@ class TestPath(unittest.TestCase):
 
         self.assertEqual('TrackSegment', jdict['type'])
         self.assertEqual(60, jdict['length'])
-        self.assertEqual(Location('BN01', 'S01'), jdict['location'])
+        self.assertEqual(SegmentLocation('BN01', 'S01'), jdict['location'])
 
 
     def test_path_edge_jstr(self):
@@ -190,9 +190,9 @@ class TestPath(unittest.TestCase):
         edge2 = self.__sample_path_edge_2()
         obj = Path(edge1, edge2)
         self.assertEqual('Path:{edges:[PathEdge:{segment_type_name:TrackSegment, length:60, '
-                         'location:Location:{block_label:BN01, segment_label:S01}}, '
+                         'location:SegmentLocation:{block_label:BN01, segment_label:S01}}, '
                          'PathEdge:{segment_type_name:TrackSegment, length:80, '
-                         'location:Location:{block_label:BN01, segment_label:S02}}]}', str(obj))
+                         'location:SegmentLocation:{block_label:BN01, segment_label:S02}}]}', str(obj))
 
 
     def test_path_as_json(self):

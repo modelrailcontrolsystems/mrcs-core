@@ -3,7 +3,7 @@ Created on 2 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-Utilities supporting dot path strings
+Utilities supporting dot-path strings
 """
 
 
@@ -11,13 +11,13 @@ Utilities supporting dot path strings
 
 class Dot(object):
     """
-    Utilities supporting dot path strings
+    Utilities supporting dot-path strings
     """
 
 
     @staticmethod
     def path(*nodes) -> str:
-        return '.'.join(nodes)
+        return '.'.join([str(node) for node in nodes])
 
 
     @staticmethod

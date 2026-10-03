@@ -11,10 +11,11 @@ from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
-from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.segment.segment import Segment
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 
 
+# TODO: rename Route / RouteSegment
 # --------------------------------------------------------------------------------------------------------------------
 
 class PathEdge(JSONable):
@@ -27,19 +28,19 @@ class PathEdge(JSONable):
     def construct_from_jdict(cls, jdict) -> Self:
         segment_type_name = jdict.get('type')
         length = jdict.get('length')
-        location = Location.construct_from_jdict(jdict.get('location'))
+        location = SegmentLocation.construct_from_jdict(jdict.get('location'))
 
         return cls(segment_type_name, length, location)
 
 
     @classmethod
     def construct(cls, config: TurnoutConfiguration, block_label: str, segment: Segment) -> Self:
-        return cls(segment.type_name(), segment.length(config), Location(block_label, segment.label))
+        return cls(segment.type_name(), segment.length(config), SegmentLocation(block_label, segment.label))
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, segment_type_name: str, length: int, location: Location):
+    def __init__(self, segment_type_name: str, length: int, location: SegmentLocation):
         self.__segment_type_name = segment_type_name
         self.__length = length
         self.__location = location

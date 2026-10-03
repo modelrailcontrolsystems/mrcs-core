@@ -17,13 +17,14 @@ from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.inventory.block.block import Block
 from mrcs_core.inventory.block.block_inventory import BlockInventory
-from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.layout.path import Path
 from mrcs_core.inventory.platform.platform import Platform
-from mrcs_core.inventory.platform.platform_label import PlatformLabel
+from mrcs_core.inventory.platform.platform_location import PlatformLocation
 from mrcs_core.inventory.segment.segment import Segment
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment.turnout_inventory import TurnoutInventory
 from mrcs_core.inventory.segment.turnout_segment import TurnoutSegment
+from mrcs_core.inventory.station.station import Station
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -36,9 +37,9 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, blocks: OrderedDict[str, Block], platforms: OrderedDict[PlatformLabel, Platform]):
+    def __init__(self, blocks: OrderedDict[str, Block], stations: OrderedDict[str, Station]):
         self.__blocks = blocks
-        self.__platforms = platforms
+        self.__stations = stations
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -82,7 +83,7 @@ class LayoutNavigator(ABC):
 
         # does every segment have a reciprocal link?
         for block_label, segment in self.block_segments():
-            this_location = Location(block_label, segment.label)
+            this_location = SegmentLocation(block_label, segment.label)
 
             reciprocal = False
             for next_location in segment.next_locations():
@@ -93,19 +94,21 @@ class LayoutNavigator(ABC):
                     reciprocal = True
                     break
 
-            if not reciprocal:
+            if not reciprocal and self.segment_count > 1:
                 raise ValueError(f"No reciprocal link for segment label {segment.label} in block {block_label}.")
 
         # do platform origins exist in the layout?
-        for platform in self.platforms:
-            if self.segment(platform.origin) is None:
-                raise ValueError(f'The platform {platform.label.shortform} has a non-existent origin '
-                                 f'{platform.origin.dot_path}.')
+        for station in self.stations:
+            for platform in station.platforms:
+                if self.segment(platform.origin) is None:
+                    raise ValueError(f'Platform {platform.label} in station {station.label} has a non-existent origin '
+                                     f'{platform.origin.dot_path}.')
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def segment_path(self, config: TurnoutConfiguration, heading: BlockHeading, start: Location, end: Location) -> Path:
+    def segment_path(self, config: TurnoutConfiguration, heading: BlockHeading, start: SegmentLocation,
+                     end: SegmentLocation) -> Path:
         path = Path()
 
         found = self.block_segment(start)
@@ -117,7 +120,7 @@ class LayoutNavigator(ABC):
         while True:
             path.append(config, block_label, segment)
 
-            if Location(block_label, segment.label) == end:
+            if SegmentLocation(block_label, segment.label) == end:
                 return path
 
             next_location = segment.next_location(config, heading)
@@ -132,20 +135,20 @@ class LayoutNavigator(ABC):
             block_label, segment = found
 
 
-    def platform_path(self, config: TurnoutConfiguration, heading: BlockHeading, start: PlatformLabel,
-                      end: PlatformLabel) -> Path:
+    def platform_path(self, config: TurnoutConfiguration, heading: BlockHeading, start: PlatformLocation,
+                      end: PlatformLocation) -> Path:
         start_platform = self.platform(start)
         if start_platform is None:
-            raise ValueError(f'Start platform not found:{start.shortform}.')
+            raise ValueError(f'Start platform not found:{start.dot_path}.')
 
         end_platform = self.platform(end)
         if end_platform is None:
-            raise ValueError(f'End platform not found:{end.shortform}.')
+            raise ValueError(f'End platform not found:{end.dot_path}.')
 
-        # TODO: length calculation depends on platform offset, platform length and heading
+        # TODO: length calculation depends on station offset, station length and heading
 
-        # start_segment = self.segment(start_platform.origin)
-        # end_segment = self.segment(end_platform.origin)
+        # start_segment = self.segment(start_station.origin)
+        # end_segment = self.segment(end_station.origin)
 
         return self.segment_path(config, heading, start_platform.origin, end_platform.origin)
 
@@ -167,34 +170,6 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def segment(self, location: Location) -> Segment | None:
-        block = self.block(location.block_label)
-        if block is None:
-            return None
-
-        return block.segment(location.segment_label)
-
-
-    def block_segment(self, location: Location) -> tuple[str, Segment] | None:
-        block = self.block(location.block_label)
-        if block is None:
-            return None
-
-        segment = block.segment(location.segment_label)
-        if segment is None:
-            return None
-
-        return block.label, segment
-
-
-    def block_segments(self):
-        for block in self.blocks:
-            for segment in block.segments:
-                yield block.label, segment
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def segment_report(self, block_label: str | None, segment_label: str | None) -> list[Block]:
         if block_label is None:
             return [block.segment_report(None) for block in self.blocks]
@@ -205,6 +180,18 @@ class LayoutNavigator(ABC):
             return [block.segment_report(segment_label)]
         except KeyError as exc:
             raise KeyError(Dot.path(block_label, exc.args[0]))
+
+
+    def platform_report(self, station_label: str | None, platform_label: int | None) -> list[Station]:
+        if station_label is None:
+            return [station.platform_report(None) for station in self.stations]
+
+        station = self.__stations[station_label]  # may raise KeyError
+
+        try:
+            return [station.platform_report(platform_label)]
+        except KeyError as exc:
+            raise KeyError(Dot.path(station_label, exc.args[0]))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -222,29 +209,89 @@ class LayoutNavigator(ABC):
             return None
 
 
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def segment(self, location: SegmentLocation) -> Segment | None:
+        block = self.block(location.block_label)
+        if block is None:
+            return None
+
+        return block.segment(location.segment_label)
+
+
+    def block_segment(self, location: SegmentLocation) -> tuple[str, Segment] | None:
+        block = self.block(location.block_label)
+        if block is None:
+            return None
+
+        segment = block.segment(location.segment_label)
+        if segment is None:
+            return None
+
+        return block.label, segment
+
+
+    def block_segments(self):
+        for block in self.blocks:
+            for segment in block.segments:
+                yield block.label, segment
+
+
     @property
-    def locations(self):
+    def segment_locations(self):
         locations = set()
 
         for block in self.blocks:
             for segment in block.segments:
-                locations.add(Location(block.label, segment.label))
+                locations.add(SegmentLocation(block.label, segment.label))
 
         return list(locations)
 
 
     @property
-    def platforms(self):
-        return tuple(self.__platforms.values())
+    def segment_count(self):
+        count = 0
+
+        for block in self.blocks:
+            count += len(block.segments)
+
+        return count
+
+
+    # ----------------------------------------------------------------------------------------------------------------
 
 
     @property
-    def platform_labels(self):
-        return tuple(self.__platforms.keys())
+    def stations(self):
+        return tuple(self.__stations.values())
 
 
-    def platform(self, label: PlatformLabel):
+    @property
+    def station_labels(self):
+        return tuple(self.__stations.keys())
+
+
+    def station(self, label: str):
         try:
-            return self.__platforms[label]
+            return self.__stations[label]
         except KeyError:
             return None
+
+
+    def platform(self, location: PlatformLocation) -> Platform | None:
+        station = self.station(location.station_label)
+        if station is None:
+            return None
+
+        return station.platform(location.platform_label)
+
+
+    @property
+    def platform_locations(self):
+        locations = set()
+
+        for station in self.stations:
+            for platform in station.platforms:
+                locations.add(PlatformLocation(station.label, platform.label))
+
+        return list(locations)

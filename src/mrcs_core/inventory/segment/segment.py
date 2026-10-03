@@ -12,7 +12,7 @@ from typing import Any
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
-from mrcs_core.inventory.layout.location import Location
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment_link.segment_link import SegmentLink
 
 
@@ -38,7 +38,7 @@ class Segment(JSONable, ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def next_location(self, config: TurnoutConfiguration, heading: BlockHeading) -> Location | None:
+    def next_location(self, config: TurnoutConfiguration, heading: BlockHeading) -> SegmentLocation | None:
         if heading == BlockHeading.UNASSIGNED:
             raise ValueError('cannot get next segment for UNASSIGNED heading')
 
@@ -46,12 +46,12 @@ class Segment(JSONable, ABC):
 
 
     @abstractmethod
-    def next_up_location(self, config: TurnoutConfiguration) -> Location | None:
+    def next_up_location(self, config: TurnoutConfiguration) -> SegmentLocation | None:
         pass
 
 
     @abstractmethod
-    def next_down_location(self, config: TurnoutConfiguration) -> Location | None:
+    def next_down_location(self, config: TurnoutConfiguration) -> SegmentLocation | None:
         pass
 
 
@@ -67,12 +67,12 @@ class Segment(JSONable, ABC):
 
 
     # noinspection unresolved-references
-    def next_up_locations(self) -> list[Location]:
+    def next_up_locations(self) -> list[SegmentLocation]:
         return [] if self.up_link is None else self.up_link.next_locations()
 
 
     # noinspection unresolved-references
-    def next_down_locations(self) -> list[Location]:
+    def next_down_locations(self) -> list[SegmentLocation]:
         return [] if self.down_link is None else self.down_link.next_locations()
 
 

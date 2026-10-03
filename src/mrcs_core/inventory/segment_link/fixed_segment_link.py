@@ -10,7 +10,7 @@ from collections import OrderedDict
 from typing import Any
 
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
-from mrcs_core.inventory.layout.location import Location
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment_link.segment_link import SegmentLink
 
 
@@ -37,14 +37,14 @@ class FixedSegmentLink(SegmentLink):
         if type_name != cls.type_name():
             raise TypeError(f'required type:{cls.type_name()} got:{type_name}')
 
-        next_location = Location.construct_from_jdict(jdict.get('next'))
+        next_location = SegmentLocation.construct_from_jdict(jdict.get('next'))
 
         return cls(next_location)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, next_location: Location):
+    def __init__(self, next_location: SegmentLocation):
         self.__next_location = next_location
 
 
@@ -57,11 +57,11 @@ class FixedSegmentLink(SegmentLink):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def selected_next_location(self, turnout_position: TurnoutPosition | None) -> Location | None:
+    def selected_next_location(self, turnout_position: TurnoutPosition | None) -> SegmentLocation | None:
         return self.next_location
 
 
-    def next_locations(self) -> list[Location]:
+    def next_locations(self) -> list[SegmentLocation]:
         return [] if self.next_location is None else [self.next_location]
 
 

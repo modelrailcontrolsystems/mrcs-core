@@ -13,26 +13,26 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
-from mrcs_core.inventory.layout.location import Location
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class TestLocation(unittest.TestCase):
+class TestSegmentLocation(unittest.TestCase):
 
     @classmethod
     def __sample_location_1(cls):
-        return Location('BN01', 'S01')
+        return SegmentLocation('BN01', 'S01')
 
 
     @classmethod
     def __sample_location_2(cls):
-        return Location('BN01', 'S02')
+        return SegmentLocation('BN01', 'S02')
 
 
     @classmethod
     def __sample_location_3(cls):
-        return Location('BN02', 'S01')
+        return SegmentLocation('BN02', 'S01')
 
 
     def test_location_construct(self):
@@ -43,7 +43,7 @@ class TestLocation(unittest.TestCase):
 
     def test_location_str(self):
         obj1 = self.__sample_location_1()
-        self.assertEqual('Location:{block_label:BN01, segment_label:S01}', str(obj1))
+        self.assertEqual('SegmentLocation:{block_label:BN01, segment_label:S01}', str(obj1))
 
 
     def test_location_shortform(self):
@@ -63,27 +63,27 @@ class TestLocation(unittest.TestCase):
 
 
     def test_location_construct_from_shortform(self):
-        self.assertEqual(self.__sample_location_1(), Location.construct_from_dot_path('BN01.S01'))
+        self.assertEqual(self.__sample_location_1(), SegmentLocation.construct_from_dot_path('BN01.S01'))
 
         # short labels are accepted
-        self.assertEqual(Location('B1', 'S1'), Location.construct_from_dot_path('B1.S1'))
+        self.assertEqual(SegmentLocation('B1', 'S1'), SegmentLocation.construct_from_dot_path('B1.S1'))
 
         for malformed in ('BN01', 'BN01.S01.X', '', '.S01', 'BN01.'):
             with self.assertRaises(ValueError):
-                Location.construct_from_dot_path(malformed)
+                SegmentLocation.construct_from_dot_path(malformed)
 
 
     def test_location_construct_from_jdict(self):
-        self.assertEqual(self.__sample_location_1(), Location.construct_from_jdict('BN01.S01'))
+        self.assertEqual(self.__sample_location_1(), SegmentLocation.construct_from_jdict('BN01.S01'))
 
         with self.assertRaises(ValueError):
-            Location.construct_from_jdict('BN01')
+            SegmentLocation.construct_from_jdict('BN01')
 
 
     def test_location_jstr_eq(self):
         obj1 = self.__sample_location_1()
         jstr = JSONify.dumps(obj1)
-        obj2 = Location.construct_from_jdict(json.loads(jstr))
+        obj2 = SegmentLocation.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
 
 
