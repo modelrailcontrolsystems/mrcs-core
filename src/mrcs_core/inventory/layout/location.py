@@ -8,6 +8,7 @@ A location on a layout, identifying a segment within a block
 
 from typing import Any, Self
 
+from mrcs_core.data.dot import Dot
 from mrcs_core.data.json import JSONable
 
 
@@ -20,18 +21,18 @@ class Location(JSONable):
 
 
     @classmethod
-    def construct_from_shortform(cls, shortform: str) -> Self:
-        pieces = shortform.split('/')
+    def construct_from_dot_path(cls, path: str) -> Self:
+        nodes = Dot.nodes(path)
 
-        if len(pieces) != 2 or not pieces[0] or not pieces[1]:
-            raise ValueError(shortform)
+        if len(nodes) != 2 or not nodes[0] or not nodes[1]:
+            raise ValueError(path)
 
-        return cls(pieces[0], pieces[1])
+        return cls(nodes[0], nodes[1])
 
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
-        return cls.construct_from_shortform(jdict)
+        return cls.construct_from_dot_path(jdict)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -65,7 +66,7 @@ class Location(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):
-        return self.shortform
+        return self.dot_path
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -84,8 +85,8 @@ class Location(JSONable):
 
 
     @property
-    def shortform(self):
-        return '/'.join((self.block_label, self.segment_label))
+    def dot_path(self):
+        return Dot.path(self.block_label, self.segment_label)
 
 
     def __str__(self, *args, **kwargs):

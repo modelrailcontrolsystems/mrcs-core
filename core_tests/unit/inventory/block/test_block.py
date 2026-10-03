@@ -128,16 +128,16 @@ class TestBlock(unittest.TestCase):
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"label": "BN01", "addr": "1/1", "operation": "REVERSIBLE", '
                          '"segments": [{"type": "TrackSegment", "label": "S01", "length": 60, '
-                         '"up-link": {"type": "Fixed", "next": "BN01/S02"}, "down-link": null}]}', jstr)
+                         '"up-link": {"type": "Fixed", "next": "BN01.S02"}, "down-link": null}]}', jstr)
 
         obj2 = self.__sample_block_2()
         jstr2 = JSONify.dumps(obj2)
         self.assertEqual('{"label": "BN02", "addr": "1/2", "operation": "UP_ONLY", '
                          '"segments": [{"type": "TrackSegment", "label": "S01", "length": 60, '
-                         '"up-link": {"type": "Fixed", "next": "BN01/S02"}, "down-link": null}, '
+                         '"up-link": {"type": "Fixed", "next": "BN01.S02"}, "down-link": null}, '
                          '{"type": "TrackSegment", "label": "S02", "length": 80, '
-                         '"up-link": {"type": "Fixed", "next": "BN01/S02"}, '
-                         '"down-link": {"type": "Fixed", "next": "BN01/S03"}}]}', jstr2)
+                         '"up-link": {"type": "Fixed", "next": "BN01.S02"}, '
+                         '"down-link": {"type": "Fixed", "next": "BN01.S03"}}]}', jstr2)
 
 
     def test_block_jstr_eq(self):

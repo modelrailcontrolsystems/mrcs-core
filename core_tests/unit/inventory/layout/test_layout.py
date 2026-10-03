@@ -209,8 +209,8 @@ class TestLayout(unittest.TestCase):
         jdict = json.loads(JSONify.dumps(layout))
 
         self.assertEqual([
-            {'label': 'TST/1', 'alignment': 'LEFT', 'origin': 'B03/S01', 'offset': 20, 'length': 120},
-            {'label': 'TST/2', 'alignment': 'RIGHT', 'origin': 'B04/S01', 'offset': 30, 'length': 140}
+            {'label': 'TST/1', 'alignment': 'LEFT', 'origin': 'B03.S01', 'offset': 20, 'length': 120},
+            {'label': 'TST/2', 'alignment': 'RIGHT', 'origin': 'B04.S01', 'offset': 30, 'length': 140}
         ], jdict['platforms'])
 
 
