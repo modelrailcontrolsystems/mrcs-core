@@ -84,7 +84,7 @@ class TestPath(unittest.TestCase):
         jdict = {
             'type': 'TrackSegment',
             'length': 60,
-            'location': 'BN01/S01'
+            'location': 'BN01.S01'
         }
         obj1 = PathEdge.construct_from_jdict(jdict)
 
@@ -111,7 +111,7 @@ class TestPath(unittest.TestCase):
     def test_path_edge_jstr(self):
         obj1 = self.__sample_path_edge_1()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "TrackSegment", "length": 60, "location": "BN01/S01"}', jstr)
+        self.assertEqual('{"type": "TrackSegment", "length": 60, "location": "BN01.S01"}', jstr)
 
 
     def test_path_edge_jstr_eq(self):
@@ -157,8 +157,8 @@ class TestPath(unittest.TestCase):
 
     def test_path_construct_from_jdict(self):
         jdict = [
-            {'type': 'TrackSegment', 'length': 60, 'location': 'BN01/S01'},
-            {'type': 'TrackSegment', 'length': 80, 'location': 'BN01/S02'}
+            {'type': 'TrackSegment', 'length': 60, 'location': 'BN01.S01'},
+            {'type': 'TrackSegment', 'length': 80, 'location': 'BN01.S02'}
         ]
         obj = Path.construct_from_jdict(jdict)
 
@@ -208,8 +208,8 @@ class TestPath(unittest.TestCase):
         edge2 = self.__sample_path_edge_2()
         obj = Path(edge1, edge2)
         jstr = JSONify.dumps(obj)
-        self.assertEqual('[{"type": "TrackSegment", "length": 60, "location": "BN01/S01"}, '
-                         '{"type": "TrackSegment", "length": 80, "location": "BN01/S02"}]', jstr)
+        self.assertEqual('[{"type": "TrackSegment", "length": 60, "location": "BN01.S01"}, '
+                         '{"type": "TrackSegment", "length": 80, "location": "BN01.S02"}]', jstr)
 
 
     def test_path_jstr_eq(self):

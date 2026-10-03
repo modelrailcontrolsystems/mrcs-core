@@ -12,7 +12,7 @@ implemented by the Layout class.
 from abc import ABC
 from collections import OrderedDict
 
-from mrcs_core.data.dot_dict import DotDict
+from mrcs_core.data.dot import Dot
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.inventory.block.block import Block
@@ -100,7 +100,7 @@ class LayoutNavigator(ABC):
         for platform in self.platforms:
             if self.segment(platform.origin) is None:
                 raise ValueError(f'The platform {platform.label.shortform} has a non-existent origin '
-                                 f'{platform.origin.shortform}.')
+                                 f'{platform.origin.dot_path}.')
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ class LayoutNavigator(ABC):
 
         found = self.block_segment(start)
         if found is None:
-            raise ValueError(f'Start location not found:{start.shortform}.')
+            raise ValueError(f'Start location not found:{start.dot_path}.')
 
         block_label, segment = found
 
@@ -122,12 +122,12 @@ class LayoutNavigator(ABC):
 
             next_location = segment.next_location(config, heading)
             if next_location is None:
-                raise ValueError(f'End location {end.shortform} is not reachable from location {start.shortform} '
+                raise ValueError(f'End location {end.dot_path} is not reachable from location {start.dot_path} '
                                  f'with heading {heading.name} - turnout configuration may be incorrect.')
 
             found = self.block_segment(next_location)
             if found is None:
-                raise ValueError(f'Malformed layout - segment not found for next location {next_location.shortform}.')
+                raise ValueError(f'Malformed layout - segment not found for next location {next_location.dot_path}.')
 
             block_label, segment = found
 
@@ -204,7 +204,7 @@ class LayoutNavigator(ABC):
         try:
             return [block.segment_report(segment_label)]
         except KeyError as exc:
-            raise KeyError(DotDict.path(block_label, exc.args[0]))
+            raise KeyError(Dot.path(block_label, exc.args[0]))
 
 
     # ----------------------------------------------------------------------------------------------------------------

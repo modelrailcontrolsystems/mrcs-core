@@ -346,7 +346,7 @@ class TestLayoutNavigator(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             navigator.validate()
 
-        self.assertEqual('The platform TST/9 has a non-existent origin B99/S01.', str(ctx.exception))
+        self.assertEqual('The platform TST/9 has a non-existent origin B99.S01.', str(ctx.exception))
 
 
     def test_navigator_validate_platform_origin_segment_not_found(self):
@@ -356,7 +356,7 @@ class TestLayoutNavigator(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             navigator.validate()
 
-        self.assertEqual('The platform TST/9 has a non-existent origin B03/S99.', str(ctx.exception))
+        self.assertEqual('The platform TST/9 has a non-existent origin B03.S99.', str(ctx.exception))
 
 
     # Path calculation -----------------------------------------------------------------------------------------------
@@ -445,7 +445,7 @@ class TestLayoutNavigator(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             navigator.segment_path(config, BlockHeading.UP, Location('B99', 'S01'), Location('B01', 'S01'))
 
-        self.assertEqual('Start location not found:B99/S01.', str(ctx.exception))
+        self.assertEqual('Start location not found:B99.S01.', str(ctx.exception))
 
 
     def test_navigator_path_start_segment_not_found(self):
@@ -455,7 +455,7 @@ class TestLayoutNavigator(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S99'), Location('B01', 'S01'))
 
-        self.assertEqual('Start location not found:B01/S99.', str(ctx.exception))
+        self.assertEqual('Start location not found:B01.S99.', str(ctx.exception))
 
 
     def test_navigator_path_end_not_reachable(self):
@@ -465,7 +465,7 @@ class TestLayoutNavigator(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B04', 'S01'))
 
-        self.assertEqual('End location B04/S01 is not reachable from location B01/S01 with heading UP - '
+        self.assertEqual('End location B04.S01 is not reachable from location B01.S01 with heading UP - '
                          'turnout configuration may be incorrect.', str(ctx.exception))
 
 
@@ -478,7 +478,7 @@ class TestLayoutNavigator(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B02', 'S01'))
 
-        self.assertEqual('Malformed layout - segment not found for next location B99/S01.', str(ctx.exception))
+        self.assertEqual('Malformed layout - segment not found for next location B99.S01.', str(ctx.exception))
 
 
     def test_navigator_path_malformed_layout_segment_during_traversal(self):
@@ -490,7 +490,7 @@ class TestLayoutNavigator(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             navigator.segment_path(config, BlockHeading.UP, Location('B01', 'S01'), Location('B02', 'S01'))
 
-        self.assertEqual('Malformed layout - segment not found for next location B01/S99.', str(ctx.exception))
+        self.assertEqual('Malformed layout - segment not found for next location B01.S99.', str(ctx.exception))
 
 
     # Platform path --------------------------------------------------------------------------------------------------

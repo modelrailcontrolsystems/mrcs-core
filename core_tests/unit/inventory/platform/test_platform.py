@@ -81,11 +81,11 @@ class TestPlatform(unittest.TestCase):
         self.maxDiff = None
         obj1 = self.__sample_platform_1()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"label": "KGX/1", "alignment": "LEFT", "origin": "BN01/S01", '
+        self.assertEqual('{"label": "KGX/1", "alignment": "LEFT", "origin": "BN01.S01", '
                          '"offset": 150, "length": 1200}', jstr)
 
         obj2 = self.__sample_platform_2()
-        self.assertEqual('{"label": "KGX/2", "alignment": "RIGHT", "origin": "BN02/S01", '
+        self.assertEqual('{"label": "KGX/2", "alignment": "RIGHT", "origin": "BN02.S01", '
                          '"offset": 0, "length": 900}', JSONify.dumps(obj2))
 
 
@@ -103,7 +103,7 @@ class TestPlatform(unittest.TestCase):
 
 
     def test_platform_construct_from_jdict(self):
-        jdict = {'label': 'PAD/3', 'alignment': 'RIGHT', 'origin': 'BN04/S02', 'offset': 25, 'length': 750}
+        jdict = {'label': 'PAD/3', 'alignment': 'RIGHT', 'origin': 'BN04.S02', 'offset': 25, 'length': 750}
         obj1 = Platform.construct_from_jdict(jdict)
 
         self.assertEqual(PlatformLabel('PAD', 3), obj1.label)
@@ -114,14 +114,14 @@ class TestPlatform(unittest.TestCase):
 
 
     def test_platform_construct_from_jdict_invalid_alignment(self):
-        jdict = {'label': 'KGX/1', 'alignment': 'SIDEWAYS', 'origin': 'BN01/S01', 'offset': 150, 'length': 1200}
+        jdict = {'label': 'KGX/1', 'alignment': 'SIDEWAYS', 'origin': 'BN01.S01', 'offset': 150, 'length': 1200}
 
         with self.assertRaises(ValueError):
             Platform.construct_from_jdict(jdict)
 
 
     def test_platform_construct_from_jdict_invalid_label(self):
-        jdict = {'label': 'KGX', 'alignment': 'LEFT', 'origin': 'BN01/S01', 'offset': 150, 'length': 1200}
+        jdict = {'label': 'KGX', 'alignment': 'LEFT', 'origin': 'BN01.S01', 'offset': 150, 'length': 1200}
 
         with self.assertRaises(ValueError):
             Platform.construct_from_jdict(jdict)

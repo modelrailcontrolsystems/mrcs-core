@@ -105,7 +105,7 @@ class TestTrackSegment(unittest.TestCase):
         obj1 = self.__sample_track_segment_1()
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"type": "TrackSegment", "label": "S01", "length": 60, '
-                         '"up-link": {"type": "Fixed", "next": "BN01/S02"}, "down-link": null}', jstr)
+                         '"up-link": {"type": "Fixed", "next": "BN01.S02"}, "down-link": null}', jstr)
 
 
     def test_track_segment_jstr_eq(self):

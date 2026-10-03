@@ -52,7 +52,7 @@ class TestSegmentLink(unittest.TestCase):
     def test_track_segment_link_jstr(self):
         obj1 = self.__sample_simple_segment_link_1()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "Fixed", "next": "BN01/S02"}', jstr)
+        self.assertEqual('{"type": "Fixed", "next": "BN01.S02"}', jstr)
 
 
     def test_track_segment_jstr_eq(self):
@@ -82,7 +82,7 @@ class TestSegmentLink(unittest.TestCase):
     def test_turnout_segment_link_jstr(self):
         obj1 = self.__sample_switched_segment_link()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "Switched", "p0-next": "BN01/S02", "p1-next": "BN02/S01"}', jstr)
+        self.assertEqual('{"type": "Switched", "p0-next": "BN01.S02", "p1-next": "BN02.S01"}', jstr)
 
 
     def test_turnout_segment_link_jstr_eq(self):
@@ -95,7 +95,7 @@ class TestSegmentLink(unittest.TestCase):
     def test_turnout_segment_link_half_null_jstr(self):
         obj1 = self.__sample_switched_segment_link_half_null()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"type": "Switched", "p0-next": "BN01/S02", "p1-next": null}', jstr)
+        self.assertEqual('{"type": "Switched", "p0-next": "BN01.S02", "p1-next": null}', jstr)
 
 
     def test_turnout_segment_link_half_null_jstr_eq(self):

@@ -132,9 +132,9 @@ class TestTurnoutSegment(unittest.TestCase):
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"type": "TurnoutSegment", "label": "TN01", "addr": 1, '
                          '"p0-length": 20, "p1-length": 30, '
-                         '"up-link": {"type": "Fixed", "next": "BN01/S02"}, '
-                         '"down-link": {"type": "Switched", "p0-next": "BN01/S03", '
-                         '"p1-next": "BN02/S01"}}', jstr)
+                         '"up-link": {"type": "Fixed", "next": "BN01.S02"}, '
+                         '"down-link": {"type": "Switched", "p0-next": "BN01.S03", '
+                         '"p1-next": "BN02.S01"}}', jstr)
 
 
     def test_turnout_segment_jstr_eq(self):
