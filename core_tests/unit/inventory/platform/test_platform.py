@@ -13,10 +13,9 @@ import json
 import unittest
 
 from mrcs_core.data.json import JSONify
-from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.platform.platform import Platform
 from mrcs_core.inventory.platform.platform_alignment import PlatformAlignment
-from mrcs_core.inventory.platform.platform_label import PlatformLabel
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,9 +24,9 @@ class TestPlatform(unittest.TestCase):
 
     @classmethod
     def __sample_platform_1(cls):
-        label = PlatformLabel('KGX', 1)
+        label = 1
         alignment = PlatformAlignment.UP_LEFT
-        origin = Location('BN01', 'S01')
+        origin = SegmentLocation('BN01', 'S01')
         offset = 150
         length = 1200
         return Platform(label, alignment, origin, offset, length)
@@ -35,9 +34,9 @@ class TestPlatform(unittest.TestCase):
 
     @classmethod
     def __sample_platform_2(cls):
-        label = PlatformLabel('KGX', 2)
+        label = 2
         alignment = PlatformAlignment.UP_RIGHT
-        origin = Location('BN02', 'S01')
+        origin = SegmentLocation('BN02', 'S01')
         offset = 0
         length = 900
         return Platform(label, alignment, origin, offset, length)
@@ -45,9 +44,9 @@ class TestPlatform(unittest.TestCase):
 
     def test_platform_construct(self):
         obj1 = self.__sample_platform_1()
-        self.assertEqual(PlatformLabel('KGX', 1), obj1.label)
+        self.assertEqual(1, obj1.label)
         self.assertEqual(PlatformAlignment.UP_LEFT, obj1.alignment)
-        self.assertEqual(Location('BN01', 'S01'), obj1.origin)
+        self.assertEqual(SegmentLocation('BN01', 'S01'), obj1.origin)
         self.assertEqual(150, obj1.offset)
         self.assertEqual(1200, obj1.length)
 
@@ -62,17 +61,17 @@ class TestPlatform(unittest.TestCase):
         self.maxDiff = None
         obj1 = self.__sample_platform_1()
         # the alignment is reported by member name, whereas as_json emits its value
-        self.assertEqual('Platform:{label:PlatformLabel:{station:KGX, number:1}, alignment:UP_LEFT, '
-                         'origin:Location:{block_label:BN01, segment_label:S01}, offset:150, length:1200}',
+        self.assertEqual('Platform:{label:1, alignment:UP_LEFT, '
+                         'origin:SegmentLocation:{block_label:BN01, segment_label:S01}, offset:150, length:1200}',
                          str(obj1))
 
 
     def test_platform_as_json(self):
         obj1 = self.__sample_platform_1()
         jdict = obj1.as_json()
-        self.assertEqual(PlatformLabel('KGX', 1), jdict['label'])
+        self.assertEqual(1, jdict['label'])
         self.assertEqual(PlatformAlignment.UP_LEFT, jdict['alignment'])
-        self.assertEqual(Location('BN01', 'S01'), jdict['origin'])
+        self.assertEqual(SegmentLocation('BN01', 'S01'), jdict['origin'])
         self.assertEqual(150, jdict['offset'])
         self.assertEqual(1200, jdict['length'])
 
@@ -81,11 +80,11 @@ class TestPlatform(unittest.TestCase):
         self.maxDiff = None
         obj1 = self.__sample_platform_1()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"label": "KGX/1", "alignment": "LEFT", "origin": "BN01.S01", '
+        self.assertEqual('{"label": 1, "alignment": "LEFT", "origin": "BN01.S01", '
                          '"offset": 150, "length": 1200}', jstr)
 
         obj2 = self.__sample_platform_2()
-        self.assertEqual('{"label": "KGX/2", "alignment": "RIGHT", "origin": "BN02.S01", '
+        self.assertEqual('{"label": 2, "alignment": "RIGHT", "origin": "BN02.S01", '
                          '"offset": 0, "length": 900}', JSONify.dumps(obj2))
 
 
@@ -103,18 +102,18 @@ class TestPlatform(unittest.TestCase):
 
 
     def test_platform_construct_from_jdict(self):
-        jdict = {'label': 'PAD/3', 'alignment': 'RIGHT', 'origin': 'BN04.S02', 'offset': 25, 'length': 750}
+        jdict = {'label': 3, 'alignment': 'RIGHT', 'origin': 'BN04.S02', 'offset': 25, 'length': 750}
         obj1 = Platform.construct_from_jdict(jdict)
 
-        self.assertEqual(PlatformLabel('PAD', 3), obj1.label)
+        self.assertEqual(3, obj1.label)
         self.assertEqual(PlatformAlignment.UP_RIGHT, obj1.alignment)
-        self.assertEqual(Location('BN04', 'S02'), obj1.origin)
+        self.assertEqual(SegmentLocation('BN04', 'S02'), obj1.origin)
         self.assertEqual(25, obj1.offset)
         self.assertEqual(750, obj1.length)
 
 
     def test_platform_construct_from_jdict_invalid_alignment(self):
-        jdict = {'label': 'KGX/1', 'alignment': 'SIDEWAYS', 'origin': 'BN01.S01', 'offset': 150, 'length': 1200}
+        jdict = {'label': 1, 'alignment': 'SIDEWAYS', 'origin': 'BN01.S01', 'offset': 150, 'length': 1200}
 
         with self.assertRaises(ValueError):
             Platform.construct_from_jdict(jdict)
@@ -122,13 +121,12 @@ class TestPlatform(unittest.TestCase):
 
     def test_platform_construct_from_jdict_invalid_label(self):
         jdict = {'label': 'KGX', 'alignment': 'LEFT', 'origin': 'BN01.S01', 'offset': 150, 'length': 1200}
-
         with self.assertRaises(ValueError):
             Platform.construct_from_jdict(jdict)
 
 
     def test_platform_construct_from_jdict_invalid_origin(self):
-        jdict = {'label': 'KGX/1', 'alignment': 'LEFT', 'origin': 'BN01', 'offset': 150, 'length': 1200}
+        jdict = {'label': 1, 'alignment': 'LEFT', 'origin': 'BN01', 'offset': 150, 'length': 1200}
 
         with self.assertRaises(ValueError):
             Platform.construct_from_jdict(jdict)
@@ -140,20 +138,20 @@ class TestPlatform(unittest.TestCase):
         self.assertEqual(obj1, obj2)
 
         # Different label
-        self.assertNotEqual(obj1, Platform(PlatformLabel('KGX', 9), PlatformAlignment.UP_LEFT,
-                                           Location('BN01', 'S01'), 150, 1200))
+        self.assertNotEqual(obj1, Platform(9, PlatformAlignment.UP_LEFT,
+                                           SegmentLocation('BN01', 'S01'), 150, 1200))
         # Different alignment
-        self.assertNotEqual(obj1, Platform(PlatformLabel('KGX', 1), PlatformAlignment.UP_RIGHT,
-                                           Location('BN01', 'S01'), 150, 1200))
+        self.assertNotEqual(obj1, Platform(1, PlatformAlignment.UP_RIGHT,
+                                           SegmentLocation('BN01', 'S01'), 150, 1200))
         # Different origin
-        self.assertNotEqual(obj1, Platform(PlatformLabel('KGX', 1), PlatformAlignment.UP_LEFT,
-                                           Location('BN09', 'S01'), 150, 1200))
+        self.assertNotEqual(obj1, Platform(1, PlatformAlignment.UP_LEFT,
+                                           SegmentLocation('BN09', 'S01'), 150, 1200))
         # Different offset
-        self.assertNotEqual(obj1, Platform(PlatformLabel('KGX', 1), PlatformAlignment.UP_LEFT,
-                                           Location('BN01', 'S01'), 0, 1200))
+        self.assertNotEqual(obj1, Platform(1, PlatformAlignment.UP_LEFT,
+                                           SegmentLocation('BN01', 'S01'), 0, 1200))
         # Different length
-        self.assertNotEqual(obj1, Platform(PlatformLabel('KGX', 1), PlatformAlignment.UP_LEFT,
-                                           Location('BN01', 'S01'), 150, 500))
+        self.assertNotEqual(obj1, Platform(1, PlatformAlignment.UP_LEFT,
+                                           SegmentLocation('BN01', 'S01'), 150, 500))
         # Different type / None
         self.assertNotEqual(obj1, None)
         self.assertNotEqual(obj1, 'KGX/1')
@@ -171,9 +169,9 @@ class TestPlatform(unittest.TestCase):
 
     def test_platform_island_is_two_platforms(self):
         # an island platform is represented by one Platform item per track
-        origin = Location('BN01', 'S01')
-        up_side = Platform(PlatformLabel('KGX', 1), PlatformAlignment.UP_LEFT, origin, 150, 1200)
-        down_side = Platform(PlatformLabel('KGX', 2), PlatformAlignment.UP_RIGHT, origin, 150, 1200)
+        origin = SegmentLocation('BN01', 'S01')
+        up_side = Platform(1, PlatformAlignment.UP_LEFT, origin, 150, 1200)
+        down_side = Platform(2, PlatformAlignment.UP_RIGHT, origin, 150, 1200)
 
         self.assertNotEqual(up_side, down_side)
         self.assertEqual(up_side.origin, down_side.origin)

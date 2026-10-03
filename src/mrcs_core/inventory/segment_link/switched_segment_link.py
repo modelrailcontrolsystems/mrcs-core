@@ -10,7 +10,7 @@ from collections import OrderedDict
 from typing import Any
 
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
-from mrcs_core.inventory.layout.location import Location
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment_link.segment_link import SegmentLink
 
 
@@ -33,17 +33,17 @@ class SwitchedSegmentLink(SegmentLink):
             return None
 
         p0 = jdict.get('p0-next')
-        p0_next_location = None if p0 is None else Location.construct_from_jdict(p0)
+        p0_next_location = None if p0 is None else SegmentLocation.construct_from_jdict(p0)
 
         p1 = jdict.get('p1-next')
-        p1_next_location = None if p1 is None else Location.construct_from_jdict(p1)
+        p1_next_location = None if p1 is None else SegmentLocation.construct_from_jdict(p1)
 
         return cls(p0_next_location, p1_next_location)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, p0_next_location: Location | None, p1_next_location: Location | None):
+    def __init__(self, p0_next_location: SegmentLocation | None, p1_next_location: SegmentLocation | None):
         self.__p0_next_location = p0_next_location
         self.__p1_next_location = p1_next_location
 
@@ -58,7 +58,7 @@ class SwitchedSegmentLink(SegmentLink):
     # ----------------------------------------------------------------------------------------------------------------
 
     # noinspection unresolved-references,unresolved-references
-    def selected_next_location(self, turnout_position: TurnoutPosition | None) -> Location | None:
+    def selected_next_location(self, turnout_position: TurnoutPosition | None) -> SegmentLocation | None:
         if turnout_position == TurnoutPosition.P0:
             return self.p0_next_location
 
@@ -69,7 +69,7 @@ class SwitchedSegmentLink(SegmentLink):
 
 
     # noinspection unresolved-references
-    def next_locations(self) -> list[Location]:
+    def next_locations(self) -> list[SegmentLocation]:
         p0_next_location = [] if self.p0_next_location is None else [self.p0_next_location]
         p1_next_location = [] if self.p1_next_location is None else [self.p1_next_location]
 

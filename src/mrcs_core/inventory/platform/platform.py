@@ -18,9 +18,8 @@ from collections import OrderedDict
 from typing import Any
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.platform.platform_alignment import PlatformAlignment
-from mrcs_core.inventory.platform.platform_label import PlatformLabel
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -33,18 +32,18 @@ class Platform(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Platform:
-        label = PlatformLabel.construct_from_jdict(jdict.get('label'))
+        label = jdict.get('label')
         alignment = PlatformAlignment(jdict.get('alignment'))
-        origin = Location.construct_from_jdict(jdict.get('origin'))
+        origin = SegmentLocation.construct_from_jdict(jdict.get('origin'))
         offset = jdict.get('offset')
         length = jdict.get('length')
 
-        return cls(label, alignment, origin, offset, length)
+        return cls(int(label), alignment, origin, offset, length)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: PlatformLabel, alignment: PlatformAlignment, origin: Location, offset: int, length: int):
+    def __init__(self, label: int, alignment: PlatformAlignment, origin: SegmentLocation, offset: int, length: int):
         self.__label = label
         self.__alignment = alignment
         self.__origin = origin

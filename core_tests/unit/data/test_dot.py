@@ -40,6 +40,10 @@ class TestDot(unittest.TestCase):
         self.assertEqual('', Dot.path())
 
 
+    def test_path_non_str(self):
+        self.assertEqual('Alpha.1', Dot.path('Alpha', 1))
+
+
     # node -----------------------------------------------------------------------------------------------------------
 
     def test_node_none(self):

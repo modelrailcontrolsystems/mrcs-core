@@ -18,7 +18,7 @@ from mrcs_core.equipment.block.block_address import BlockAddress
 from mrcs_core.equipment.block.block_enums import BlockHeading, BlockVoltage
 from mrcs_core.inventory.block.block import Block
 from mrcs_core.inventory.block.block_operation import BlockOperation
-from mrcs_core.inventory.layout.location import Location
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment.track_segment import TrackSegment
 from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
 
@@ -29,12 +29,12 @@ class TestBlock(unittest.TestCase):
 
     @classmethod
     def __sample_simple_segment_link_1(cls):
-        return FixedSegmentLink(Location('BN01', 'S02'))
+        return FixedSegmentLink(SegmentLocation('BN01', 'S02'))
 
 
     @classmethod
     def __sample_simple_segment_link_2(cls):
-        return FixedSegmentLink(Location('BN01', 'S03'))
+        return FixedSegmentLink(SegmentLocation('BN01', 'S03'))
 
 
     @classmethod
@@ -95,15 +95,17 @@ class TestBlock(unittest.TestCase):
         obj1 = self.__sample_block_1()
         self.assertEqual('Block:{label:BN01, address:BlockAddress:{detector:1, channel:1}, operation:REVERSIBLE, '
                          'segments:[TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:'
-                         'Location:{block_label:BN01, segment_label:S02}}, down_link:None, length:60}]}', str(obj1))
+                         'SegmentLocation:{block_label:BN01, segment_label:S02}}, down_link:None, length:60}]}',
+                         str(obj1))
 
         obj2 = self.__sample_block_2()
         self.assertEqual('Block:{label:BN02, address:BlockAddress:{detector:1, channel:2}, operation:UP_ONLY, '
                          'segments:[TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:'
-                         'Location:{block_label:BN01, segment_label:S02}}, down_link:None, length:60}, '
+                         'SegmentLocation:{block_label:BN01, segment_label:S02}}, down_link:None, length:60}, '
                          'TrackSegment:{label:S02, up_link:FixedSegmentLink:{next_location:'
-                         'Location:{block_label:BN01, segment_label:S02}}, down_link:FixedSegmentLink:{next_location:'
-                         'Location:{block_label:BN01, segment_label:S03}}, length:80}]}', str(obj2))
+                         'SegmentLocation:{block_label:BN01, segment_label:S02}}, down_link:FixedSegmentLink:'
+                         '{next_location:SegmentLocation:{block_label:BN01, segment_label:S03}}, length:80}]}',
+                         str(obj2))
 
 
     def test_block_as_json(self):

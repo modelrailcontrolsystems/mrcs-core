@@ -17,8 +17,8 @@ from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
 from mrcs_core.equipment.turnout.turnout_status import TurnoutStatus
-from mrcs_core.inventory.layout.location import Location
 from mrcs_core.inventory.segment.segment_builder import SegmentBuilder
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment.turnout_segment import TurnoutSegment
 from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
 from mrcs_core.inventory.segment_link.switched_segment_link import SwitchedSegmentLink
@@ -30,12 +30,12 @@ class TestTurnoutSegment(unittest.TestCase):
 
     @classmethod
     def __sample_simple_segment_link(cls):
-        return FixedSegmentLink(Location('BN01', 'S02'))
+        return FixedSegmentLink(SegmentLocation('BN01', 'S02'))
 
 
     @classmethod
     def __sample_switched_segment_link(cls):
-        return SwitchedSegmentLink(Location('BN01', 'S03'), Location('BN02', 'S01'))
+        return SwitchedSegmentLink(SegmentLocation('BN01', 'S03'), SegmentLocation('BN02', 'S01'))
 
 
     @classmethod
@@ -107,9 +107,9 @@ class TestTurnoutSegment(unittest.TestCase):
         self.maxDiff = None
         obj1 = self.__sample_turnout_segment_1()
         self.assertEqual('TurnoutSegment:{label:TN01, address:1, up_link:FixedSegmentLink:'
-                         '{next_location:Location:{block_label:BN01, segment_label:S02}}, '
-                         'down_link:SwitchedSegmentLink:{p0_next_location:Location:{block_label:BN01, '
-                         'segment_label:S03}, p1_next_location:Location:{block_label:BN02, '
+                         '{next_location:SegmentLocation:{block_label:BN01, segment_label:S02}}, '
+                         'down_link:SwitchedSegmentLink:{p0_next_location:SegmentLocation:{block_label:BN01, '
+                         'segment_label:S03}, p1_next_location:SegmentLocation:{block_label:BN02, '
                          'segment_label:S01}}, p0_length:20, p1_length:30}', str(obj1))
 
 
@@ -204,9 +204,9 @@ class TestTurnoutSegment(unittest.TestCase):
         conf_p0 = self.__sample_turnout_configuration(TurnoutPosition.P0)
         conf_p1 = self.__sample_turnout_configuration(TurnoutPosition.P1)
 
-        self.assertEqual(Location('BN01', 'S02'), obj1.next_location(conf_p0, BlockHeading.UP))
-        self.assertEqual(Location('BN01', 'S03'), obj1.next_location(conf_p0, BlockHeading.DOWN))
-        self.assertEqual(Location('BN02', 'S01'), obj1.next_location(conf_p1, BlockHeading.DOWN))
+        self.assertEqual(SegmentLocation('BN01', 'S02'), obj1.next_location(conf_p0, BlockHeading.UP))
+        self.assertEqual(SegmentLocation('BN01', 'S03'), obj1.next_location(conf_p0, BlockHeading.DOWN))
+        self.assertEqual(SegmentLocation('BN02', 'S01'), obj1.next_location(conf_p1, BlockHeading.DOWN))
 
         with self.assertRaises(ValueError):
             obj1.next_location(conf_p0, BlockHeading.UNASSIGNED)
@@ -215,13 +215,13 @@ class TestTurnoutSegment(unittest.TestCase):
     def test_turnout_segment_next_up_location(self):
         obj1 = self.__sample_turnout_segment_1()
         conf_p0 = self.__sample_turnout_configuration(TurnoutPosition.P0)
-        self.assertEqual(Location('BN01', 'S02'), obj1.next_up_location(conf_p0))
+        self.assertEqual(SegmentLocation('BN01', 'S02'), obj1.next_up_location(conf_p0))
 
         obj_switched_up = self.__sample_turnout_segment_2()
         conf_tn02_p0 = TurnoutConfiguration({'TN02': TurnoutPosition.P0})
         conf_tn02_p1 = TurnoutConfiguration({'TN02': TurnoutPosition.P1})
-        self.assertEqual(Location('BN01', 'S03'), obj_switched_up.next_up_location(conf_tn02_p0))
-        self.assertEqual(Location('BN02', 'S01'), obj_switched_up.next_up_location(conf_tn02_p1))
+        self.assertEqual(SegmentLocation('BN01', 'S03'), obj_switched_up.next_up_location(conf_tn02_p0))
+        self.assertEqual(SegmentLocation('BN02', 'S01'), obj_switched_up.next_up_location(conf_tn02_p1))
 
         obj_no_link = TurnoutSegment('TN01', 1, None, None, 20, 30)
         self.assertIsNone(obj_no_link.next_up_location(conf_p0))
@@ -231,8 +231,8 @@ class TestTurnoutSegment(unittest.TestCase):
         obj1 = self.__sample_turnout_segment_1()
         conf_p0 = self.__sample_turnout_configuration(TurnoutPosition.P0)
         conf_p1 = self.__sample_turnout_configuration(TurnoutPosition.P1)
-        self.assertEqual(Location('BN01', 'S03'), obj1.next_down_location(conf_p0))
-        self.assertEqual(Location('BN02', 'S01'), obj1.next_down_location(conf_p1))
+        self.assertEqual(SegmentLocation('BN01', 'S03'), obj1.next_down_location(conf_p0))
+        self.assertEqual(SegmentLocation('BN02', 'S01'), obj1.next_down_location(conf_p1))
 
         obj_no_link = TurnoutSegment('TN01', 1, None, None, 20, 30)
         self.assertIsNone(obj_no_link.next_down_location(conf_p0))
@@ -240,10 +240,11 @@ class TestTurnoutSegment(unittest.TestCase):
 
     def test_turnout_segment_next_locations(self):
         obj1 = self.__sample_turnout_segment_1()
-        self.assertEqual([Location('BN01', 'S02')], obj1.next_up_locations())
-        self.assertEqual([Location('BN01', 'S03'), Location('BN02', 'S01')], obj1.next_down_locations())
-        self.assertEqual([Location('BN01', 'S02'), Location('BN01', 'S03'), Location('BN02', 'S01')],
-                         obj1.next_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S02')], obj1.next_up_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S03'), SegmentLocation('BN02', 'S01')], obj1.next_down_locations())
+        self.assertEqual(
+            [SegmentLocation('BN01', 'S02'), SegmentLocation('BN01', 'S03'), SegmentLocation('BN02', 'S01')],
+            obj1.next_locations())
 
         obj_no_links = TurnoutSegment('TN01', 1, None, None, 20, 30)
         self.assertEqual([], obj_no_links.next_up_locations())

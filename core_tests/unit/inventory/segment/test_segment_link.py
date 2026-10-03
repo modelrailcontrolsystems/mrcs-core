@@ -14,7 +14,7 @@ import unittest
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
-from mrcs_core.inventory.layout.location import Location
+from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
 from mrcs_core.inventory.segment_link.segment_link_builder import SegmentLinkBuilder
 from mrcs_core.inventory.segment_link.switched_segment_link import SwitchedSegmentLink
@@ -26,27 +26,28 @@ class TestSegmentLink(unittest.TestCase):
 
     @classmethod
     def __sample_simple_segment_link_1(cls):
-        return FixedSegmentLink(Location('BN01', 'S02'))
+        return FixedSegmentLink(SegmentLocation('BN01', 'S02'))
 
 
     @classmethod
     def __sample_simple_segment_link_2(cls):
-        return FixedSegmentLink(Location('BN02', 'S01'))
+        return FixedSegmentLink(SegmentLocation('BN02', 'S01'))
 
 
     @classmethod
     def __sample_switched_segment_link(cls):
-        return SwitchedSegmentLink(Location('BN01', 'S02'), Location('BN02', 'S01'))
+        return SwitchedSegmentLink(SegmentLocation('BN01', 'S02'), SegmentLocation('BN02', 'S01'))
 
 
     @classmethod
     def __sample_switched_segment_link_half_null(cls):
-        return SwitchedSegmentLink(Location('BN01', 'S02'), None)
+        return SwitchedSegmentLink(SegmentLocation('BN01', 'S02'), None)
 
 
     def test_track_segment_link_str(self):
         obj1 = self.__sample_simple_segment_link_1()
-        self.assertEqual('FixedSegmentLink:{next_location:Location:{block_label:BN01, segment_label:S02}}', str(obj1))
+        self.assertEqual('FixedSegmentLink:{next_location:SegmentLocation:{block_label:BN01, segment_label:S02}}',
+                         str(obj1))
 
 
     def test_track_segment_link_jstr(self):
@@ -65,18 +66,18 @@ class TestSegmentLink(unittest.TestCase):
     def test_track_segment_link(self):
         obj1 = self.__sample_simple_segment_link_1()
         link = obj1.selected_next_location(TurnoutPosition.P0)
-        self.assertEqual('Location:{block_label:BN01, segment_label:S02}', str(link))
+        self.assertEqual('SegmentLocation:{block_label:BN01, segment_label:S02}', str(link))
 
 
     def test_track_segment_link_next_locations(self):
         obj1 = self.__sample_simple_segment_link_1()
-        self.assertEqual([Location('BN01', 'S02')], obj1.next_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S02')], obj1.next_locations())
 
 
     def test_turnout_segment_link_str(self):
         obj1 = self.__sample_switched_segment_link()
-        self.assertEqual('SwitchedSegmentLink:{p0_next_location:Location:{block_label:BN01, segment_label:S02}, '
-                         'p1_next_location:Location:{block_label:BN02, segment_label:S01}}', str(obj1))
+        self.assertEqual('SwitchedSegmentLink:{p0_next_location:SegmentLocation:{block_label:BN01, segment_label:S02}, '
+                         'p1_next_location:SegmentLocation:{block_label:BN02, segment_label:S01}}', str(obj1))
 
 
     def test_turnout_segment_link_jstr(self):
@@ -108,21 +109,21 @@ class TestSegmentLink(unittest.TestCase):
     def test_turnout_segment_link_p0(self):
         obj1 = self.__sample_switched_segment_link()
         link = obj1.selected_next_location(TurnoutPosition.P0)
-        self.assertEqual('Location:{block_label:BN01, segment_label:S02}', str(link))
+        self.assertEqual('SegmentLocation:{block_label:BN01, segment_label:S02}', str(link))
 
 
     def test_turnout_segment_link_p1(self):
         obj1 = self.__sample_switched_segment_link()
         link = obj1.selected_next_location(TurnoutPosition.P1)
-        self.assertEqual('Location:{block_label:BN02, segment_label:S01}', str(link))
+        self.assertEqual('SegmentLocation:{block_label:BN02, segment_label:S01}', str(link))
 
 
     def test_turnout_segment_link_next_locations(self):
         obj1 = self.__sample_switched_segment_link()
-        self.assertEqual([Location('BN01', 'S02'), Location('BN02', 'S01')], obj1.next_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S02'), SegmentLocation('BN02', 'S01')], obj1.next_locations())
 
         obj_half_null = self.__sample_switched_segment_link_half_null()
-        self.assertEqual([Location('BN01', 'S02')], obj_half_null.next_locations())
+        self.assertEqual([SegmentLocation('BN01', 'S02')], obj_half_null.next_locations())
 
         obj_null = SwitchedSegmentLink(None, None)
         self.assertEqual([], obj_null.next_locations())
