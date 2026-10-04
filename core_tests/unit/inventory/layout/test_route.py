@@ -14,7 +14,7 @@ import unittest
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
-from mrcs_core.inventory.layout.path import Path, PathEdge
+from mrcs_core.inventory.layout.route import Route, RouteSegment
 from mrcs_core.inventory.segment.segment_location import SegmentLocation
 from mrcs_core.inventory.segment.track_segment import TrackSegment
 from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
@@ -22,7 +22,7 @@ from mrcs_core.inventory.segment_link.fixed_segment_link import FixedSegmentLink
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class TestPath(unittest.TestCase):
+class TestRoute(unittest.TestCase):
 
     @classmethod
     def __sample_track_segment_1(cls):
@@ -49,17 +49,17 @@ class TestPath(unittest.TestCase):
 
     @classmethod
     def __sample_path_edge_1(cls):
-        return PathEdge('TrackSegment', 60, SegmentLocation('BN01', 'S01'))
+        return RouteSegment('TrackSegment', 60, SegmentLocation('BN01', 'S01'))
 
 
     @classmethod
     def __sample_path_edge_2(cls):
-        return PathEdge('TrackSegment', 80, SegmentLocation('BN01', 'S02'))
+        return RouteSegment('TrackSegment', 80, SegmentLocation('BN01', 'S02'))
 
 
     @classmethod
     def __sample_path_edge_3(cls):
-        return PathEdge('TrackSegment', 100, SegmentLocation('BN02', 'S01'))
+        return RouteSegment('TrackSegment', 100, SegmentLocation('BN02', 'S01'))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ class TestPath(unittest.TestCase):
 
     def test_path_edge_construct_from_segment(self):
         segment = self.__sample_track_segment_1()
-        obj1 = PathEdge.construct(self.__sample_turnout_configuration(), 'BN01', segment)
+        obj1 = RouteSegment.construct(self.__sample_turnout_configuration(), 'BN01', segment)
 
         self.assertEqual('TrackSegment', obj1.segment_type_name)
         self.assertEqual(60, obj1.length)
@@ -86,7 +86,7 @@ class TestPath(unittest.TestCase):
             'length': 60,
             'location': 'BN01.S01'
         }
-        obj1 = PathEdge.construct_from_jdict(jdict)
+        obj1 = RouteSegment.construct_from_jdict(jdict)
 
         self.assertEqual('TrackSegment', obj1.segment_type_name)
         self.assertEqual(60, obj1.length)
@@ -95,7 +95,7 @@ class TestPath(unittest.TestCase):
 
     def test_path_edge_str(self):
         obj1 = self.__sample_path_edge_1()
-        self.assertEqual('PathEdge:{segment_type_name:TrackSegment, length:60, '
+        self.assertEqual('RouteSegment:{segment_type_name:TrackSegment, length:60, '
                          'location:SegmentLocation:{block_label:BN01, segment_label:S01}}', str(obj1))
 
 
@@ -117,7 +117,7 @@ class TestPath(unittest.TestCase):
     def test_path_edge_jstr_eq(self):
         obj1 = self.__sample_path_edge_1()
         jstr = JSONify.dumps(obj1)
-        obj2 = PathEdge.construct_from_jdict(json.loads(jstr))
+        obj2 = RouteSegment.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
 
 
@@ -141,7 +141,7 @@ class TestPath(unittest.TestCase):
     # ----------------------------------------------------------------------------------------------------------------
 
     def test_path_construct_empty(self):
-        obj = Path()
+        obj = Route()
         self.assertEqual([], obj.edges)
         self.assertEqual(0, obj.total_length)
 
@@ -149,7 +149,7 @@ class TestPath(unittest.TestCase):
     def test_path_construct_with_edges(self):
         edge1 = self.__sample_path_edge_1()
         edge2 = self.__sample_path_edge_2()
-        obj = Path(edge1, edge2)
+        obj = Route(edge1, edge2)
 
         self.assertEqual([edge1, edge2], obj.edges)
         self.assertEqual(140, obj.total_length)
@@ -160,14 +160,14 @@ class TestPath(unittest.TestCase):
             {'type': 'TrackSegment', 'length': 60, 'location': 'BN01.S01'},
             {'type': 'TrackSegment', 'length': 80, 'location': 'BN01.S02'}
         ]
-        obj = Path.construct_from_jdict(jdict)
+        obj = Route.construct_from_jdict(jdict)
 
         self.assertEqual([self.__sample_path_edge_1(), self.__sample_path_edge_2()], obj.edges)
         self.assertEqual(140, obj.total_length)
 
 
     def test_path_append(self):
-        obj = Path()
+        obj = Route()
         conf = self.__sample_turnout_configuration()
         segment1 = self.__sample_track_segment_1()
         segment2 = self.__sample_track_segment_2()
@@ -183,22 +183,22 @@ class TestPath(unittest.TestCase):
 
     def test_path_str(self):
         self.maxDiff = None
-        obj_empty = Path()
-        self.assertEqual('Path:{edges:[]}', str(obj_empty))
+        obj_empty = Route()
+        self.assertEqual('Route:{edges:[]}', str(obj_empty))
 
         edge1 = self.__sample_path_edge_1()
         edge2 = self.__sample_path_edge_2()
-        obj = Path(edge1, edge2)
-        self.assertEqual('Path:{edges:[PathEdge:{segment_type_name:TrackSegment, length:60, '
+        obj = Route(edge1, edge2)
+        self.assertEqual('Route:{edges:[RouteSegment:{segment_type_name:TrackSegment, length:60, '
                          'location:SegmentLocation:{block_label:BN01, segment_label:S01}}, '
-                         'PathEdge:{segment_type_name:TrackSegment, length:80, '
+                         'RouteSegment:{segment_type_name:TrackSegment, length:80, '
                          'location:SegmentLocation:{block_label:BN01, segment_label:S02}}]}', str(obj))
 
 
     def test_path_as_json(self):
         edge1 = self.__sample_path_edge_1()
         edge2 = self.__sample_path_edge_2()
-        obj = Path(edge1, edge2)
+        obj = Route(edge1, edge2)
 
         self.assertEqual([edge1, edge2], obj.as_json())
 
@@ -206,7 +206,7 @@ class TestPath(unittest.TestCase):
     def test_path_jstr(self):
         edge1 = self.__sample_path_edge_1()
         edge2 = self.__sample_path_edge_2()
-        obj = Path(edge1, edge2)
+        obj = Route(edge1, edge2)
         jstr = JSONify.dumps(obj)
         self.assertEqual('[{"type": "TrackSegment", "length": 60, "location": "BN01.S01"}, '
                          '{"type": "TrackSegment", "length": 80, "location": "BN01.S02"}]', jstr)
@@ -215,17 +215,17 @@ class TestPath(unittest.TestCase):
     def test_path_jstr_eq(self):
         edge1 = self.__sample_path_edge_1()
         edge2 = self.__sample_path_edge_2()
-        obj1 = Path(edge1, edge2)
+        obj1 = Route(edge1, edge2)
         jstr = JSONify.dumps(obj1)
-        obj2 = Path.construct_from_jdict(json.loads(jstr))
+        obj2 = Route.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
 
 
     def test_path_eq(self):
         edge1 = self.__sample_path_edge_1()
         edge2 = self.__sample_path_edge_2()
-        obj1 = Path(edge1, edge2)
-        obj2 = Path(edge1, edge2)
+        obj1 = Route(edge1, edge2)
+        obj2 = Route(edge1, edge2)
         self.assertEqual(obj1, obj2)
 
 
@@ -234,9 +234,9 @@ class TestPath(unittest.TestCase):
         edge2 = self.__sample_path_edge_2()
         edge3 = self.__sample_path_edge_3()
 
-        obj1 = Path(edge1, edge2)
-        obj2 = Path(edge1, edge3)
-        obj3 = Path(edge1)
+        obj1 = Route(edge1, edge2)
+        obj2 = Route(edge1, edge3)
+        obj3 = Route(edge1)
 
         self.assertNotEqual(obj1, obj2)
         self.assertNotEqual(obj1, obj3)

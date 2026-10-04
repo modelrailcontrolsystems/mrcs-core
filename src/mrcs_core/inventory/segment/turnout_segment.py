@@ -30,7 +30,7 @@ class TurnoutSegment(Segment):
         type_name = jdict.get('type')
 
         if type_name != cls.type_name():
-            raise TypeError(f'required type:{cls.type_name()} got:{type_name}')
+            raise TypeError(jdict)
 
         label = jdict.get('label')
         address = jdict.get('addr')
