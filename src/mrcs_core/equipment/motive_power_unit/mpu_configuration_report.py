@@ -50,7 +50,8 @@ class MPUConfigurationReport(JSONable):
         double_traction = jdict.get('consist')
         smart_search = jdict.get('smart_search')
 
-        return cls(mpu_address, functions, is_busy, stepping, speed_setting, reverse, double_traction, smart_search)
+        return cls(int(mpu_address), functions, is_busy, stepping, speed_setting, reverse, double_traction,
+                   smart_search)
 
 
     # ----------------------------------------------------------------------------------------------------------------

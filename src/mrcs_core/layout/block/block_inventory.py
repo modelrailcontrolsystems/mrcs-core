@@ -3,7 +3,7 @@ Created on 27 Sep 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-an inventory of blocks
+An inventory of blocks
 """
 
 from typing import Any, List, Self
