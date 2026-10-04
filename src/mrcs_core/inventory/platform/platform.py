@@ -32,13 +32,17 @@ class Platform(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Platform:
-        label = jdict.get('label')
-        alignment = PlatformAlignment(jdict.get('alignment'))
-        origin = SegmentLocation.construct_from_jdict(jdict.get('origin'))
-        offset = jdict.get('offset')
-        length = jdict.get('length')
+        try:
+            label = jdict.get('label')
+            alignment = PlatformAlignment(jdict.get('alignment'))
+            origin = SegmentLocation.construct_from_jdict(jdict.get('origin'))
+            offset = jdict.get('offset')
+            length = jdict.get('length')
 
-        return cls(int(label), alignment, origin, offset, length)
+            return cls(int(label), alignment, origin, offset, length)
+
+        except ValueError:
+            raise ValueError(jdict)
 
 
     # ----------------------------------------------------------------------------------------------------------------

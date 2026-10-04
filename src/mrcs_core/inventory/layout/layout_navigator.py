@@ -31,7 +31,7 @@ from mrcs_core.inventory.station.station import Station
 
 class LayoutNavigator(ABC):
     """
-    An ordered collection of Blocks and Platforms, making up a complete layout
+    An ordered collection of Blocks and Stations, making up a complete layout
     """
 
 
@@ -196,7 +196,6 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-
     @property
     def blocks(self):
         return tuple(self.__blocks.values())
@@ -260,7 +259,6 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-
     @property
     def stations(self):
         return tuple(self.__stations.values())
@@ -277,6 +275,8 @@ class LayoutNavigator(ABC):
         except KeyError:
             return None
 
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     def platform(self, location: PlatformLocation) -> Platform | None:
         station = self.station(location.station_label)

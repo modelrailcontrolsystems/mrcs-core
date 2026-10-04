@@ -29,4 +29,4 @@ class SegmentBuilder(object):
         if type_name == TurnoutSegment.type_name():
             return TurnoutSegment.construct_from_jdict(jdict)
 
-        raise TypeError(f'invalid segment type: {type_name}')
+        raise TypeError(jdict)
