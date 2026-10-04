@@ -48,7 +48,7 @@ class MPUDecoderReport(JSONable):
         speed = jdict.get('speed')
         qos = jdict.get('qos')
 
-        return cls(mpu_address, receive_count, error_count, opts, speed, qos)
+        return cls(int(mpu_address), int(receive_count), int(error_count), int(opts), int(speed), int(qos))
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -42,7 +42,7 @@ class MPUStatus(JSONable):
         speed = jdict.get('speed')
         direction = MPUDirection[jdict.get('direction')]
 
-        return cls(label, mpu_address, functions, speed_setting, speed, direction)
+        return cls(label, int(mpu_address), functions, int(speed_setting), int(speed), direction)
 
 
     # ----------------------------------------------------------------------------------------------------------------

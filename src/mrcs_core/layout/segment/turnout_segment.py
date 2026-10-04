@@ -40,7 +40,7 @@ class TurnoutSegment(Segment):
         up_link = SegmentLinkBuilder.construct_from_jdict(jdict.get('up-link'))
         down_link = SegmentLinkBuilder.construct_from_jdict(jdict.get('down-link'))
 
-        return cls(label, address, up_link, down_link, p0_length, p1_length)
+        return cls(label, int(address), up_link, down_link, int(p0_length), int(p1_length))
 
 
     # ----------------------------------------------------------------------------------------------------------------

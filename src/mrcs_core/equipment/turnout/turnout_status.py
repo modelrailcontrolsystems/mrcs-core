@@ -43,7 +43,7 @@ class TurnoutStatus(JSONable):
         # may raise KeyError
         position = TurnoutPosition[jdict.get('position')]
 
-        return cls(label, block_label, turnout_address, position)
+        return cls(label, block_label, int(turnout_address), position)
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ class BlockOccupant(JSONable):
         # may raise KeyError
         face = BlockOccupantFace[jdict.get('face')]
 
-        return cls(mpu_address, face)
+        return cls(int(mpu_address), face)
 
 
     # ----------------------------------------------------------------------------------------------------------------
