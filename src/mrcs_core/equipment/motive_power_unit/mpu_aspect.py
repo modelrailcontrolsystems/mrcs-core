@@ -31,7 +31,7 @@ class MPUAspect(JSONable):
         heading = BlockHeading[jdict.get('heading')]
         location = jdict.get('location')
 
-        return cls(label, int(mpu_address), speed, heading, location)  # TODO: cast location to int?
+        return cls(label, int(mpu_address), speed, heading, location)
 
 
     # ----------------------------------------------------------------------------------------------------------------

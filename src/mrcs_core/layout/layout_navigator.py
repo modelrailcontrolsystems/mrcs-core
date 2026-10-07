@@ -16,13 +16,13 @@ from mrcs_core.data.dot import Dot
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.layout.block.block import Block
-from mrcs_core.layout.block.block_inventory import BlockInventory
+from mrcs_core.layout.block.block_abstract import BlockAbstract
 from mrcs_core.layout.platform.platform import Platform
 from mrcs_core.layout.platform.platform_location import PlatformLocation
 from mrcs_core.layout.route import Route
 from mrcs_core.layout.segment.segment import Segment
 from mrcs_core.layout.segment.segment_location import SegmentLocation
-from mrcs_core.layout.segment.turnout_inventory import TurnoutInventory
+from mrcs_core.layout.segment.turnout_abstract import TurnoutAbstract
 from mrcs_core.layout.segment.turnout_segment import TurnoutSegment
 from mrcs_core.layout.station.station import Station
 
@@ -155,17 +155,17 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def block_inventory(self) -> BlockInventory:
+    def block_abstract(self) -> BlockAbstract:
         block_statuses = [block.status() for block in self.blocks]
 
-        return BlockInventory(block_statuses)
+        return BlockAbstract(block_statuses)
 
 
-    def turnout_inventory(self) -> TurnoutInventory:
+    def turnout_abstract(self) -> TurnoutAbstract:
         turnout_statuses = [segment.status(block_label) for block_label, segment in self.block_segments() if
                             isinstance(segment, TurnoutSegment)]
 
-        return TurnoutInventory(turnout_statuses)
+        return TurnoutAbstract(turnout_statuses)
 
 
     # ----------------------------------------------------------------------------------------------------------------

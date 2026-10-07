@@ -301,20 +301,20 @@ class TestLayoutNavigator(unittest.TestCase):
 
     # inventories ----------------------------------------------------------------------------------------------------
 
-    def test_block_inventory(self):
-        inventory = self.__layout.block_inventory()
+    def test_block_abstract(self):
+        abstract = self.__layout.block_abstract()
 
-        self.assertEqual(4, len(inventory))
-        self.assertEqual(['B01', 'B02', 'B03', 'B04'], [status.label for status in inventory.items])
+        self.assertEqual(4, len(abstract))
+        self.assertEqual(['B01', 'B02', 'B03', 'B04'], [status.label for status in abstract.items])
         self.assertEqual([BlockAddress(1, 1), BlockAddress(1, 2), BlockAddress(1, 3), BlockAddress(1, 4)],
-                         [status.address for status in inventory.items])
+                         [status.address for status in abstract.items])
 
 
-    def test_turnout_inventory(self):
-        inventory = self.__layout.turnout_inventory()
+    def test_turnout_abstract(self):
+        abstract = self.__layout.turnout_abstract()
 
-        self.assertEqual(1, len(inventory))
-        self.assertEqual(TurnoutStatus('S02', 'B02', 1, TurnoutPosition.UNKNOWN), inventory.items[0])
+        self.assertEqual(1, len(abstract))
+        self.assertEqual(TurnoutStatus('S02', 'B02', 1, TurnoutPosition.UNKNOWN), abstract.items[0])
 
 
     # block_report -------------------------------------------------------------------------------------------------

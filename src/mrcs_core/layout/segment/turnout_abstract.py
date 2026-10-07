@@ -3,7 +3,10 @@ Created on 14 Aug 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-an inventory of turnouts
+A compendium of turnout status objects
+
+The intended use of the TurnoutAbstract is to populate an empty turnout database table. To this end, it should provide
+TurnoutStatus objects which have identity, but no information about the configuration of each turnout.
 """
 
 from typing import Any, List, Self
@@ -14,7 +17,7 @@ from mrcs_core.equipment.turnout.turnout_status import TurnoutStatus
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class TurnoutInventory(JSONable):
+class TurnoutAbstract(JSONable):
     """
     an inventory of turnouts
     """
@@ -54,4 +57,4 @@ class TurnoutInventory(JSONable):
 
     def __str__(self, *args, **kwargs):
         items = '[' + ', '.join(str(item) for item in self.items) + ']'
-        return f'TurnoutInventory:{{items:{items}}}'
+        return f'TurnoutAbstract:{{items:{items}}}'
