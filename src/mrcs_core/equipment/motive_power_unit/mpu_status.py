@@ -35,14 +35,18 @@ class MPUStatus(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
-        label = jdict.get('label')
-        mpu_address = jdict.get('addr')
-        functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
-        speed_setting = jdict.get('speed_setting')
-        speed = jdict.get('speed')
-        direction = MPUDirection[jdict.get('direction')]
+        try:
+            label = jdict.get('label')
+            mpu_address = int(jdict.get('addr'))
+            functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
+            speed_setting = jdict.get('speed_setting')
+            speed = jdict.get('speed')
+            direction = MPUDirection[jdict.get('direction')]
 
-        return cls(label, int(mpu_address), functions, speed_setting, speed, direction)
+        except (TypeError, ValueError):
+            raise ValueError(jdict)
+
+        return cls(label, mpu_address, functions, speed_setting, speed, direction)
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -35,15 +35,19 @@ class TurnoutStatus(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
-        label = jdict.get('label')
-        block_label = jdict.get('block_label')
+        try:
+            label = jdict.get('label')
+            block_label = jdict.get('block_label')
 
-        turnout_address = jdict.get('addr')
+            turnout_address = int(jdict.get('addr'))
 
-        # may raise KeyError
-        position = TurnoutPosition[jdict.get('position')]
+            # may raise KeyError
+            position = TurnoutPosition[jdict.get('position')]
 
-        return cls(label, block_label, int(turnout_address), position)
+        except (TypeError, ValueError):
+            raise ValueError(jdict)
+
+        return cls(label, block_label, turnout_address, position)
 
 
     # ----------------------------------------------------------------------------------------------------------------

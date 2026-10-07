@@ -25,13 +25,17 @@ class MPUAspect(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
-        label = jdict.get('label')
-        mpu_address = jdict.get('addr')
-        speed = jdict.get('speed')
-        heading = BlockHeading[jdict.get('heading')]
-        location = jdict.get('location')
+        try:
+            label = jdict.get('label')
+            mpu_address = int(jdict.get('addr'))
+            speed = jdict.get('speed')
+            heading = BlockHeading[jdict.get('heading')]
+            location = jdict.get('location')
 
-        return cls(label, int(mpu_address), speed, heading, location)
+        except (TypeError, ValueError):
+            raise ValueError(jdict)
+
+        return cls(label, mpu_address, speed, heading, location)
 
 
     # ----------------------------------------------------------------------------------------------------------------

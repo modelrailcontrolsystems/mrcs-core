@@ -39,10 +39,10 @@ class Platform(JSONable):
             offset = jdict.get('offset')
             length = jdict.get('length')
 
-            return cls(int(label), alignment, origin, offset, length)
-
         except ValueError:
             raise ValueError(jdict)
+
+        return cls(int(label), alignment, origin, offset, length)
 
 
     # ----------------------------------------------------------------------------------------------------------------

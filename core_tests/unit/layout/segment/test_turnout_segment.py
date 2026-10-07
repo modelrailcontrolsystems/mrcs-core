@@ -152,7 +152,7 @@ class TestTurnoutSegment(unittest.TestCase):
 
 
     def test_turnout_segment_construct_from_jdict_invalid_type(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             TurnoutSegment.construct_from_jdict({'type': 'InvalidType'})
 
 

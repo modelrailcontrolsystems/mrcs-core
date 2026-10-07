@@ -35,19 +35,22 @@ class MPU(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
-        label = jdict.get('label')
-        address = jdict.get('addr')
+        try:
+            label = jdict.get('label')
+            address = int(jdict.get('addr'))
 
-        operator = jdict.get('operator')
-        mpu_class = jdict.get('class')
-        number = jdict.get('number')
-        vendor = jdict.get('vendor')
+            operator = jdict.get('operator')
+            mpu_class = jdict.get('class')
+            number = jdict.get('number')
+            vendor = jdict.get('vendor')
 
-        length = jdict.get('length')
+            length = int(jdict.get('length'))
 
-        # TODO: add decoder, CV pairs here
+            # TODO: add decoder, CV pairs here
+        except (TypeError, ValueError):
+            raise ValueError(jdict)
 
-        return cls(label, int(address), operator, mpu_class, number, vendor, int(length))
+        return cls(label, address, operator, mpu_class, number, vendor, length)
 
 
     # ----------------------------------------------------------------------------------------------------------------

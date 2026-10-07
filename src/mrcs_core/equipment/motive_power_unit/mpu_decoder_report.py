@@ -36,19 +36,23 @@ class MPUDecoderReport(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> MPUDecoderReport:
-        type_name = jdict.get('type')
+        try:
+            type_name = jdict.get('type')
 
-        if type_name != cls.__name__:
-            raise TypeError(f'required type:{cls.__name__} got:{type_name}')
+            if type_name != cls.__name__:
+                raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
-        mpu_address = jdict.get('addr')
-        receive_count = jdict.get('received')
-        error_count = jdict.get('errors')
-        opts = jdict.get('opts')
-        speed = jdict.get('speed')
-        qos = jdict.get('qos')
+            mpu_address = int(jdict.get('addr'))
+            receive_count = int(jdict.get('received'))
+            error_count = int(jdict.get('errors'))
+            opts = int(jdict.get('opts'))
+            speed = int(jdict.get('speed'))
+            qos = int(jdict.get('qos'))
 
-        return cls(int(mpu_address), int(receive_count), int(error_count), int(opts), int(speed), int(qos))
+        except (TypeError, ValueError):
+            raise ValueError(jdict)
+
+        return cls(mpu_address, receive_count, error_count, opts, speed, qos)
 
 
     # ----------------------------------------------------------------------------------------------------------------
