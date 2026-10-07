@@ -27,20 +27,25 @@ class TurnoutSegment(Segment):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> TurnoutSegment:
-        type_name = jdict.get('type')
+        try:
+            type_name = jdict.get('type')
 
-        if type_name != cls.type_name():
-            raise TypeError(jdict)
+            if type_name != cls.type_name():
+                raise TypeError(jdict)
 
-        label = jdict.get('label')
-        address = jdict.get('addr')
-        p0_length = jdict.get('p0-length')
-        p1_length = jdict.get('p1-length')
+            label = jdict.get('label')
+            address = int(jdict.get('addr'))
 
-        up_link = SegmentLinkBuilder.construct_from_jdict(jdict.get('up-link'))
-        down_link = SegmentLinkBuilder.construct_from_jdict(jdict.get('down-link'))
+            up_link = SegmentLinkBuilder.construct_from_jdict(jdict.get('up-link'))
+            down_link = SegmentLinkBuilder.construct_from_jdict(jdict.get('down-link'))
 
-        return cls(label, int(address), up_link, down_link, int(p0_length), int(p1_length))
+            p0_length = int(jdict.get('p0-length'))
+            p1_length = int(jdict.get('p1-length'))
+
+        except (TypeError, ValueError):
+            raise ValueError(jdict)
+
+        return cls(label, address, up_link, down_link, p0_length, p1_length)
 
 
     # ----------------------------------------------------------------------------------------------------------------
