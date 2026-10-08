@@ -26,12 +26,12 @@ class BlockOccupant(JSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> BlockOccupant:
-        mpu_address = jdict.get('addr')
+        mpu_address = int(jdict.get('addr'))
 
         # may raise KeyError
         face = BlockOccupantFace[jdict.get('face')]
 
-        return cls(int(mpu_address), face)
+        return cls(mpu_address, face)
 
 
     # ----------------------------------------------------------------------------------------------------------------

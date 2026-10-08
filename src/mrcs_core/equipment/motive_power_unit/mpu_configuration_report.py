@@ -41,7 +41,7 @@ class MPUConfigurationReport(JSONable):
         if type_name != cls.__name__:
             raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
-        mpu_address = jdict.get('addr')
+        mpu_address = int(jdict.get('addr'))
         functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
         is_busy = jdict.get('busy')
         stepping = ThrottleSteps[jdict.get('stepping')]
@@ -50,8 +50,7 @@ class MPUConfigurationReport(JSONable):
         double_traction = jdict.get('consist')
         smart_search = jdict.get('smart_search')
 
-        return cls(int(mpu_address), functions, is_busy, stepping, speed_setting, reverse, double_traction,
-                   smart_search)
+        return cls(mpu_address, functions, is_busy, stepping, speed_setting, reverse, double_traction, smart_search)
 
 
     # ----------------------------------------------------------------------------------------------------------------

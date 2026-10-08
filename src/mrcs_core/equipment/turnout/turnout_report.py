@@ -34,12 +34,12 @@ class TurnoutReport(JSONable):
         if type_name != cls.__name__:
             raise TypeError(f'required type:{cls.__name__} got:{type_name}')
 
-        turnout_address = jdict.get('addr')
+        turnout_address = int(jdict.get('addr'))
 
         # may raise KeyError
         position = TurnoutPosition[jdict.get('position')]
 
-        return cls(int(turnout_address), position)
+        return cls(turnout_address, position)
 
 
     # ----------------------------------------------------------------------------------------------------------------
