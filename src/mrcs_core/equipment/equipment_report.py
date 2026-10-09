@@ -12,6 +12,7 @@ https://www.z21.eu/en/products/z21
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_report import BlockOccupancyReport, BlockVoltageReport
 from mrcs_core.equipment.control_router.control_router_report import ControlRouterReport
+from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
 from mrcs_core.equipment.motive_power_unit.mpu_configuration_report import MPUConfigurationReport
 from mrcs_core.equipment.motive_power_unit.mpu_decoder_report import MPUDecoderReport
 from mrcs_core.equipment.track.track_report import TrackReport
@@ -29,6 +30,7 @@ class EquipmentReport(object):
         'BlockOccupancyReport': BlockOccupancyReport,
         'BlockVoltageReport': BlockVoltageReport,
         'ControlRouterReport': ControlRouterReport,
+        'CVReport': CVReport,
         'MPUDecoderReport': MPUDecoderReport,
         'MPUConfigurationReport': MPUConfigurationReport,
         'TrackReport': TrackReport,
