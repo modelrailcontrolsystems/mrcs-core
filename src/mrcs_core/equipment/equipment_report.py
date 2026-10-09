@@ -53,6 +53,6 @@ class EquipmentReport(object):
         try:
             equipment_cls = cls.__class_for_type_name(type_name)
         except KeyError:
-            raise TypeError(f'EquipmentReport: unsupported type:{type_name}')
+            raise TypeError(f'unsupported type:{type_name}')
 
         return equipment_cls.construct_from_jdict(jdict)
