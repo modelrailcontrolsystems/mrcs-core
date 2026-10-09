@@ -28,7 +28,7 @@ class TrackReport(JSONable):
     def construct_from_jdict(cls, jdict) -> Self:
         type_name = jdict.get('type')
 
-        if type_name != 'TrackReport' and type_name != cls.__name__:
+        if type_name != 'TrackReport' and type_name != cls.type_name():
             raise TypeError(f'required type:TrackReport got:{type_name}')
 
         # may raise KeyError
