@@ -38,8 +38,8 @@ class MPUConfigurationReport(JSONable):
     def construct_from_jdict(cls, jdict) -> MPUConfigurationReport:
         type_name = jdict.get('type')
 
-        if type_name != cls.__name__:
-            raise TypeError(f'required type:{cls.__name__} got:{type_name}')
+        if type_name != cls.type_name():
+            raise TypeError(f'required type:{cls.type_name()} got:{type_name}')
 
         mpu_address = int(jdict.get('addr'))
         functions = MPUFunctions.construct_from_jdict(jdict.get('functions'))
