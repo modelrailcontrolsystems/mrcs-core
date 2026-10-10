@@ -1,48 +1,57 @@
 """
-Created on 7 Oct 2026
+Created on 10 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A reported configuration variable
+Configuration variable for numeric values
 
 {
-    "type": "CVReport",
-    "addr": 1,
-    "value": 2
+    "type": "NumericCV",
+    "addr": "ACCELERATION",
+    "value": 5
 }
 """
 
 from collections import OrderedDict
-from typing import Any
+from typing import Any, Self
 
-from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
+from mrcs_core.inventory.configuration_variable.cv import CV
+from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class CVReport(JSONable):
+class NumericCV(CV):
     """
-    A reported configuration variable
+    Configuration variable for numeric values
     """
 
 
     @classmethod
-    def construct_from_jdict(cls, jdict) -> CVReport:
-        type_name = jdict.get('type')
+    def construct_from_report(cls, report: CVReport) -> Self:
+        cv_address = CVAddress(report.cv_address)  # may raise KeyError
 
-        if type_name != cls.type_name():
-            raise TypeError(f'required type:{cls.type_name()} got:{type_name}')
+        return cls(cv_address, report.value)
 
-        cv_address = int(jdict.get('addr'))
-        value = int(jdict.get('value'))
+
+    @classmethod
+    def construct_from_jdict(cls, jdict) -> Self:
+        try:
+            # may raise KeyError
+            cv_address = CVAddress[jdict.get('addr')]
+            value = int(jdict.get('value'))
+
+        except (TypeError, ValueError):
+            raise ValueError(jdict)
 
         return cls(cv_address, value)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, cv_address: int, value: int):
-        self.__cv_address = cv_address
+    def __init__(self, cv_address: CVAddress, value: int):
+        super().__init__(cv_address)
         self.__value = value
 
 
@@ -53,10 +62,6 @@ class CVReport(JSONable):
             return False
 
 
-    def __lt__(self, other: Any):
-        return self.cv_address < other.cv_address
-
-
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):
@@ -64,7 +69,7 @@ class CVReport(JSONable):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.cv_address
+        jdict['addr'] = self.cv_address.name
         jdict['value'] = self.value
 
         return jdict
@@ -73,16 +78,11 @@ class CVReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def cv_address(self):
-        return self.__cv_address
-
-
-    @property
-    def value(self):
+    def value(self) -> int:
         return self.__value
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'CVReport:{{cv_address:{self.cv_address}, value:{self.value}}}'
+        return f'NumericCV{{cv_address:{self.cv_address}, value:{self.value}}}'
