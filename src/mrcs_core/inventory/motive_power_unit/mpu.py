@@ -65,7 +65,7 @@ class MPU(JSONable):
             for cv_jdict in jdict.get('cvs', []):
                 cv = CVBuilder.construct_from_jdict(cv_jdict)
                 if cv.cv_address in cvs:
-                    raise ValueError(f'duplicate label {cv.cv_address}')
+                    raise ValueError(f'duplicate cv address: {cv.cv_address.name}')
 
                 cvs[cv.cv_address] = cv
 

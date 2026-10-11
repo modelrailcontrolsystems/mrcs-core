@@ -36,6 +36,9 @@ class Block(JSONable):
         segments = OrderedDict()
         for segment_jdict in jdict.get('segments', []):
             segment = SegmentBuilder.construct_from_jdict(segment_jdict)
+            if segment.label in segments:
+                raise ValueError(f'duplicate segment label: {segment.label}')
+
             segments[segment.label] = segment
 
         return cls(label, address, operation, segments)
