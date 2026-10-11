@@ -40,7 +40,7 @@ class LayoutConf(PersistentJSONable):
         conf = cls.load(manager)
         if conf is not None:
             if conf.selected_layout not in layouts:
-                raise KeyError(f'Selected layout is set to {conf.selected_layout} but this layout is not known.')
+                raise KeyError(f'Selected layout is set to {conf.selected_layout} but this layout is not present.')
 
             return Layout.load(manager, name=conf.selected_layout)
 

@@ -41,12 +41,18 @@ class Layout(LayoutNavigator, MultiPersistentJSONable):
 
         blocks = OrderedDict()
         for block_jdict in jdict.get('blocks', []):
-            block = Block.construct_from_jdict(block_jdict)  # TODO: check for duplicate labels
+            block = Block.construct_from_jdict(block_jdict)
+            if block.label in blocks:
+                raise ValueError(f'duplicate block label: {block.label}')
+
             blocks[block.label] = block
 
         stations = OrderedDict()
         for station_jdict in jdict.get('stations', []):
-            station = Station.construct_from_jdict(station_jdict)  # TODO: check for duplicate labels
+            station = Station.construct_from_jdict(station_jdict)
+            if station.label in stations:
+                raise ValueError(f'duplicate station label: {station.label}')
+
             stations[station.label] = station
 
         return cls(label, description, blocks, stations, name=name)
