@@ -85,3 +85,9 @@ class TestDot(unittest.TestCase):
     def test_nodes_path_round_trip(self):
         nodes = Dot.nodes('c.c1.c100')
         self.assertEqual('c.c1.c100', Dot.path(*nodes))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

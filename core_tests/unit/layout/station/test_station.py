@@ -77,3 +77,9 @@ class TestStation(unittest.TestCase):
         obj1 = self.__sample_station_1()
         obj2 = self.__sample_station_2()
         self.assertLess(obj1, obj2)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

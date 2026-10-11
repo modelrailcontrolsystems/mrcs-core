@@ -70,3 +70,9 @@ class TestRailcomCV(unittest.TestCase):
         obj2 = JSONify.dumps(obj1, indent=4)
         obj3 = RailcomCV.construct_from_jdict(json.loads(obj2))
         self.assertEqual(obj1, obj3)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

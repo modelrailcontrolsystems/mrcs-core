@@ -78,3 +78,9 @@ class TestMPU(unittest.TestCase):
         obj2 = obj1.mpu_status()
         self.assertEqual('MPUStatus:{label:DB59, mpu_address:5, functions:, speed_setting:None, speed:None, '
                          'direction:UNKNOWN{2}}', str(obj2))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()
