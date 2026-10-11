@@ -11,8 +11,11 @@ https://www.jetbrains.com/help/pycharm/creating-tests.html
 
 import json
 import unittest
+from typing import OrderedDict
 
 from mrcs_core.data.json import JSONify
+from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
+from mrcs_core.inventory.configuration_variable.numeric_cv import NumericCV
 from mrcs_core.inventory.motive_power_unit.mpu import MPU
 
 
@@ -20,40 +23,58 @@ from mrcs_core.inventory.motive_power_unit.mpu import MPU
 
 class TestMPU(unittest.TestCase):
 
+    @staticmethod
+    def __sample_mpu(address: int):
+        cv1 = NumericCV(CVAddress.ACCELERATION, 5)
+        cv2 = NumericCV(CVAddress.DECELERATION, 9)
+        cvs = OrderedDict({cv1.cv_address: cv1, cv2.cv_address: cv2})
+        return MPU('DB59', address, 'DB Schenker', '59', '59201',
+                   'Revolution Trains', 145, cvs)
+
+
     def test_mpu_construct(self):
-        obj1 = MPU('lab1', 1, 'DB', '59', '593456', 'Revolution', 15)
-        self.assertEqual('MPU:{label:lab1, address:1, operator:DB, mpu_class:59, number:593456, '
-                         'vendor:Revolution, length:15}', str(obj1))
+        obj1 = self.__sample_mpu(5)
+        self.assertEqual('MPU:{label:DB59, address:5, operator:DB Schenker, mpu_class:59, number:59201, '
+                         'vendor:Revolution Trains, length:145, cvs:[NumericCV{cv_address:ACCELERATION{3}, value:5}, '
+                         'NumericCV{cv_address:DECELERATION{4}, value:9}]}', str(obj1))
 
 
     def test_mpu_eq(self):
-        obj1 = MPU('lab1', 1, 'DB', '59', '593456', 'Revolution', 15)
-        obj2 = MPU('lab1', 1, 'DB', '59', '593456', 'Revolution', 15)
+        obj1 = self.__sample_mpu(5)
+        obj2 = self.__sample_mpu(5)
         self.assertTrue(obj1 == obj2)
 
 
     def test_mpu_lt(self):
-        obj1 = MPU('lab1', 1, 'DB', '59', '593456', 'Revolution', 15)
-        obj2 = MPU('lab1', 2, 'DB', '59', '593456', 'Revolution', 15)
+        obj1 = self.__sample_mpu(5)
+        obj2 = self.__sample_mpu(6)
         self.assertTrue(obj1 < obj2)
 
 
+    def test_mpu_cv(self):
+        obj1 = self.__sample_mpu(5)
+        obj2 = obj1.cv(CVAddress.DECELERATION)
+        self.assertEqual('NumericCV{cv_address:DECELERATION{4}, value:9}', str(obj2))
+
+
     def test_mpu_json(self):
-        obj1 = MPU('lab1', 1, 'DB', '59', '593456', 'Revolution', 15)
+        obj1 = self.__sample_mpu(5)
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"label": "lab1", "addr": 1, "operator": "DB", "class": "59", "number": "593456", '
-                         '"vendor": "Revolution", "length": 15}', jstr)
+        self.assertEqual('{"label": "DB59", "addr": 5, "operator": "DB Schenker", "class": "59", '
+                         '"number": "59201", "vendor": "Revolution Trains", "length": 145, '
+                         '"cvs": [{"type": "NumericCV", "addr": "ACCELERATION", "value": 5}, '
+                         '{"type": "NumericCV", "addr": "DECELERATION", "value": 9}]}', jstr)
 
 
     def test_mpu_json_roundtrip(self):
-        obj1 = MPU('lab1', 1, 'DB', '59', '593456', 'Revolution', 15)
+        obj1 = self.__sample_mpu(5)
         jstr = JSONify.dumps(obj1)
         obj2 = MPU.construct_from_jdict(json.loads(jstr))
         self.assertEqual(obj1, obj2)
 
 
     def test_mpu_status(self):
-        obj1 = MPU('lab1', 1, 'DB', '59', '593456', 'Revolution', 15)
+        obj1 = self.__sample_mpu(5)
         obj2 = obj1.mpu_status()
-        self.assertEqual('MPUStatus:{label:lab1, mpu_address:1, functions:, speed_setting:None, speed:None, '
+        self.assertEqual('MPUStatus:{label:DB59, mpu_address:5, functions:, speed_setting:None, speed:None, '
                          'direction:UNKNOWN{2}}', str(obj2))
