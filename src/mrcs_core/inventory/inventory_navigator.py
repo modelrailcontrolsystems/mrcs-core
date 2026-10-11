@@ -3,10 +3,10 @@ Created on 4 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-An ordered collection of Blocks and Platforms, making up a complete layout
+An ordered collection of MPUs
 
-The LayoutNavigator structure separates the business logic - implemented here - from the object lifecycle functions
-implemented by the Layout class.
+The InventoryNavigator structure separates the business logic - implemented here - from the object lifecycle functions
+implemented by the Inventory class.
 """
 
 from abc import ABC
@@ -20,7 +20,7 @@ from mrcs_core.inventory.motive_power_unit.mpu_abstract import MPUAbstract
 
 class InventoryNavigator(ABC):
     """
-    An ordered collection of Blocks and Stations, making up a complete layout
+    An ordered collection of MPUs
     """
 
 
