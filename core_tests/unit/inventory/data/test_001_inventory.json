@@ -1,0 +1,37 @@
+{
+  "label": "INV001",
+  "description": "Test inventory 001",
+  "mpus": [
+    {
+      "label": "DB59",
+      "addr": 5,
+      "operator": "DB Schenker",
+      "class": "59",
+      "number": "59201",
+      "vendor": "Revolution Trains",
+      "length": 145,
+      "cvs": [
+        {
+          "type": "NumericCV",
+          "addr": "ACCELERATION",
+          "value": 5
+        },
+        {
+          "type": "NumericCV",
+          "addr": "DECELERATION",
+          "value": 9
+        }
+      ]
+    },
+    {
+      "label": "GBRF66",
+      "addr": 6,
+      "operator": "GB Railfreight",
+      "class": "66",
+      "number": "66701",
+      "vendor": "Hornby",
+      "length": 135,
+      "cvs": []
+    }
+  ]
+}

@@ -40,7 +40,10 @@ class Inventory(InventoryNavigator, MultiPersistentJSONable):
 
         mpus = OrderedDict()
         for mpu_jdict in jdict.get('mpus', []):
-            mpu = MPU.construct_from_jdict(mpu_jdict)  # TODO: check for duplicate labels
+            mpu = MPU.construct_from_jdict(mpu_jdict)
+            if mpu.label in mpus:
+                raise ValueError(f'duplicate MPU label: {mpu.label}')
+
             mpus[mpu.label] = mpu
 
         return cls(label, description, mpus, name=name)
