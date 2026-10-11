@@ -169,3 +169,9 @@ class TestSegmentLink(unittest.TestCase):
         self.assertNotEqual(obj1, obj3)
         self.assertNotEqual(obj1, None)
         self.assertNotEqual(obj1, 'BN01:S02')
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

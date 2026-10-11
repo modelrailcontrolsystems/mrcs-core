@@ -28,3 +28,9 @@ class TestCVAddress(unittest.TestCase):
     def test_cv_address_find(self):
         obj1 = CVAddress['SHORT_ADDRESS']
         self.assertEqual('SHORT_ADDRESS{1}', str(obj1))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

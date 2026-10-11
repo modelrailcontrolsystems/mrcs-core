@@ -87,3 +87,9 @@ class TestCVBuilder(unittest.TestCase):
         jstr = '{"type": "UnknownCV", "addr": "ACCELERATION", "value": 5}'
         with self.assertRaises(TypeError):
             CVBuilder.construct_from_jdict(json.loads(jstr))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()

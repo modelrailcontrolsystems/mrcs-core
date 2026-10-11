@@ -46,3 +46,9 @@ class TestEnvPaths(unittest.IsolatedAsyncioTestCase):
             f"{mrcs}/mrcs-control/src:"
             f"{mrcs}/mrcs-core/src'}}",
             str(obj1.as_dict()))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    unittest.main()
