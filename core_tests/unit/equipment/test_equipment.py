@@ -58,7 +58,7 @@ class TestEquipment(unittest.TestCase):
     def test_track(self):
         jstr = '{"type": "TrackReport", "mode": "SHORT_CIRCUIT"}'
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('TrackReport:{mode:SHORT_CIRCUIT}', str(obj1))
+        self.assertEqual('TrackReport:{mode:SHORT_CIRCUIT{0x08}}', str(obj1))
 
 
     def test_turnout(self):

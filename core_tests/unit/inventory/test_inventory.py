@@ -50,8 +50,8 @@ class TestInventory(unittest.TestCase):
     # Persistence location -------------------------------------------------------------------------------------------
 
     def test_inventory_persistence_location(self):
-        self.assertEqual(('inventory', 'inventory.json'), Inventory.persistence_location(None))
-        self.assertEqual(('inventory', 'test_001_inventory.json'), Inventory.persistence_location('test_001'))
+        self.assertEqual(('inventories', 'inventory.json'), Inventory.persistence_location(None))
+        self.assertEqual(('inventories', 'test_001_inventory.json'), Inventory.persistence_location('test_001'))
 
 
     # Construction & properties --------------------------------------------------------------------------------------

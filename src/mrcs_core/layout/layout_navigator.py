@@ -174,7 +174,7 @@ class LayoutNavigator(ABC):
         if block_label is None:
             return [block.segment_report(None) for block in self.blocks]
 
-        block = self.__blocks[block_label]  # may raise KeyError(block_label)
+        block = self.__blocks[block_label]  # may raise KeyError
 
         try:
             return [block.segment_report(segment_label)]
