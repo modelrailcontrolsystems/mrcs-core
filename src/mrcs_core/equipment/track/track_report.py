@@ -78,4 +78,4 @@ class TrackReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'{self.__class__.__name__}:{{mode:{self.mode.name}}}'
+        return f'{self.__class__.__name__}:{{mode:{self.mode}}}'

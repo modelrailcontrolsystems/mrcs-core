@@ -30,7 +30,7 @@ class TestTrackReport(unittest.TestCase):
     def test_track_str(self):
         mode = TrackMode.POWER_ON
         obj1 = TrackReport(mode)
-        self.assertEqual('TrackReport:{mode:POWER_ON}', str(obj1))
+        self.assertEqual('TrackReport:{mode:POWER_ON{0x01}}', str(obj1))
 
 
     def test_turnout_is_valid(self):

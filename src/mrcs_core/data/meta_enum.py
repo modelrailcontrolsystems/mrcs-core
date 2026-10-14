@@ -21,5 +21,9 @@ class MetaEnum(EnumMeta):
         return True
 
 
+    def items(cls):
+        return [cls.__members__[key] for key in cls.keys()]
+
+
     def keys(cls):
         return cls.__members__.keys()

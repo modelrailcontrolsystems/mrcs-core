@@ -36,6 +36,12 @@ class CV(JSONable, ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def is_writeable(self):
+        return self.cv_address not in (CVAddress.MANUFACTURER_VERSION, CVAddress.MANUFACTURER_ID)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def as_report(self):
         return CVReport(self.cv_address.value, self.value)
 

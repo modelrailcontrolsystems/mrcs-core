@@ -85,7 +85,7 @@ class MPU(JSONable):
         self.__operator = operator
         self.__mpu_class = mpu_class
         self.__number = number
-        self.__vendor = vendor
+        self.__vendor = vendor  # TODO: change vendor -> manufacturer
 
         self.__length = length
         self.__cvs = cvs
@@ -147,6 +147,11 @@ class MPU(JSONable):
             return self.__cvs[address]
         except KeyError:
             return None
+
+
+    def set_cvs(self, *cvs: CV):
+        for cv in cvs:
+            self.__cvs[cv.cv_address] = cv
 
 
     # ----------------------------------------------------------------------------------------------------------------

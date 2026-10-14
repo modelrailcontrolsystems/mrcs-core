@@ -287,7 +287,7 @@ class AbstractPersistentJSONable(JSONable, ABC):
     _SECURITY_DELAY = 3.0  # seconds
 
     __CONF_DIR = 'conf'  # hard-coded rel path
-    __INVENTORY_DIR = 'inventory'  # hard-coded rel path
+    __INVENTORY_DIR = 'inventories'  # hard-coded rel path
     __LAYOUTS_DIR = 'layouts'  # hard-coded rel path
 
 

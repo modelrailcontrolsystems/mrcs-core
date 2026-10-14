@@ -33,6 +33,7 @@ class InventoryNavigator(ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def validate(self) -> None:
+        # TODO: implement validate()
         pass
 
 
@@ -43,8 +44,27 @@ class InventoryNavigator(ABC):
         return MPUAbstract(mpu_statuses)
 
 
+    def mpu_report(self, mpu_label: str | None) -> list[MPU]:
+        if mpu_label is None:
+            return list(self.mpus)
+
+        mpu = self.__mpus[mpu_label]  # may raise KeyError
+
+        try:
+            return [mpu]
+        except KeyError:
+            raise KeyError(mpu_label)
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def mpus(self):
         return tuple(self.__mpus.values())
+
+
+    def mpu(self, label: str):
+        try:
+            return self.__mpus[label]
+        except KeyError:
+            return None
