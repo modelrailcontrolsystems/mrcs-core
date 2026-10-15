@@ -77,6 +77,16 @@ class TestInventoryNavigator(unittest.TestCase):
         self.__navigator().validate()
 
 
+    def test_validate_duplicate_address(self):
+        # the second MPU with a given address is the one reported
+        navigator = self.__navigator(self.__mpu('M01', 1), self.__mpu('M02', 2), self.__mpu('M03', 1))
+
+        with self.assertRaises(ValueError) as context:
+            navigator.validate()
+
+        self.assertEqual("Duplicate MPU address 1 in M03.", str(context.exception))
+
+
     # mpus -----------------------------------------------------------------------------------------------------------
 
     def test_mpus(self):

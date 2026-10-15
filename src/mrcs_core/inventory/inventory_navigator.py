@@ -33,8 +33,12 @@ class InventoryNavigator(ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def validate(self) -> None:
-        # TODO: implement validate() - unique addresses
-        pass
+        # are all MPU addresses unique?
+        addresses = []
+        for mpu in self.mpus:
+            if mpu.address in addresses:
+                raise ValueError(f"Duplicate MPU address {mpu.address} in {mpu.label}.")
+            addresses.append(mpu.address)
 
 
     # ----------------------------------------------------------------------------------------------------------------
