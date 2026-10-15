@@ -35,8 +35,8 @@ class TestMPU(unittest.TestCase):
     def test_mpu_construct(self):
         obj1 = self.__sample_mpu(5)
         self.assertEqual('MPU:{label:DB59, address:5, operator:DB Schenker, mpu_class:59, number:59201, '
-                         'vendor:Revolution Trains, length:145, cvs:[NumericCV{cv_address:ACCELERATION{3}, value:5}, '
-                         'NumericCV{cv_address:DECELERATION{4}, value:9}]}', str(obj1))
+                         'manufacturer:Revolution Trains, length:145, cvs:[NumericCV{cv_address:ACCELERATION{3}, '
+                         'value:5}, NumericCV{cv_address:DECELERATION{4}, value:9}]}', str(obj1))
 
 
     def test_mpu_eq(self):
@@ -61,7 +61,7 @@ class TestMPU(unittest.TestCase):
         obj1 = self.__sample_mpu(5)
         jstr = JSONify.dumps(obj1)
         self.assertEqual('{"label": "DB59", "addr": 5, "operator": "DB Schenker", "class": "59", '
-                         '"number": "59201", "vendor": "Revolution Trains", "length": 145, '
+                         '"number": "59201", "manufacturer": "Revolution Trains", "length": 145, '
                          '"cvs": [{"type": "NumericCV", "addr": "ACCELERATION", "value": 5}, '
                          '{"type": "NumericCV", "addr": "DECELERATION", "value": 9}]}', jstr)
 

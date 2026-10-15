@@ -8,7 +8,7 @@
       "operator": "DB Schenker",
       "class": "59",
       "number": "59201",
-      "vendor": "Revolution Trains",
+      "manufacturer": "Revolution Trains",
       "length": 145,
       "cvs": [
         {
@@ -29,7 +29,7 @@
       "operator": "GB Railfreight",
       "class": "66",
       "number": "66701",
-      "vendor": "Hornby",
+      "manufacturer": "Hornby",
       "length": 135,
       "cvs": []
     }

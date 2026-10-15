@@ -11,7 +11,7 @@ A DCC motive power unit (MPU), as listed in an inventory
     "operator": "DB Schenker",
     "class": "59",
     "number": "59201",
-    "vendor": "Revolution Trains",
+    "manufacturer": "Revolution Trains",
     "length": 145,
     "cvs": [
         {
@@ -57,7 +57,7 @@ class MPU(JSONable):
             operator = jdict.get('operator')
             mpu_class = jdict.get('class')
             number = jdict.get('number')
-            vendor = jdict.get('vendor')
+            manufacturer = jdict.get('manufacturer')
 
             length = int(jdict.get('length'))
 
@@ -72,12 +72,12 @@ class MPU(JSONable):
         except (TypeError, ValueError):
             raise ValueError(jdict)
 
-        return cls(label, address, operator, mpu_class, number, vendor, length, cvs)
+        return cls(label, address, operator, mpu_class, number, manufacturer, length, cvs)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, address: int, operator: str, mpu_class: str, number: str, vendor: str,
+    def __init__(self, label: str, address: int, operator: str, mpu_class: str, number: str, manufacturer: str,
                  length: int, cvs: OrderedDict[CVAddress, CV]):
         self.__label = label
         self.__address = address
@@ -85,7 +85,7 @@ class MPU(JSONable):
         self.__operator = operator
         self.__mpu_class = mpu_class
         self.__number = number
-        self.__vendor = vendor  # TODO: change vendor -> manufacturer
+        self.__manufacturer = manufacturer
 
         self.__length = length
         self.__cvs = cvs
@@ -95,7 +95,8 @@ class MPU(JSONable):
         try:
             return (self.label == other.label and self.address == other.address and self.operator == other.operator and
                     self.mpu_class == other.mpu_class and self.number == other.number and
-                    self.vendor == other.vendor and self.length == other.length and self.cvs == other.cvs)
+                    self.manufacturer == other.manufacturer and self.length == other.length and
+                    self.cvs == other.cvs)
         except (AttributeError, TypeError):
             return False
 
@@ -127,31 +128,12 @@ class MPU(JSONable):
         jdict['operator'] = self.operator
         jdict['class'] = self.mpu_class
         jdict['number'] = self.number
-        jdict['vendor'] = self.vendor
+        jdict['manufacturer'] = self.manufacturer
 
         jdict['length'] = self.length
         jdict['cvs'] = self.cvs
 
         return jdict
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def cvs(self):
-        return tuple(self.__cvs.values())
-
-
-    def cv(self, address: CVAddress):
-        try:
-            return self.__cvs[address]
-        except KeyError:
-            return None
-
-
-    def set_cvs(self, *cvs: CV):
-        for cv in cvs:
-            self.__cvs[cv.cv_address] = cv
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -182,8 +164,8 @@ class MPU(JSONable):
 
 
     @property
-    def vendor(self):
-        return self.__vendor
+    def manufacturer(self):
+        return self.__manufacturer
 
 
     @property
@@ -193,9 +175,28 @@ class MPU(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    @property
+    def cvs(self):
+        return tuple(self.__cvs.values())
+
+
+    def cv(self, address: CVAddress):
+        try:
+            return self.__cvs[address]
+        except KeyError:
+            return None
+
+
+    def set_cvs(self, *cvs: CV):
+        for cv in cvs:
+            self.__cvs[cv.cv_address] = cv
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __str__(self, *args, **kwargs):
         cvs = '[' + ', '.join([str(cv) for cv in self.cvs]) + ']'
 
         return (f'MPU:{{label:{self.label}, address:{self.address}, operator:{self.operator}, '
-                f'mpu_class:{self.mpu_class}, number:{self.number}, vendor:{self.vendor}, length:{self.length}, '
-                f'cvs:{cvs}}}')
+                f'mpu_class:{self.mpu_class}, number:{self.number}, manufacturer:{self.manufacturer}, '
+                f'length:{self.length}, cvs:{cvs}}}')

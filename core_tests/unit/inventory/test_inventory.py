@@ -147,10 +147,10 @@ class TestInventory(unittest.TestCase):
         inventory = Inventory.construct_from_jdict(self.__inventory_jdict, name='test_001')
 
         expected = ('Inventory:{name:test_001, label:INV001, description:Test inventory 001, mpus:[MPU:{label:DB59, '
-                    'address:5, operator:DB Schenker, mpu_class:59, number:59201, vendor:Revolution Trains, '
+                    'address:5, operator:DB Schenker, mpu_class:59, number:59201, manufacturer:Revolution Trains, '
                     'length:145, cvs:[NumericCV{cv_address:ACCELERATION{3}, value:5}, '
                     'NumericCV{cv_address:DECELERATION{4}, value:9}]}, MPU:{label:GBRF66, address:6, '
-                    'operator:GB Railfreight, mpu_class:66, number:66701, vendor:Hornby, length:135, cvs:[]}]}')
+                    'operator:GB Railfreight, mpu_class:66, number:66701, manufacturer:Hornby, length:135, cvs:[]}]}')
         self.assertEqual(expected, str(inventory))
 
 

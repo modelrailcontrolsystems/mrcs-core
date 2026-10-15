@@ -33,7 +33,7 @@ class InventoryNavigator(ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     def validate(self) -> None:
-        # TODO: implement validate()
+        # TODO: implement validate() - unique addresses
         pass
 
 
