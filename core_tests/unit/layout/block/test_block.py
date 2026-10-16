@@ -211,6 +211,22 @@ class TestBlock(unittest.TestCase):
         self.assertIsNone(obj2.segment('S99'))
 
 
+    def test_block_validate(self):
+        self.__sample_block_1().validate()
+        self.__sample_block_2().validate()
+        Block('BN01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict()).validate()
+
+
+    def test_block_validate_duplicate_segment_label(self):
+        segment = self.__sample_track_segment_1()
+        obj = Block('BN01', BlockAddress(1, 1), BlockOperation.REVERSIBLE, OrderedDict({'k1': segment, 'k2': segment}))
+
+        with self.assertRaises(ValueError) as ctx:
+            obj.validate()
+
+        self.assertEqual('Duplicate segment label S01 in block BN01.', str(ctx.exception))
+
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":

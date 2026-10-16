@@ -67,6 +67,17 @@ class Block(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def validate(self) -> None:
+        # are all segment labels unique?
+        labels = []
+        for segment in self.segments:
+            if segment.label in labels:
+                raise ValueError(f"Duplicate segment label {segment.label} in block {self.label}.")
+            labels.append(segment.label)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def status(self):
         return BlockStatus(self.label, self.address, BlockHeading.UNASSIGNED, BlockVoltage.UNKNOWN)
 
