@@ -53,7 +53,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
 @unique
 class CLU(IntEnum, metaclass=MetaEnum):
     """
-    An enumeration of all the possible CLU equipment types
+    An enumeration of all the CLU serial numbers
     """
 
     SUBSCRIBER = 1  # infrastructure: mrcs_control_subscriber CLU
@@ -73,13 +73,40 @@ class CLU(IntEnum, metaclass=MetaEnum):
 @unique
 class CLK(IntEnum, metaclass=MetaEnum):
     """
-    An enumeration of all the CLK equipment types
+    An enumeration of all the CLK serial numbers
     """
 
     CRON = 1  # infrastructure: CronNode
     CRONTAB = 2  # infrastructure: CrontabNode
     CLOCK_CONF = 3  # infrastructure: ClockConfNode
     CLOCK_MANAGER = 4  # infrastructure: ClockManagerNode
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return f'{self.name}{{{self.value}}}'
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+@unique
+class CRT(IntEnum, metaclass=MetaEnum):
+    """
+    An enumeration of all the CRT serial numbers, associated with different data topics
+    """
+
+    ROUTER = 1
+
+    UNCLASSIFIED = 2
+    COMMON = 3
+
+    SYSTEM = 4
+    TRACK = 5
+    TURNOUT = 6
+    BLOCK = 7
+    SIGNAL = 8
+    MPU = 9
 
 
     # ----------------------------------------------------------------------------------------------------------------
