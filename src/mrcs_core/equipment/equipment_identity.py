@@ -9,44 +9,10 @@ https://docs.python.org/3/howto/enum.html
 """
 
 from abc import ABC
-from enum import StrEnum, unique
 from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
-from mrcs_core.data.meta_enum import MetaEnum
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
-@unique
-class EquipmentType(StrEnum, metaclass=MetaEnum):
-    """
-    An enumeration of all the possible equipment types
-    """
-
-    API = 'API'  # infrastructure: MRCS Web API
-    CLK = 'CLK'  # infrastructure: clock: cron, crontab, etc.
-    CRT = 'CRT'  # infrastructure: control router
-    REC = 'REC'  # infrastructure: message recorder
-    TST = 'TST'  # infrastructure: test equipment
-
-    DCP = 'DCP'  # operations: decoupler
-    LGP = 'LGP'  # operations: lighting group
-    LVL = 'LVL'  # operations: level crossing
-    MPU = 'MPU'  # operations: motive power unit
-    SCH = 'SCH'  # operations: schedule controller
-    SIG = 'SIG'  # operations: signal
-    TEL = 'TEL'  # operations: motive power unit telemetry
-    TRK = 'TRK'  # operations: track: block, track, turnout
-    TRS = 'TRS'  # operations: train set (may be multi-headed)
-
-    BOS = 'BOS'  # sensor: block occupancy detector
-    LID = 'LID'  # sensor: LiDAR
-    VIS = 'VIS'  # sensor: vision
-
-
-    def __lt__(self, other: Any):
-        return self.value < other.value
+from mrcs_core.equipment.equipment_enums import EquipmentType
 
 
 # --------------------------------------------------------------------------------------------------------------------

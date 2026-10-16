@@ -3,7 +3,7 @@ Created on 15 Nov 2025
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v unit/data/test_equipment_identity.py
+python -m unittest -v unit/equipment/test_equipment_identifier.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -12,7 +12,7 @@ https://www.jetbrains.com/help/pycharm/creating-tests.html
 import json
 import unittest
 
-from mrcs_core.data.equipment_identity import EquipmentIdentifier
+from mrcs_core.equipment.equipment_identity import EquipmentIdentifier
 
 
 # --------------------------------------------------------------------------------------------------------------------
