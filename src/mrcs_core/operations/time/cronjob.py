@@ -16,7 +16,7 @@ Note that the cron components work in model time, not true time.
 from collections import OrderedDict
 from typing import Any
 
-from mrcs_core.data.equipment_identity import EquipmentIdentifier
+from mrcs_core.equipment.equipment_identity import EquipmentIdentifier
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONable
 

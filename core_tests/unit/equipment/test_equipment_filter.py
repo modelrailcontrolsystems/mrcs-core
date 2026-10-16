@@ -12,7 +12,7 @@ https://www.jetbrains.com/help/pycharm/creating-tests.html
 import json
 import unittest
 
-from mrcs_core.data.equipment_identity import EquipmentFilter
+from mrcs_core.equipment.equipment_identity import EquipmentFilter
 
 
 # --------------------------------------------------------------------------------------------------------------------

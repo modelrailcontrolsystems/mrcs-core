@@ -12,7 +12,7 @@ import re
 from abc import ABC
 from typing import Any
 
-from mrcs_core.data.equipment_identity import EquipmentFilter, EquipmentIdentifier, EquipmentSpecification
+from mrcs_core.equipment.equipment_identity import EquipmentFilter, EquipmentIdentifier, EquipmentSpecification
 from mrcs_core.data.json import JSONable
 
 
