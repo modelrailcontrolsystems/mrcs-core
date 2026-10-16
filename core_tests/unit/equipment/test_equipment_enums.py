@@ -11,7 +11,7 @@ https://www.jetbrains.com/help/pycharm/creating-tests.html
 
 import unittest
 
-from mrcs_core.equipment.equipment_enums import CLK, CLU, EquipmentType
+from mrcs_core.equipment.equipment_enums import CLK, CLU, CRT, EquipmentType
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -155,6 +155,52 @@ class TestCLK(unittest.TestCase):
     def test_lt(self):
         self.assertTrue(CLK.CRON < CLK.CLOCK_MANAGER)
         self.assertFalse(CLK.CLOCK_MANAGER < CLK.CRON)
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class TestCRT(unittest.TestCase):
+
+    def test_keys(self):
+        self.assertEqual(['ROUTER', 'UNCLASSIFIED', 'COMMON',
+                          'SYSTEM', 'TRACK', 'TURNOUT', 'BLOCK', 'SIGNAL', 'MPU'], list(CRT.keys()))
+
+
+    def test_items(self):
+        self.assertEqual([CRT.ROUTER, CRT.UNCLASSIFIED, CRT.COMMON,
+                          CRT.SYSTEM, CRT.TRACK, CRT.TURNOUT, CRT.BLOCK, CRT.SIGNAL, CRT.MPU], CRT.items())
+
+
+    def test_values(self):
+        self.assertEqual([1, 2, 3, 4, 5, 6, 7, 8, 9], [member.value for member in CRT])
+
+
+    def test_construct(self):
+        self.assertEqual(CRT.TURNOUT, CRT(6))
+
+        with self.assertRaises(ValueError):
+            CRT(99)
+
+
+    def test_contains(self):
+        self.assertTrue(9 in CRT)
+        self.assertFalse(99 in CRT)
+        self.assertFalse('ROUTER' in CRT)
+
+
+    def test_str(self):
+        self.assertEqual('ROUTER{1}', str(CRT.ROUTER))
+        self.assertEqual('MPU{9}', str(CRT.MPU))
+
+
+    def test_int(self):
+        self.assertEqual(7, int(CRT.BLOCK))
+        self.assertEqual(CRT.SIGNAL, 8)
+
+
+    def test_lt(self):
+        self.assertTrue(CRT.ROUTER < CRT.MPU)
+        self.assertFalse(CRT.MPU < CRT.ROUTER)
 
 
 # --------------------------------------------------------------------------------------------------------------------
