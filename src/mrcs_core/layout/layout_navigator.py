@@ -52,24 +52,20 @@ class LayoutNavigator(ABC):
                 raise ValueError(f"Duplicate block address {block.address.shortform} in {block.label}.")
             addresses.append(block.address)
 
-        # are all turnout addresses unique?
+        # validate blocks
+        for block in self.blocks:
+            block.validate()
+
+        # are all turnout addresses unique across the layout?
         addresses = []
         for block_label, segment in self.block_segments():
-            if segment.address is None:
+            if segment.address is None:  # only turnouts have addresses
                 continue
             if segment.address in addresses:
-                raise ValueError(f"Duplicate turnout address {segment.address} in {segment.label}.")
+                raise ValueError(f"Duplicate turnout address {segment.address} in {block_label}.{segment.label}.")
             addresses.append(segment.address)
 
-        # are all segment labels unique within their block?
-        for block in self.blocks:
-            labels = []
-            for segment in block.segments:
-                if segment.label in labels:
-                    raise ValueError(f"Duplicate segment label {segment.label} in block {block.label}.")
-                labels.append(segment.label)
-
-        # does every segment link have a location in the layout?
+        # do segment links have a location in the layout?
         for block_label, segment in self.block_segments():
             for next_location in segment.next_locations():
                 found = self.block_segment(next_location)
@@ -81,21 +77,22 @@ class LayoutNavigator(ABC):
                 if block_label == next_block_label and segment.label == next_segment.label:
                     raise ValueError(f'Segment {segment.label} in block {block_label} is pointing to itself.')
 
-        # does every segment have a reciprocal link?
-        for block_label, segment in self.block_segments():
-            this_location = SegmentLocation(block_label, segment.label)
+        # does every segment have a reciprocal link? (a lone segment cannot)
+        if self.segment_count > 1:
+            for block_label, segment in self.block_segments():
+                this_location = SegmentLocation(block_label, segment.label)
 
-            reciprocal = False
-            for next_location in segment.next_locations():
-                next_segment = self.segment(next_location)
-                next_locations = [] if next_segment is None else next_segment.next_locations()
+                reciprocal = False
+                for next_location in segment.next_locations():
+                    next_segment = self.segment(next_location)
+                    assert next_segment is not None  # checked above
 
-                if this_location in next_locations:
-                    reciprocal = True
-                    break
+                    if this_location in next_segment.next_locations():
+                        reciprocal = True
+                        break
 
-            if not reciprocal and self.segment_count > 1:
-                raise ValueError(f"No reciprocal link for segment label {segment.label} in block {block_label}.")
+                if not reciprocal:
+                    raise ValueError(f"No reciprocal link for segment label {segment.label} in block {block_label}.")
 
         # do platform origins exist in the layout?
         for station in self.stations:
