@@ -23,6 +23,8 @@ class EquipmentSpecification(JSONable, ABC):
     """
 
 
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __init__(self, equipment_type: EquipmentType | None, sector_number: int | None, serial_number: int | None):
         self.__equipment_type = equipment_type
         self.__sector_number = sector_number
