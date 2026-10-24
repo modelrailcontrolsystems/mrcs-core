@@ -109,8 +109,8 @@ class Layout(LayoutNavigator, MultiPersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        blocks = '[' + ', '.join([str(block) for block in self.blocks]) + ']'
-        stations = '[' + ', '.join([str(station) for station in self.stations]) + ']'
+        blocks = '[' + ', '.join(map(str, self.blocks)) + ']'
+        stations = '[' + ', '.join(map(str, self.stations)) + ']'
 
         return (f'Layout:{{name:{self.name}, label:{self.label}, description:{self.description}, '
                 f'blocks:{blocks}, stations:{stations}}}')

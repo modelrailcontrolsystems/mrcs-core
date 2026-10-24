@@ -105,5 +105,5 @@ class LinkSet(object):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        links = '{' + ', '.join([str(key) + ': ' + str(value) for key, value in self.__links.items()])
+        links = '{' + ', '.join(f'{key}: {link}' for key, link in self.__links.items())
         return f'PrologLinkSet:{{links:{links}}}'

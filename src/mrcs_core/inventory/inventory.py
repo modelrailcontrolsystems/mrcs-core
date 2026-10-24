@@ -100,7 +100,7 @@ class Inventory(InventoryNavigator, MultiPersistentJSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        mpus = '[' + ', '.join([str(mpu) for mpu in self.mpus]) + ']'
+        mpus = '[' + ', '.join(map(str, self.mpus)) + ']'
 
         return (f'Inventory:{{name:{self.name}, label:{self.label}, description:{self.description}, '
                 f'mpus:{mpus}}}')

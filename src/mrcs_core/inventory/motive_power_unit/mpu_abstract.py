@@ -56,5 +56,5 @@ class MPUAbstract(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        items = '[' + ', '.join(str(item) for item in self.items) + ']'
+        items = '[' + ', '.join(map(str, self.items)) + ']'
         return f'MPUAbstract:{{items:{items}}}'

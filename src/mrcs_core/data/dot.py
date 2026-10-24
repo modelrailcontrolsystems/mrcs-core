@@ -17,7 +17,7 @@ class Dot(object):
 
     @staticmethod
     def path(*nodes) -> str:
-        return '.'.join([str(node) for node in nodes])
+        return '.'.join(map(str, nodes))
 
 
     @staticmethod

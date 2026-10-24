@@ -97,5 +97,5 @@ class Station(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        platforms = '[' + ', '.join([str(platform) for platform in self.platforms]) + ']'
+        platforms = '[' + ', '.join(map(str, self.platforms)) + ']'
         return f'Station:{{label:{self.label}, platforms:{platforms}}}'

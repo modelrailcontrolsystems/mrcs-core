@@ -16,6 +16,7 @@ from mrcs_core.layout.segment.prolog_segment import PrologSegment
 from mrcs_core.layout.segment.segment_location import SegmentLocation
 
 
+# TODO: move prolog to mrcs_control
 # --------------------------------------------------------------------------------------------------------------------
 
 class RoutePlanner(object):

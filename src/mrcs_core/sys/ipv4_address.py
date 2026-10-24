@@ -64,7 +64,7 @@ class IPv4Address(object):
 
     @property
     def dot_decimal(self):
-        return '.'.join([str(octet) for octet in self.__octets])
+        return '.'.join(map(str, self.__octets))
 
 
     # ----------------------------------------------------------------------------------------------------------------

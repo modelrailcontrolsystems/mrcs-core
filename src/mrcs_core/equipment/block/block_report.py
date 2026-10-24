@@ -215,7 +215,7 @@ class BlockOccupancyReport(BlockReport):
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        occupants = '[' + ', '.join([str(occupant) for occupant in self.occupants]) + ']'
+        occupants = '[' + ', '.join(map(str, self.occupants)) + ']'
 
         return (f'{self.__class__.__name__}:{{block_id:{self.block_id}, '
                 f'occupant_group:{self.occupant_group}, occupants:{occupants}}}')

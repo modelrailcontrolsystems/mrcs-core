@@ -89,8 +89,8 @@ class EnvPaths(object):
 
     def as_dict(self):
         env = dict(
-            PATH=':'.join(str(path) for path in self.path),
-            PYTHONPATH=':'.join(str(path) for path in self.python_path)
+            PATH=':'.join(map(str, self.path)),
+            PYTHONPATH=':'.join(map(str, self.python_path))
         )
 
         if self.swi_home_dir is not None:
