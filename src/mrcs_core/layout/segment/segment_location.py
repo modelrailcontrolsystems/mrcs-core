@@ -23,11 +23,19 @@ class SegmentLocation(JSONable):
     @classmethod
     def construct_from_dot_path(cls, path: str) -> Self:
         nodes = Dot.nodes(path)
-
         if len(nodes) != 2 or not nodes[0] or not nodes[1]:
             raise ValueError(path)
 
         return cls(nodes[0], nodes[1])
+
+
+    @classmethod
+    def construct_from_prolog(cls, pname) -> Self:
+        pieces = pname.split('_')
+        if len(pieces) != 2 or not pieces[0] or not pieces[1]:
+            raise ValueError(pname)
+
+        return cls(pieces[0].upper(), pieces[1].upper())
 
 
     @classmethod
@@ -61,6 +69,12 @@ class SegmentLocation(JSONable):
             return False
 
         return self.segment_label < other.segment_label
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_prolog(self):
+        return f'{self.block_label}_{self.segment_label}'.lower()
 
 
     # ----------------------------------------------------------------------------------------------------------------

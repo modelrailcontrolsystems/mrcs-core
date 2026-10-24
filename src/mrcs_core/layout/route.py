@@ -1,92 +1,18 @@
 """
-Created on 14 Sep 2026
+Created on 24 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A route through a Layout, made up of a sequence of route (block) segments
+A route through a Layout, made up of a sequence of segments, together with turnout conditions
 """
 
 from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
-from mrcs_core.layout.segment.segment import Segment
 from mrcs_core.layout.segment.segment_location import SegmentLocation
-
-
-# --------------------------------------------------------------------------------------------------------------------
-
-class RouteSegment(JSONable):
-    """
-    a path component
-    """
-
-
-    @classmethod
-    def construct_from_jdict(cls, jdict) -> Self:
-        segment_type_name = jdict.get('type')
-        length = jdict.get('length')
-        location = SegmentLocation.construct_from_jdict(jdict.get('location'))
-
-        return cls(segment_type_name, length, location)
-
-
-    @classmethod
-    def construct(cls, config: TurnoutConfiguration, block_label: str, segment: Segment) -> Self:
-        return cls(segment.type_name(), segment.length(config), SegmentLocation(block_label, segment.label))
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __init__(self, segment_type_name: str, length: int, location: SegmentLocation):
-        self.__segment_type_name = segment_type_name
-        self.__length = length
-        self.__location = location
-
-
-    def __eq__(self, other: Any):
-        try:
-            return (self.segment_type_name == other.segment_type_name and self.length == other.length and
-                    self.location == other.location)
-        except (AttributeError, TypeError):
-            return False
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def as_json(self, **kwargs):
-        jdict = OrderedDict()
-
-        jdict['type'] = self.segment_type_name
-        jdict['length'] = self.length
-        jdict['location'] = self.location
-
-        return jdict
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    @property
-    def segment_type_name(self):
-        return self.__segment_type_name
-
-
-    @property
-    def length(self):
-        return self.__length
-
-
-    @property
-    def location(self):
-        return self.__location
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
-    def __str__(self, *args, **kwargs):
-        return (f'RouteSegment:{{segment_type_name:{self.segment_type_name}, length:{self.length}, '
-                f'location:{self.location}}}')
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -98,50 +24,82 @@ class Route(JSONable):
 
 
     @classmethod
+    def construct_from_prolog(cls, pdict) -> Self:
+        direction = BlockHeading.construct_from_prolog(pdict.get('Dir'))
+        length = int(pdict.get('Length'))
+        configuration = TurnoutConfiguration.construct_from_prolog(pdict.get('ConfOut'))
+        segments = [SegmentLocation.construct_from_prolog(pname) for pname in pdict.get('Route')]
+
+        return cls(direction, length, configuration, segments)
+
+
+    @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
-        edges = [RouteSegment.construct_from_jdict(edge_jdict) for edge_jdict in jdict]
-        return cls(*edges)
+        direction = BlockHeading[jdict.get('direction')]
+        length = int(jdict.get('length'))
+        configuration = TurnoutConfiguration.construct_from_jdict(jdict.get('conf'))
+        segments = [SegmentLocation.construct_from_jdict(segment) for segment in jdict.get('segments')]
+
+        return cls(direction, length, configuration, segments)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, *edges: RouteSegment):
-        self.__edges = list(edges)
+    def __init__(self, direction: BlockHeading, length: int, configuration: TurnoutConfiguration,
+                 segments: list[SegmentLocation]):
+        self.__direction = direction
+        self.__length = length
+        self.__configuration = configuration
+        self.__segments = segments
 
 
     def __eq__(self, other: Any):
         try:
-            return self.edges == other.edges
+            return (self.direction == other.direction and self.length == other.length and
+                    self.configuration == other.configuration and self.segments == other.segments)
         except (AttributeError, TypeError):
             return False
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def append(self, config: TurnoutConfiguration, block_label: str, segment: Segment):
-        self.edges.append(RouteSegment.construct(config, block_label, segment))
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def as_json(self, **kwargs):
-        return self.edges
+        jdict = OrderedDict()
+
+        jdict['direction'] = self.direction.name
+        jdict['length'] = self.length
+        jdict['conf'] = self.configuration
+        jdict['segments'] = self.segments
+
+        return jdict
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def edges(self):
-        return self.__edges
+    def direction(self):
+        return self.__direction
 
 
     @property
-    def total_length(self) -> int:
-        return sum(edge.length for edge in self.edges)
+    def length(self):
+        return self.__length
+
+
+    @property
+    def configuration(self):
+        return self.__configuration
+
+
+    @property
+    def segments(self):
+        return self.__segments
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        edges = '[' + ', '.join([str(edge) for edge in self.edges]) + ']'
-        return f'Route:{{edges:{edges}}}'
+        segments = '[' + ', '.join([str(segment) for segment in self.segments]) + ']'
+
+        return (f'Route:{{direction:{self.direction}, length:{self.length}, '
+                f'configuration:{self.configuration}, segments:{segments}}}')

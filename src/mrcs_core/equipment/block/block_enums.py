@@ -27,6 +27,17 @@ class BlockHeading(IntEnum, metaclass=MetaEnum):
     DOWN = 2
 
 
+    @classmethod
+    def construct_from_prolog(cls, pname: str):
+        return BlockHeading[pname.upper()]
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def is_valid(self) -> bool:
+        return self == BlockHeading.UP or self == BlockHeading.DOWN
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):

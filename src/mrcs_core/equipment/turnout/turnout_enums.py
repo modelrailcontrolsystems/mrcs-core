@@ -32,6 +32,11 @@ class TurnoutPosition(IntEnum, metaclass=MetaEnum):
     INVALID = 3
 
 
+    @classmethod
+    def construct_from_prolog(cls, pname: str):
+        return TurnoutPosition[pname.upper()]
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def is_valid(self) -> bool:

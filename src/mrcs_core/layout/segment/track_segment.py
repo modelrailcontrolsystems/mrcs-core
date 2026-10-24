@@ -3,14 +3,21 @@ Created on 26 Sep 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A component of a Block
+A track component of a Block
+The segment has an up link and a down link, either of which can be a FixedSegmentLink or none
 """
 
 from collections import OrderedDict
 from typing import Any
 
+from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
+from mrcs_core.layout.segment.prolog_link import PrologLink
+from mrcs_core.layout.segment.prolog_link_set import LinkSet
+from mrcs_core.layout.segment.prolog_segment import PrologSegment
 from mrcs_core.layout.segment.segment import Segment
+from mrcs_core.layout.segment.segment_location import SegmentLocation
+from mrcs_core.layout.segment_link.fixed_segment_link import FixedSegmentLink
 from mrcs_core.layout.segment_link.segment_link import SegmentLink
 from mrcs_core.layout.segment_link.segment_link_builder import SegmentLinkBuilder
 
@@ -59,7 +66,7 @@ class TrackSegment(Segment):
     # ----------------------------------------------------------------------------------------------------------------
 
     # noinspection unresolved-references
-    def next_up_location(self, config: TurnoutConfiguration) -> Location | None:
+    def next_up_location(self, config: TurnoutConfiguration) -> SegmentLocation | None:
         if self.up_link is None:
             return None
 
@@ -67,7 +74,7 @@ class TrackSegment(Segment):
 
 
     # noinspection unresolved-references
-    def next_down_location(self, config: TurnoutConfiguration) -> Location | None:
+    def next_down_location(self, config: TurnoutConfiguration) -> SegmentLocation | None:
         if self.down_link is None:
             return None
 
@@ -76,6 +83,25 @@ class TrackSegment(Segment):
 
     def length(self, config: TurnoutConfiguration) -> int:
         return self._length
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_prolog_segment(self, block_label: str) -> PrologSegment:
+        location = self.location(block_label)
+        return PrologSegment(location, self._length)
+
+
+    def as_prolog_links(self, link_set: LinkSet, block_label: str) -> None:
+        location = self.location(block_label)
+
+        if isinstance(self.up_link, FixedSegmentLink):
+            link: FixedSegmentLink = self.up_link
+            link_set.add(PrologLink(location, link.next_location, BlockHeading.UP))
+
+        if isinstance(self.down_link, FixedSegmentLink):
+            link: FixedSegmentLink = self.down_link
+            link_set.add(PrologLink(location, link.next_location, BlockHeading.DOWN))
 
 
     # ----------------------------------------------------------------------------------------------------------------

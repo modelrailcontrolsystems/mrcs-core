@@ -1,0 +1,30 @@
+{
+  "label": "BN08",
+  "addr": "6/1",
+  "operation": "REVERSIBLE",
+  "segments": [
+    {
+      "type": "TrackSegment",
+      "label": "SG01",
+      "length": 313,
+      "up-link": {
+        "type": "Fixed",
+        "next": "BN08.SG02"
+      },
+      "down-link": {
+        "type": "Fixed",
+        "next": "BN07.SG01"
+      }
+    },
+    {
+      "type": "TrackSegment",
+      "label": "SG02",
+      "length": 123,
+      "up-link": null,
+      "down-link": {
+        "type": "Fixed",
+        "next": "BN08.SG01"
+      }
+    }
+  ]
+}
