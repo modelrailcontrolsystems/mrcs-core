@@ -17,7 +17,6 @@ from mrcs_core.layout.block.block import Block
 from mrcs_core.layout.block.block_abstract import BlockAbstract
 from mrcs_core.layout.platform.platform import Platform
 from mrcs_core.layout.platform.platform_location import PlatformLocation
-from mrcs_core.layout.route_planner import RoutePlanner
 from mrcs_core.layout.segment.prolog_link import PrologLink
 from mrcs_core.layout.segment.prolog_link_set import LinkSet
 from mrcs_core.layout.segment.prolog_segment import PrologSegment
@@ -41,9 +40,6 @@ class LayoutNavigator(ABC):
     def __init__(self, blocks: OrderedDict[str, Block], stations: OrderedDict[str, Station]):
         self.__blocks = blocks
         self.__stations = stations
-
-        self.__planner = RoutePlanner(self.__as_prolog_segments(), self.__as_prolog_links())
-        self.__planner.initialise()
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -104,13 +100,7 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def segment_route(self, start: SegmentLocation, end: SegmentLocation):
-        return self.__planner.route(start, end)
-
-
-    # TODO: enable viewing of the assertions
-
-    def __as_prolog_segments(self) -> list[PrologSegment]:
+    def as_prolog_segments(self) -> list[PrologSegment]:
         segments = []
         for block in self.blocks:
             segments.extend(block.as_prolog_segments())
@@ -118,7 +108,7 @@ class LayoutNavigator(ABC):
         return segments
 
 
-    def __as_prolog_links(self) -> list[PrologLink]:
+    def as_prolog_links(self) -> list[PrologLink]:
         link_set = LinkSet.construct()
         for block in self.blocks:
             block.as_prolog_links(link_set)
