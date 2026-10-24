@@ -195,7 +195,7 @@ class MPU(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        cvs = '[' + ', '.join([str(cv) for cv in self.cvs]) + ']'
+        cvs = '[' + ', '.join(map(str, self.cvs)) + ']'
 
         return (f'MPU:{{label:{self.label}, address:{self.address}, operator:{self.operator}, '
                 f'mpu_class:{self.mpu_class}, number:{self.number}, manufacturer:{self.manufacturer}, '

@@ -99,7 +99,7 @@ class Route(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        segments = '[' + ', '.join([str(segment) for segment in self.segments]) + ']'
+        segments = '[' + ', '.join(map(str, self.segments)) + ']'
 
         return (f'Route:{{direction:{self.direction}, length:{self.length}, '
                 f'configuration:{self.configuration}, segments:{segments}}}')

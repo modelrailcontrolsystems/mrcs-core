@@ -140,7 +140,7 @@ class Block(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        segments = '[' + ', '.join([str(segment) for segment in self.segments]) + ']'
+        segments = '[' + ', '.join(map(str, self.segments)) + ']'
 
         return (f'Block:{{label:{self.label}, address:{self.address}, operation:{self.operation.name}, '
                 f'segments:{segments}}}')

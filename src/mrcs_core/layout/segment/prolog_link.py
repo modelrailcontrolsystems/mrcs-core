@@ -198,7 +198,7 @@ class PrologLink(object):
 
 
     def __str__(self, *args, **kwargs):
-        constraints = '[' + ', '.join([str(constraint) for constraint in self.constraints]) + ']'
+        constraints = '[' + ', '.join(map(str, self.constraints)) + ']'
 
         return (f'PrologLink:{{location:{self.location}, next_location:{self.next_location}, '
                 f'heading:{self.heading}, constraints:{constraints}}}')
