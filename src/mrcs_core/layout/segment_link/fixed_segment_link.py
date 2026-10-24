@@ -3,7 +3,7 @@ Created on 26 Sep 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A link between segments
+A fixed link between segments
 """
 
 from collections import OrderedDict
@@ -18,7 +18,7 @@ from mrcs_core.layout.segment_link.segment_link import SegmentLink
 
 class FixedSegmentLink(SegmentLink):
     """
-    A simple link between segments
+    A fixed link between segments
     """
 
 

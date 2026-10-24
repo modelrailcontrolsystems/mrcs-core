@@ -13,13 +13,14 @@ from abc import ABC
 from collections import OrderedDict
 
 from mrcs_core.data.dot import Dot
-from mrcs_core.equipment.block.block_enums import BlockHeading
-from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
 from mrcs_core.layout.block.block import Block
 from mrcs_core.layout.block.block_abstract import BlockAbstract
 from mrcs_core.layout.platform.platform import Platform
 from mrcs_core.layout.platform.platform_location import PlatformLocation
-from mrcs_core.layout.route import Route
+from mrcs_core.layout.route_planner import RoutePlanner
+from mrcs_core.layout.segment.prolog_link import PrologLink
+from mrcs_core.layout.segment.prolog_link_set import LinkSet
+from mrcs_core.layout.segment.prolog_segment import PrologSegment
 from mrcs_core.layout.segment.segment import Segment
 from mrcs_core.layout.segment.segment_location import SegmentLocation
 from mrcs_core.layout.segment.turnout_abstract import TurnoutAbstract
@@ -41,6 +42,9 @@ class LayoutNavigator(ABC):
         self.__blocks = blocks
         self.__stations = stations
 
+        self.__planner = RoutePlanner(self.__as_prolog_segments(), self.__as_prolog_links())
+        self.__planner.initialise()
+
 
     # ----------------------------------------------------------------------------------------------------------------
 
@@ -51,10 +55,6 @@ class LayoutNavigator(ABC):
             if block.address in addresses:
                 raise ValueError(f"Duplicate block address {block.address.shortform} in {block.label}.")
             addresses.append(block.address)
-
-        # validate blocks
-        for block in self.blocks:
-            block.validate()
 
         # are all turnout addresses unique across the layout?
         addresses = []
@@ -104,50 +104,46 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def segment_route(self, config: TurnoutConfiguration, heading: BlockHeading, start: SegmentLocation,
-                      end: SegmentLocation) -> Route:
-        path = Route()
-
-        found = self.block_segment(start)
-        if found is None:
-            raise ValueError(f'Start location not found:{start.dot_path}.')
-
-        block_label, segment = found
-
-        while True:
-            path.append(config, block_label, segment)
-
-            if SegmentLocation(block_label, segment.label) == end:
-                return path
-
-            next_location = segment.next_location(config, heading)
-            if next_location is None:
-                raise ValueError(f'End location {end.dot_path} is not reachable from location {start.dot_path} '
-                                 f'with heading {heading.name} - turnout configuration may be incorrect.')
-
-            found = self.block_segment(next_location)
-            if found is None:
-                raise ValueError(f'Malformed layout - segment not found for next location {next_location.dot_path}.')
-
-            block_label, segment = found
+    def segment_route(self, start: SegmentLocation, end: SegmentLocation):
+        return self.__planner.route(start, end)
 
 
-    def platform_route(self, config: TurnoutConfiguration, heading: BlockHeading, start: PlatformLocation,
-                       end: PlatformLocation) -> Route:
-        start_platform = self.platform(start)
-        if start_platform is None:
-            raise ValueError(f'Start platform not found:{start.dot_path}.')
+    # TODO: enable viewing of the assertions
 
-        end_platform = self.platform(end)
-        if end_platform is None:
-            raise ValueError(f'End platform not found:{end.dot_path}.')
+    def __as_prolog_segments(self) -> list[PrologSegment]:
+        segments = []
+        for block in self.blocks:
+            segments.extend(block.as_prolog_segments())
 
-        # TODO: length calculation depends on station offset, station length and heading
+        return segments
 
-        # start_segment = self.segment(start_station.origin)
-        # end_segment = self.segment(end_station.origin)
 
-        return self.segment_route(config, heading, start_platform.origin, end_platform.origin)
+    def __as_prolog_links(self) -> list[PrologLink]:
+        link_set = LinkSet.construct()
+        for block in self.blocks:
+            block.as_prolog_links(link_set)
+
+        return link_set.links
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    # def platform_route(self, config: TurnoutConfiguration, heading: BlockHeading, start: PlatformLocation,
+    #                    end: PlatformLocation) -> Route:
+    #     start_platform = self.platform(start)
+    #     if start_platform is None:
+    #         raise ValueError(f'Start platform not found:{start.dot_path}.')
+    #
+    #     end_platform = self.platform(end)
+    #     if end_platform is None:
+    #         raise ValueError(f'End platform not found:{end.dot_path}.')
+    #
+    #     # TODO: length calculation depends on station offset, station length and heading
+    #
+    #     # start_segment = self.segment(start_station.origin)
+    #     # end_segment = self.segment(end_station.origin)
+    #
+    #     return self.segment_route(config, heading, start_platform.origin, end_platform.origin)
 
 
     # ----------------------------------------------------------------------------------------------------------------

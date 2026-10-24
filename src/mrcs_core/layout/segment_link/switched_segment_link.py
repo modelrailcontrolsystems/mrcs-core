@@ -3,7 +3,7 @@ Created on 26 Sep 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A link between segments
+A link between segments, dependent on turnout position
 """
 
 from collections import OrderedDict
@@ -74,6 +74,18 @@ class SwitchedSegmentLink(SegmentLink):
         p1_next_location = [] if self.p1_next_location is None else [self.p1_next_location]
 
         return p0_next_location + p1_next_location
+
+
+    def next_location_items(self):
+        next_locations = {}
+
+        if self.p0_next_location is not None:
+            next_locations[TurnoutPosition.P0] = self.p0_next_location
+
+        if self.p1_next_location is not None:
+            next_locations[TurnoutPosition.P1] = self.p1_next_location
+
+        return next_locations.items()
 
 
     # ----------------------------------------------------------------------------------------------------------------

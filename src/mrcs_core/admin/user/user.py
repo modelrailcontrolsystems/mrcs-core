@@ -117,7 +117,7 @@ class User(JSONable):
 
         jdict['uid'] = self.uid
         jdict['email'] = self.email
-        jdict['role'] = str(self.role)
+        jdict['role'] = self.role.name
         jdict['must_set_password'] = self.must_set_password
         jdict['given_name'] = self.given_name
         jdict['family_name'] = self.family_name

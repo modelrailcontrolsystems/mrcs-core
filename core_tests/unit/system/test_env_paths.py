@@ -25,11 +25,12 @@ class TestEnvPaths(unittest.IsolatedAsyncioTestCase):
             f"EnvPaths:{{path:['{mrcs}/mrcs-cli/src/mrcs_cli/cli', "
             f"'{mrcs}/mrcs-api/src/mrcs_api/cli', "
             f"'{mrcs}/mrcs-control/src/mrcs_control/cli', "
-            f"'{mrcs}/.venv14/bin'], "
+            f"'{mrcs}/.venv/bin'], "
             f"python_path:[{repr(mrcs / 'mrcs-cli/src')}, "
             f"{repr(mrcs / 'mrcs-api/src')}, "
             f"{repr(mrcs / 'mrcs-control/src')}, "
-            f"{repr(mrcs / 'mrcs-core/src')}]}}",
+            f"{repr(mrcs / 'mrcs-core/src')}], "
+            f"swi_home_dir:/Applications/SWI-Prolog.app/Contents/Resources/swipl}}",
             str(obj1))
 
 
@@ -40,11 +41,12 @@ class TestEnvPaths(unittest.IsolatedAsyncioTestCase):
             f"{{'PATH': '{mrcs}/mrcs-cli/src/mrcs_cli/cli:"
             f"{mrcs}/mrcs-api/src/mrcs_api/cli:"
             f"{mrcs}/mrcs-control/src/mrcs_control/cli:"
-            f"{mrcs}/.venv14/bin', "
+            f"{mrcs}/.venv/bin', "
             f"'PYTHONPATH': '{mrcs}/mrcs-cli/src:"
             f"{mrcs}/mrcs-api/src:"
             f"{mrcs}/mrcs-control/src:"
-            f"{mrcs}/mrcs-core/src'}}",
+            f"{mrcs}/mrcs-core/src', "
+            f"'SWI_HOME_DIR': '/Applications/SWI-Prolog.app/Contents/Resources/swipl'}}",
             str(obj1.as_dict()))
 
 

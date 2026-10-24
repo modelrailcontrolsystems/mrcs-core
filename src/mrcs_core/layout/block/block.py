@@ -15,6 +15,8 @@ from mrcs_core.equipment.block.block_address import BlockAddress
 from mrcs_core.equipment.block.block_enums import BlockHeading, BlockVoltage
 from mrcs_core.equipment.block.block_status import BlockStatus
 from mrcs_core.layout.block.block_operation import BlockOperation
+from mrcs_core.layout.segment.prolog_link_set import LinkSet
+from mrcs_core.layout.segment.prolog_segment import PrologSegment
 from mrcs_core.layout.segment.segment import Segment
 from mrcs_core.layout.segment.segment_builder import SegmentBuilder
 
@@ -67,17 +69,6 @@ class Block(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def validate(self) -> None:
-        # are all segment labels unique?
-        labels = []
-        for segment in self.segments:
-            if segment.label in labels:
-                raise ValueError(f"Duplicate segment label {segment.label} in block {self.label}.")
-            labels.append(segment.label)
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def status(self):
         return BlockStatus(self.label, self.address, BlockHeading.UNASSIGNED, BlockVoltage.UNKNOWN)
 
@@ -91,6 +82,17 @@ class Block(JSONable):
             raise KeyError(segment_label)
 
         return Block(self.label, self.address, self.operation, OrderedDict(segments))
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_prolog_segments(self) -> list[PrologSegment]:
+        return [segment.as_prolog_segment(self.label) for segment in self.segments]
+
+
+    def as_prolog_links(self, link_set: LinkSet) -> None:
+        for segment in self.segments:
+            segment.as_prolog_links(link_set, self.label)
 
 
     # ----------------------------------------------------------------------------------------------------------------

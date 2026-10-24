@@ -23,6 +23,15 @@ class TurnoutConfiguration(JSONable):
 
 
     @classmethod
+    def construct_from_prolog(cls, pdict) -> Self:
+        positions = OrderedDict()
+        for pair in pdict:
+            positions[pair[0].upper()] = TurnoutPosition.construct_from_prolog(pair[1])
+
+        return cls(positions)
+
+
+    @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
         positions = OrderedDict()
         for label, position in jdict.items():
@@ -60,14 +69,14 @@ class TurnoutConfiguration(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):
-        return {label: position.name for label, position in self.__positions.items()}
+        return {label: position.name for label, position in self.positions.items()}
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
     def positions(self):
-        return self.__positions
+        return dict(sorted(self.__positions.items()))
 
 
     def position(self, label: str) -> TurnoutPosition | None:

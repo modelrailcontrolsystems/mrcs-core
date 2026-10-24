@@ -3,7 +3,7 @@ Created on 9 Jul 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A persistent ordered collection of Blocks and Platforms, making up a complete layout
+A persistent, ordered collection of Blocks and Platforms, making up a complete layout
 
 Business logic is implemented in the abstract superclass LayoutNavigator, with object lifecycle functions
 implemented here.
@@ -22,7 +22,7 @@ from mrcs_core.layout.station.station import Station
 
 class Layout(LayoutNavigator, MultiPersistentJSONable):
     """
-    A persistent ordered collection of Blocks and Platforms, making up a complete layout
+    A persistent, ordered collection of Blocks and Platforms, making up a complete layout
     """
 
     __FILENAME = "layout.json"

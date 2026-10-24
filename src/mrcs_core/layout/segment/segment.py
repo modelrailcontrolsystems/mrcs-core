@@ -12,6 +12,8 @@ from typing import Any
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.equipment.turnout.turnout_configuration import TurnoutConfiguration
+from mrcs_core.layout.segment.prolog_link_set import LinkSet
+from mrcs_core.layout.segment.prolog_segment import PrologSegment
 from mrcs_core.layout.segment.segment_location import SegmentLocation
 from mrcs_core.layout.segment_link.segment_link import SegmentLink
 
@@ -77,6 +79,22 @@ class Segment(JSONable, ABC):
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @abstractmethod
+    def as_prolog_segment(self, block_label: str) -> PrologSegment:
+        pass
+
+
+    @abstractmethod
+    def as_prolog_links(self, link_set: LinkSet, block_label: str) -> None:
+        pass
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def location(self, block_label: str) -> SegmentLocation:
+        return SegmentLocation(block_label, self.label)
+
 
     @property
     def label(self):
