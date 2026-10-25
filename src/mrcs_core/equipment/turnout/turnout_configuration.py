@@ -3,11 +3,10 @@ Created on 9 Jul 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-A simple represenation of the state of all the Turnouts, typically within a Block
-Intended for use in determining the active path edges in a Block design
+A simple represenation of the state of all the Turnouts
 """
 
-from typing import Any, Dict, OrderedDict, Self
+from typing import Any, Dict, Self
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_enums import TurnoutPosition
@@ -18,24 +17,20 @@ from mrcs_core.equipment.turnout.turnout_status import TurnoutStatus
 
 class TurnoutConfiguration(JSONable):
     """
-    A simple represenation of the state of all the Turnouts, typically within a Block
+    A simple represenation of the state of all the Turnouts
     """
 
 
     @classmethod
     def construct_from_prolog(cls, pdict) -> Self:
-        positions = OrderedDict()
-        for pair in pdict:
-            positions[pair[0].upper()] = TurnoutPosition.construct_from_prolog(pair[1])
+        positions = {pair[0].upper(): TurnoutPosition.construct_from_prolog(pair[1]) for pair in pdict}
 
         return cls(positions)
 
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
-        positions = OrderedDict()
-        for label, position in jdict.items():
-            positions[label] = TurnoutPosition[position]
+        positions = {label: TurnoutPosition[position] for label, position in jdict.items()}
 
         return cls(positions)
 
