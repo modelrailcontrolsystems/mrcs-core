@@ -121,12 +121,12 @@ class TurnoutSegment(Segment):
 
     def as_prolog_links(self, link_set: LinkSet, block_label: str) -> None:
         location = self.location(block_label)
-        length = self.p0_length - self.p1_length
+        delta = self.p0_length - self.p1_length
 
         if isinstance(self.up_link, SwitchedSegmentLink):
             link: SwitchedSegmentLink = self.up_link
             for position, next_location in link.next_location_items():
-                p0_length = length if position == TurnoutPosition.P0 else 0
+                p0_length = delta if position == TurnoutPosition.P0 else 0
                 constraint = PrologLinkConstraint(location, position, p0_length)
                 link_set.add(PrologLink(location, next_location, BlockHeading.UP, constraint))
                 link_set.add(PrologLink(next_location, location, BlockHeading.DOWN, constraint))
@@ -138,7 +138,7 @@ class TurnoutSegment(Segment):
         if isinstance(self.down_link, SwitchedSegmentLink):
             link: SwitchedSegmentLink = self.down_link
             for position, next_location in link.next_location_items():
-                p0_length = length if position == TurnoutPosition.P0 else 0
+                p0_length = delta if position == TurnoutPosition.P0 else 0
                 constraint = PrologLinkConstraint(location, position, p0_length)
                 link_set.add(PrologLink(location, next_location, BlockHeading.DOWN, constraint))
                 link_set.add(PrologLink(next_location, location, BlockHeading.UP, constraint))
