@@ -35,7 +35,7 @@ class SpeedRun(JSONable):
     def construct(cls, distance: int, direction: BlockHeading, set_speed: int, log: SpeedLog) -> Self:
         test_time = ISODatetime.now()
 
-        return cls(distance, direction, set_speed, log.average_reported_speed, log.elapsed_time, test_time)
+        return cls(distance, direction, set_speed, log.average_reported_speed, log.total_elapsed_time, test_time)
 
 
     @classmethod
