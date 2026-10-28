@@ -16,9 +16,9 @@ Note that the cron components work in model time, not true time.
 from collections import OrderedDict
 from typing import Any
 
-from mrcs_core.equipment.equipment_identity import EquipmentIdentifier
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONable
+from mrcs_core.equipment.equipment_identity import EquipmentIdentifier
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -44,8 +44,6 @@ class Cronjob(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, target: EquipmentIdentifier | None, event_id: str, on_datetime: ISODatetime):
-        super().__init__()
-
         self.__target = target  # the target of the cron event (may be the source of the crontab message)
         self.__event_id = event_id  # the ID of the event to be performed
         self.__on_datetime = on_datetime  # the model datetime when the event should be performed

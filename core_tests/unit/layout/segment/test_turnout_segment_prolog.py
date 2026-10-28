@@ -40,7 +40,7 @@ class TestTurnoutSegmentProlog(unittest.TestCase):
 
     def test_as_prolog_links(self):
         block = Block.construct_from_jdict(self.__block_jdict)
-        link_set = LinkSet.construct()
+        link_set = LinkSet.new()
 
         obj2 = block.segment('TW01')
         obj2.as_prolog_links(link_set, 'BN06')
