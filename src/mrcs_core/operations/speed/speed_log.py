@@ -104,7 +104,7 @@ class SpeedLog(object):
         if len(self) < 2:
             raise ValueError('insufficient data to calculate average reported speed')
 
-        total_elapsed_time = self.elapsed_time
+        total_elapsed_time = self.total_elapsed_time
         average_speed = 0
 
         for i in range(1, len(self.reports), 1):
@@ -117,7 +117,7 @@ class SpeedLog(object):
 
 
     @property
-    def elapsed_time(self) -> float:
+    def total_elapsed_time(self) -> float:
         return round(self.reports[-1].timestamp - self.reports[0].timestamp, 3)
 
 
