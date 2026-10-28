@@ -21,8 +21,20 @@ class Host(FilesystemPersistenceManager):
     An abstraction over the host system
     """
 
+    __TEST_DIR = 'tests'  # hard-coded rel path
+
+
+    @classmethod
+    def test_dir(cls):
+        return cls.__TEST_DIR
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+
     __MRCS_DIR = 'MRCS'
     __DB_DIR = 'db'
+
 
     @classmethod
     def home_abs_dir(cls):
@@ -49,5 +61,3 @@ class Host(FilesystemPersistenceManager):
     @classmethod
     def name(cls):
         return socket.gethostname()
-
-

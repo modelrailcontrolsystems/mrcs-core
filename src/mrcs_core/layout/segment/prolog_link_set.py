@@ -6,7 +6,7 @@ Created on 18 Oct 2026
 Translation between prolog and python segments
 """
 
-from typing import Any
+from typing import Any, Self
 
 from mrcs_core.layout.segment.prolog_link import PrologLink
 from mrcs_core.layout.segment.segment_location import SegmentLocation
@@ -62,7 +62,7 @@ class LinkSet(object):
 
 
     @classmethod
-    def construct(cls):
+    def new(cls) -> Self:
         return cls({})
 
 

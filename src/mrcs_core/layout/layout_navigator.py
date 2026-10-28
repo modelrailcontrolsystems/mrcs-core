@@ -109,7 +109,7 @@ class LayoutNavigator(ABC):
 
 
     def as_prolog_links(self) -> list[PrologLink]:
-        link_set = LinkSet.construct()
+        link_set = LinkSet.new()
         for block in self.blocks:
             block.as_prolog_links(link_set)
 

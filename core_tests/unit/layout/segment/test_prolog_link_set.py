@@ -50,7 +50,7 @@ class TestPrologLink(unittest.TestCase):
 
 
     def test_link_str_1(self):
-        link_set = LinkSet.construct()
+        link_set = LinkSet.new()
         obj1 = self.__sample_link_1()
         link_set.add(obj1)
         self.assertEqual('PrologLinkSet:{links:{LinkSetKey:{start:SegmentLocation:{block_label:BN06, '
@@ -64,9 +64,9 @@ class TestPrologLink(unittest.TestCase):
     def test_link_eq(self):
         self.maxDiff = None
         obj1 = self.__sample_link_1()
-        link_set_1 = LinkSet.construct()
+        link_set_1 = LinkSet.new()
         link_set_1.add(obj1)
-        link_set_2 = LinkSet.construct()
+        link_set_2 = LinkSet.new()
         link_set_2.add(obj1)
 
         self.assertTrue(link_set_1 == link_set_2)
@@ -75,11 +75,11 @@ class TestPrologLink(unittest.TestCase):
     def test_link_neq(self):
         self.maxDiff = None
         obj1 = self.__sample_link_1()
-        link_set_1 = LinkSet.construct()
+        link_set_1 = LinkSet.new()
         link_set_1.add(obj1)
 
         obj2 = self.__sample_link_2()
-        link_set_2 = LinkSet.construct()
+        link_set_2 = LinkSet.new()
         link_set_2.add(obj2)
 
         self.assertFalse(link_set_1 == link_set_2)

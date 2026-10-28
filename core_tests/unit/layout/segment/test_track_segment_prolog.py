@@ -40,7 +40,7 @@ class TestTrackSegmentProlog(unittest.TestCase):
 
     def test_as_1_prolog_link(self):
         block = Block.construct_from_jdict(self.__block_jdict)
-        link_set = LinkSet.construct()
+        link_set = LinkSet.new()
 
         obj2 = block.segment('SG02')
         obj2.as_prolog_links(link_set, 'BN08')
@@ -50,7 +50,7 @@ class TestTrackSegmentProlog(unittest.TestCase):
 
     def test_as_2_prolog_links(self):
         block = Block.construct_from_jdict(self.__block_jdict)
-        link_set = LinkSet.construct()
+        link_set = LinkSet.new()
 
         obj2 = block.segment('SG01')
         obj2.as_prolog_links(link_set, 'BN08')

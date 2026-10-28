@@ -50,7 +50,7 @@ class TestBlockProlog(unittest.TestCase):
 
     def test_as_prolog_links_str(self):
         block = Block.construct_from_jdict(self.__block_jdict)
-        link_set = LinkSet.construct()
+        link_set = LinkSet.new()
 
         block.as_prolog_links(link_set)
         self.assertEqual(8, len(link_set))
@@ -92,7 +92,7 @@ class TestBlockProlog(unittest.TestCase):
 
     def test_as_prolog_links_repr(self):
         block = Block.construct_from_jdict(self.__block_jdict)
-        link_set = LinkSet.construct()
+        link_set = LinkSet.new()
 
         block.as_prolog_links(link_set)
         self.assertEqual(8, len(link_set))
