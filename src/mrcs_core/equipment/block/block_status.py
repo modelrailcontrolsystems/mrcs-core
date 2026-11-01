@@ -43,6 +43,17 @@ class BlockStatus(JSONable):
 
 
     @classmethod
+    def containing_block(cls, blocks: list[BlockStatus], mpu_address: int) -> BlockStatus | None:
+        for block in blocks:
+            if block.contains_mpu(mpu_address):  # note that the MPU may be in two blocks
+                return block
+
+        return None
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
         label = jdict.get('label')
         address = BlockAddress.construct_from_jdict(jdict.get('addr'))
@@ -82,6 +93,16 @@ class BlockStatus(JSONable):
 
     def __lt__(self, other: Any):
         return self.label < other.label
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def contains_mpu(self, mpu_address: int) -> bool:
+        for occupant in self.occupants:
+            if occupant.mpu_address == mpu_address:
+                return True
+
+        return False
 
 
     # ----------------------------------------------------------------------------------------------------------------

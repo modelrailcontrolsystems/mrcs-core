@@ -23,6 +23,8 @@ from mrcs_core.data.json import JSONable, JSONify
 from mrcs_core.messaging.routing_key import PublicationRoutingKey, RoutingKey
 
 
+# TODO: message payloads should only carry typed JSON
+# TODO: reconstructing the body should be done automatically, based on the JSON type field
 # --------------------------------------------------------------------------------------------------------------------
 
 class Message(JSONable):
@@ -125,7 +127,7 @@ class Message(JSONable):
         self.__origin = origin if origin else self.truncated_uuid4()
 
         self.__routing_key = routing_key
-        self.__body = body  # JSONable (jdict when constructed from callback)
+        self.__body = body  # JSONable (jdict when constructed from callback)   # TODO: a symptom of the problem
 
 
     def __eq__(self, other: Any):

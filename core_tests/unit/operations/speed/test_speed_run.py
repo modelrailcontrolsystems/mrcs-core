@@ -47,8 +47,9 @@ class TestSpeedRun(unittest.TestCase):
 
     def test_construct(self):
         obj1 = self.__sample_run_1()
-        self.assertEqual('SpeedRun:{distance:500, direction:UP{1}, set_speed:5, average_reported_speed:12.1, '
-                         'elapsed_time:17.123, test_time:ISODatetime:{2026-10-25T08:55:38.234+00:00}}', str(obj1))
+        self.assertEqual('SpeedRun:{distance:500, direction:UP{1}, set_speed:5, average_reported_speed:12.125, '
+                         'elapsed_time:17.123, actual_ms_speed:0.029, actual_mph_speed:9.6, '
+                         'test_time:ISODatetime:{2026-10-25T08:55:38.234+00:00}}', str(obj1))
 
 
     def test_eq(self):
@@ -71,8 +72,9 @@ class TestSpeedRun(unittest.TestCase):
 
     def test_json(self):
         obj1 = self.__sample_run_1()
-        self.assertEqual('{"distance": 500, "direction": "UP", "set": 5, "ars": 12.1, "elapsed": 17.123, '
-                         '"test_time": "2026-10-25T08:55:38.234+00:00"}', JSONify.dumps(obj1))
+        self.assertEqual('{"distance": 500, "direction": "UP", "set": 5, "ars": 12.125, "elapsed": 17.123, '
+                         '"ms_speed": 0.029, "mph_speed": 9.6, "test_time": "2026-10-25T08:55:38.234+00:00"}',
+                         JSONify.dumps(obj1))
 
 
     def test_json_eq(self):
@@ -84,11 +86,11 @@ class TestSpeedRun(unittest.TestCase):
 
     def test_actual_speed(self):
         obj1 = self.__sample_run_1()
-        self.assertEqual(0.029, obj1.actual_speed)
+        self.assertEqual(0.029, obj1.actual_ms_speed)
 
 
     def test_construct_from_log(self):
-        obj1 = SpeedLog.start()
+        obj1 = SpeedLog.start(30)
         time.sleep(1)
         obj1.mark(30)
         obj2 = SpeedRun.construct(500, BlockHeading.UP, 11, obj1)

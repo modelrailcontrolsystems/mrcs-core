@@ -20,7 +20,7 @@ class TestEquipmentType(unittest.TestCase):
 
     def test_keys(self):
         self.assertEqual(['API', 'CLK', 'CRT', 'REC', 'CLU', 'TST',
-                          'DCP', 'LGP', 'LVL', 'MPU', 'SCH', 'SIG', 'TEL', 'TRK', 'TRS',
+                          'DCP', 'LGP', 'LVL', 'MPU', 'SCH', 'SIG', 'SPD', 'TEL', 'TRK', 'TRS',
                           'BOS', 'LID', 'VIS'], list(EquipmentType.keys()))
 
 
