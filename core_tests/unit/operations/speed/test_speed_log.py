@@ -21,35 +21,35 @@ from mrcs_core.operations.speed.speed_log import SpeedLog
 class TestSpeedLog(unittest.TestCase):
 
     def test_construct(self):
-        obj1 = SpeedLog.start()
+        obj1 = SpeedLog.start(0)
         self.assertEqual(1, len(obj1))
 
 
     def test_run_1(self):
-        obj1 = SpeedLog.start()
+        obj1 = SpeedLog.start(30)
         time.sleep(1)
         obj1.mark(30)
         self.assertEqual(30, obj1.average_reported_speed)
 
 
     def test_run_2(self):
-        obj1 = SpeedLog.start()
+        obj1 = SpeedLog.start(30)
         time.sleep(1)
         obj1.mark(30)
         time.sleep(1)
         obj1.mark(40)
-        self.assertEqual(35, obj1.average_reported_speed)
+        self.assertEqual(35, round(obj1.average_reported_speed, 0))
 
 
     def test_run_3(self):
-        obj1 = SpeedLog.start()
+        obj1 = SpeedLog.start(0)
         time.sleep(1)
         obj1.mark(30)
         time.sleep(1)
         obj1.mark(40)
         time.sleep(1)
         obj1.mark(50)
-        self.assertEqual(40, obj1.average_reported_speed)
+        self.assertEqual(40, round(obj1.average_reported_speed, 0))
 
 
 # --------------------------------------------------------------------------------------------------------------------

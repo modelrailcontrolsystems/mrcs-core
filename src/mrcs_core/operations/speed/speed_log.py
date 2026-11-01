@@ -72,8 +72,8 @@ class SpeedLog(object):
 
 
     @classmethod
-    def start(cls) -> Self:
-        return cls(SpeedReport.construct(0))  # the first speeed is never used
+    def start(cls, reported_speed: int) -> Self:
+        return cls(SpeedReport.construct(reported_speed))  # the first speeed is never used
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ class SpeedLog(object):
 
     @property
     def average_reported_speed(self) -> float:
-        if len(self) < 2:
+        if len(self) < 1:
             raise ValueError('insufficient data to calculate average reported speed')
 
         total_elapsed_time = self.total_elapsed_time
@@ -113,7 +113,12 @@ class SpeedLog(object):
             weighted_speed = self.reports[i].reported_speed * proportion
             average_speed += weighted_speed
 
-        return round(average_speed, 1)
+        return round(average_speed, 3)
+
+
+    @property
+    def elapsed_time(self):
+        return round(time.time() - self.reports[0].timestamp, 3)
 
 
     @property

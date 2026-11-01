@@ -38,6 +38,13 @@ class SpeedTrial(MultiPersistentJSONable):
 
     @classmethod
     def construct_from_jdict(cls, jdict, name=None) -> Self:
+        if jdict is None:
+            if name is None:
+                raise ValueError('Cannot create a SpeedTrial with no name.')
+
+            pieces = name.split('_')
+            return cls(pieces[0], pieces[1], name=name)
+
         mpu_label = jdict.get('mpu_label')
         block_label = jdict.get('block_label')
         runs = [SpeedRun.construct_from_jdict(run_jdict) for run_jdict in jdict.get('runs')]

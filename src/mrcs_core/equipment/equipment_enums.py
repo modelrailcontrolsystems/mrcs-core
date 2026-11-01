@@ -35,6 +35,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     MPU = 'MPU'  # operations: motive power unit
     SCH = 'SCH'  # operations: schedule controller
     SIG = 'SIG'  # operations: signal
+    SPD = 'SPD'  # operations: speed trial manager
     TEL = 'TEL'  # operations: motive power unit telemetry
     TRK = 'TRK'  # operations: track: block, track, turnout
     TRS = 'TRS'  # operations: train set (may be multi-headed)

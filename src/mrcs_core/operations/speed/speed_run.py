@@ -93,6 +93,9 @@ class SpeedRun(JSONable):
         jdict['set'] = self.set_speed
         jdict['ars'] = self.average_reported_speed
         jdict['elapsed'] = self.elapsed_time
+
+        jdict['ms_speed'] = self.actual_ms_speed
+        jdict['mph_speed'] = self.actual_mph_speed
         jdict['test_time'] = self.test_time
 
         return jdict
@@ -101,8 +104,13 @@ class SpeedRun(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def actual_speed(self) -> float:
+    def actual_ms_speed(self) -> float:
         return round((self.distance / 1000) / self.elapsed_time, 3)  # metres per second
+
+
+    @property
+    def actual_mph_speed(self) -> float:
+        return round(self.actual_ms_speed * 2.23694 * 148, 1)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -124,7 +132,7 @@ class SpeedRun(JSONable):
 
     @property
     def average_reported_speed(self):
-        return round(self.__average_reported_speed, 1)
+        return round(self.__average_reported_speed, 3)
 
 
     @property
@@ -142,4 +150,5 @@ class SpeedRun(JSONable):
     def __str__(self, *args, **kwargs):
         return (f'SpeedRun:{{distance:{self.distance}, direction:{self.direction}, set_speed:{self.set_speed}, '
                 f'average_reported_speed:{self.average_reported_speed}, elapsed_time:{self.elapsed_time}, '
+                f'actual_ms_speed:{self.actual_ms_speed}, actual_mph_speed:{self.actual_mph_speed}, '
                 f'test_time:{self.test_time}}}')

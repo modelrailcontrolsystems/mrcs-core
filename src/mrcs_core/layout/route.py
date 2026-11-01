@@ -61,6 +61,10 @@ class Route(JSONable):
             return False
 
 
+    def __lt__(self, other: Any):
+        return self.length < other.length
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def as_json(self, **kwargs):
