@@ -15,6 +15,7 @@ from collections import OrderedDict
 from pathlib import Path
 
 from mrcs_core.data.json import JSONify
+from mrcs_core.data.scale import Gauge
 from mrcs_core.equipment.block.block_address import BlockAddress
 from mrcs_core.layout.block.block import Block
 from mrcs_core.layout.block.block_operation import BlockOperation
@@ -71,7 +72,7 @@ class TestLayout(unittest.TestCase):
         station1 = self.__sample_station_1()
         stations = OrderedDict({station1.label: station1})
 
-        layout = Layout('TST001', 'Test layout 001', blocks, stations, name='test_001')
+        layout = Layout('TST001', 'Test layout 001', Gauge.N, blocks, stations, name='test_001')
         self.assertEqual('test_001', layout.name)
         self.assertEqual('TST001', layout.label)
         self.assertEqual('Test layout 001', layout.description)
@@ -89,15 +90,6 @@ class TestLayout(unittest.TestCase):
         self.assertEqual(('B01', 'B02', 'B03', 'B04'), tuple(b.label for b in layout.blocks))
 
         self.assertEqual(1, len(layout.stations))
-
-
-    def test_layout_construct_from_jdict_none_or_empty(self):
-        layout = Layout.construct_from_jdict({})
-        self.assertIsNone(layout.name)
-        self.assertIsNone(layout.label)
-        self.assertIsNone(layout.description)
-        self.assertEqual((), layout.blocks)
-        self.assertEqual((), layout.stations)
 
 
     def test_layout_construct_from_jdict_no_platforms(self):
@@ -119,17 +111,17 @@ class TestLayout(unittest.TestCase):
         blocks = OrderedDict({b.label: b for b in layout1.blocks})
         stations = OrderedDict({s.label: s for s in layout1.stations})
 
-        layout_diff_label = Layout('OTHER', layout1.description, blocks, stations)
+        layout_diff_label = Layout('OTHER', layout1.description, Gauge.N, blocks, stations)
         self.assertNotEqual(layout1, layout_diff_label)
 
-        layout_diff_desc = Layout(layout1.label, 'Other description', blocks, stations)
+        layout_diff_desc = Layout(layout1.label, 'Other description', Gauge.N, blocks, stations)
         self.assertNotEqual(layout1, layout_diff_desc)
 
-        layout_diff_blocks = Layout(layout1.label, layout1.description,
+        layout_diff_blocks = Layout(layout1.label, layout1.description, Gauge.N,
                                     OrderedDict({'B01': layout1.block('B01')}), stations)
         self.assertNotEqual(layout1, layout_diff_blocks)
 
-        layout_no_platforms = Layout(layout1.label, layout1.description, blocks, OrderedDict())
+        layout_no_platforms = Layout(layout1.label, layout1.description, Gauge.N, blocks, OrderedDict())
         self.assertNotEqual(layout1, layout_no_platforms)
 
         self.assertNotEqual(layout1, None)
@@ -137,8 +129,8 @@ class TestLayout(unittest.TestCase):
 
 
     def test_layout_lt(self):
-        layout1 = Layout('TST001', 'Desc', OrderedDict(), OrderedDict())
-        layout2 = Layout('TST002', 'Desc', OrderedDict(), OrderedDict())
+        layout1 = Layout('TST001', 'Desc', Gauge.N, OrderedDict(), OrderedDict())
+        layout2 = Layout('TST002', 'Desc', Gauge.N, OrderedDict(), OrderedDict())
 
         self.assertTrue(layout1 < layout2)
         self.assertFalse(layout2 < layout1)
@@ -151,8 +143,8 @@ class TestLayout(unittest.TestCase):
         self.maxDiff = None
         layout = Layout.construct_from_jdict(self.__layout_jdict, name='test_001')
 
-        expected = ('Layout:{name:test_001, label:TST001, description:Test layout 001, blocks:[Block:{label:B01, '
-                    'address:BlockAddress:{detector:1, channel:1}, operation:REVERSIBLE, '
+        expected = ('Layout:{name:test_001, label:TST001, description:Test layout 001, gauge:N{148}, blocks:'
+                    '[Block:{label:B01, address:BlockAddress:{detector:1, channel:1}, operation:REVERSIBLE, '
                     'segments:[TrackSegment:{label:S01, up_link:FixedSegmentLink:{next_location:'
                     'SegmentLocation:{block_label:B02, segment_label:S01}}, down_link:None, length:100}]}, '
                     'Block:{label:B02, address:BlockAddress:{detector:1, channel:2}, operation:REVERSIBLE, '

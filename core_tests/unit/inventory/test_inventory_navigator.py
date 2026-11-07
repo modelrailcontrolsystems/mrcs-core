@@ -14,6 +14,7 @@ import unittest
 from collections import OrderedDict
 from pathlib import Path as FilePath
 
+from mrcs_core.data.scale import Scale
 from mrcs_core.equipment.motive_power_unit.mpu_enums import MPUDirection
 from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
 from mrcs_core.equipment.motive_power_unit.mpu_status import MPUStatus
@@ -50,7 +51,8 @@ class TestInventoryNavigator(unittest.TestCase):
 
     @staticmethod
     def __mpu(label, address):
-        return MPU(label, address, 'Operator', '00', '00000', 'Vendor', 100, OrderedDict())
+        return MPU(label, address, 'Operator', '00', '00000', 'Vendor',
+                   Scale.N, 100, OrderedDict())
 
 
     @staticmethod

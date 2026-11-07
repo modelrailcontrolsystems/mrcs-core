@@ -19,6 +19,7 @@ from typing import Any, Self
 
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONable
+from mrcs_core.data.scale import Scale
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.operations.speed.speed_log import SpeedLog
 
@@ -32,28 +33,32 @@ class SpeedRun(JSONable):
 
 
     @classmethod
-    def construct(cls, distance: int, direction: BlockHeading, set_speed: int, log: SpeedLog) -> Self:
-        test_time = ISODatetime.now()
+    def construct(cls, scale: Scale, distance: int, direction: BlockHeading, set_speed: int, log: SpeedLog) -> Self:
+        time = ISODatetime.now()
 
-        return cls(distance, direction, set_speed, log.average_reported_speed, log.total_elapsed_time, test_time)
+        return cls(scale, distance, direction, set_speed, log.average_reported_speed, log.total_elapsed_time, time)
 
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
+        scale = Scale[jdict.get('scale')]  # may raise KeyError
+
         distance = int(jdict.get('distance'))
         direction = BlockHeading[jdict.get('direction')]
         set_speed = int(jdict.get('set'))
         average_reported_speed = float(jdict.get('ars'))
         elapsed_time = jdict.get('elapsed')
+
         test_time = ISODatetime.construct_from_jdict(jdict.get('test_time'))
 
-        return cls(distance, direction, set_speed, average_reported_speed, elapsed_time, test_time)
+        return cls(scale, distance, direction, set_speed, average_reported_speed, elapsed_time, test_time)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, distance: int, direction: BlockHeading, set_speed: int, average_reported_speed: float,
-                 elapsed_time: float, test_time: ISODatetime):
+    def __init__(self, scale: Scale, distance: int, direction: BlockHeading, set_speed: int,
+                 average_reported_speed: float, elapsed_time: float, test_time: ISODatetime):
+        self.__scale = scale
         self.__distance = distance  # mm
         self.__direction = direction
         self.__set_speed = set_speed  # MPU configuration speed units
@@ -65,8 +70,8 @@ class SpeedRun(JSONable):
     def __eq__(self, other: Any):
         try:
             return (
-                    self.distance == other.distance and self.direction == other.direction and
-                    self.set_speed == other.set_speed and
+                    self.scale == other.scale and self.distance == other.distance and
+                    self.direction == other.direction and self.set_speed == other.set_speed and
                     self.average_reported_speed == other.average_reported_speed and
                     self.elapsed_time == other.elapsed_time and self.test_time == other.test_time)
         except (AttributeError, TypeError):
@@ -88,14 +93,18 @@ class SpeedRun(JSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
+        jdict['scale'] = self.scale.name
+
         jdict['distance'] = self.distance
         jdict['direction'] = self.direction.name
         jdict['set'] = self.set_speed
         jdict['ars'] = self.average_reported_speed
         jdict['elapsed'] = self.elapsed_time
 
-        jdict['ms_speed'] = self.actual_ms_speed
-        jdict['mph_speed'] = self.actual_mph_speed
+        jdict['model_ms_speed'] = self.model_ms_speed
+        jdict['real_kph_speed'] = self.real_kph_speed
+        jdict['real_mph_speed'] = self.real_mph_speed
+
         jdict['test_time'] = self.test_time
 
         return jdict
@@ -104,16 +113,26 @@ class SpeedRun(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def actual_ms_speed(self) -> float:
+    def model_ms_speed(self) -> float:
         return round((self.distance / 1000) / self.elapsed_time, 3)  # metres per second
 
 
     @property
-    def actual_mph_speed(self) -> float:
-        return round(self.actual_ms_speed * 2.23694 * 148, 1)
+    def real_kph_speed(self) -> float:
+        return self.scale.kph(self.model_ms_speed)
+
+
+    @property
+    def real_mph_speed(self) -> float:
+        return self.scale.mph(self.model_ms_speed)
 
 
     # ----------------------------------------------------------------------------------------------------------------
+
+    @property
+    def scale(self):
+        return self.__scale
+
 
     @property
     def distance(self):
@@ -148,7 +167,8 @@ class SpeedRun(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'SpeedRun:{{distance:{self.distance}, direction:{self.direction}, set_speed:{self.set_speed}, '
-                f'average_reported_speed:{self.average_reported_speed}, elapsed_time:{self.elapsed_time}, '
-                f'actual_ms_speed:{self.actual_ms_speed}, actual_mph_speed:{self.actual_mph_speed}, '
+        return (f'SpeedRun:{{scale:{self.scale}, distance:{self.distance}, direction:{self.direction}, '
+                f'set_speed:{self.set_speed}, average_reported_speed:{self.average_reported_speed}, '
+                f'elapsed_time:{self.elapsed_time}, model_ms_speed:{self.model_ms_speed}, '
+                f'real_kph_speed:{self.real_kph_speed}, real_mph_speed:{self.real_mph_speed}, '
                 f'test_time:{self.test_time}}}')

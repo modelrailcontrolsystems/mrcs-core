@@ -13,6 +13,7 @@ from collections import OrderedDict
 from typing import Any
 
 from mrcs_core.data.json import MultiPersistentJSONable
+from mrcs_core.data.scale import Gauge
 from mrcs_core.layout.block.block import Block
 from mrcs_core.layout.layout_navigator import LayoutNavigator
 from mrcs_core.layout.station.station import Station
@@ -38,6 +39,7 @@ class Layout(LayoutNavigator, MultiPersistentJSONable):
     def construct_from_jdict(cls, jdict, name=None) -> Layout:
         label = jdict.get('label')
         description = jdict.get('description')
+        gauge = Gauge[jdict.get('gauge')]  # may raise KeyError
 
         blocks = OrderedDict()
         for block_jdict in jdict.get('blocks', []):
@@ -55,24 +57,25 @@ class Layout(LayoutNavigator, MultiPersistentJSONable):
 
             stations[station.label] = station
 
-        return cls(label, description, blocks, stations, name=name)
+        return cls(label, description, gauge, blocks, stations, name=name)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, label: str, description: str, blocks: OrderedDict[str, Block],
-                 stations: OrderedDict[str, Station], name=None):
+    def __init__(self, label: str, description: str, gauge: Gauge,
+                 blocks: OrderedDict[str, Block], stations: OrderedDict[str, Station], name=None):
         LayoutNavigator.__init__(self, blocks, stations)
         MultiPersistentJSONable.__init__(self, name)
 
         self.__label = label
         self.__description = description
+        self.__gauge = gauge
 
 
     def __eq__(self, other: Any):
         try:
             return (self.label == other.label and self.description == other.description and
-                    self.blocks == other.blocks and self.stations == other.stations)
+                    self.gauge == other.gauge and self.blocks == other.blocks and self.stations == other.stations)
         except (AttributeError, TypeError):
             return False
 
@@ -88,6 +91,8 @@ class Layout(LayoutNavigator, MultiPersistentJSONable):
 
         jdict['label'] = self.label
         jdict['description'] = self.description
+        jdict['gauge'] = self.gauge.name
+
         jdict['blocks'] = self.blocks
         jdict['stations'] = self.stations
 
@@ -106,11 +111,16 @@ class Layout(LayoutNavigator, MultiPersistentJSONable):
         return self.__description
 
 
+    @property
+    def gauge(self):
+        return self.__gauge
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
         blocks = '[' + ', '.join(map(str, self.blocks)) + ']'
         stations = '[' + ', '.join(map(str, self.stations)) + ']'
 
-        return (f'Layout:{{name:{self.name}, label:{self.label}, description:{self.description}, '
+        return (f'Layout:{{name:{self.name}, label:{self.label}, description:{self.description}, gauge:{self.gauge}, '
                 f'blocks:{blocks}, stations:{stations}}}')
