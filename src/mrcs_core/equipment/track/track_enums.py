@@ -11,13 +11,14 @@ https://www.z21.eu/en/products/z21
 
 from enum import IntEnum, unique
 
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.json import JSONable
+from mrcs_core.data.meta_enum import ABCMetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class TrackMode(IntEnum, metaclass=MetaEnum):
+class TrackMode(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     An enumeration of all the track modes
     """
@@ -30,6 +31,12 @@ class TrackMode(IntEnum, metaclass=MetaEnum):
 
     COMMAND_POWER_OFF = 0x80
     COMMAND_POWER_ON = 0x81
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        return self.name
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -69,7 +69,7 @@ class NumericCV(CV):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.cv_address.name
+        jdict['addr'] = self.cv_address
         jdict['value'] = self.value
 
         return jdict

@@ -101,7 +101,7 @@ class RailcomCV(CV):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.cv_address.name
+        jdict['addr'] = self.cv_address
 
         jdict['ch1_broadcast'] = self.ch1_broadcast
         jdict['ch2_broadcast'] = self.ch2_broadcast

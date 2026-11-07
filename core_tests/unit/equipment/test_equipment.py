@@ -51,8 +51,9 @@ class TestEquipment(unittest.TestCase):
         jstr = ('{"type": "MPUConfigurationReport", "addr": 3, "functions": "+-+", "busy": false, '
                 '"stepping": "STEPS_28", "speed": 12, "reverse": true, "consist": false, "smart_search": true}')
         obj1 = EquipmentReport.construct_from_jdict(json.loads(jstr))
-        self.assertEqual('MPUConfigurationReport:{mpu_address:3, functions:+-+, is_busy:False, stepping:STEPS_28, '
-                         'speed_setting:12, reverse:True, double_traction:False, smart_search:True}', str(obj1))
+        self.assertEqual('MPUConfigurationReport:{mpu_address:3, functions:+-+, is_busy:False, '
+                         'stepping:STEPS_28{2}, speed_setting:12, reverse:True, double_traction:False, '
+                         'smart_search:True}', str(obj1))
 
 
     def test_track(self):

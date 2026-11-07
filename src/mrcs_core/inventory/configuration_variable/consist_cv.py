@@ -82,7 +82,7 @@ class ConsistCV(CV):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.cv_address.name
+        jdict['addr'] = self.cv_address
 
         jdict['reverse'] = self.reverse
         jdict['consist_address'] = self.consist_address

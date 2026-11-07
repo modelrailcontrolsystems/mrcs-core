@@ -11,7 +11,8 @@ kilometres per hour and miles per hour relate to the real-world equivalents.
 
 from enum import IntEnum, unique
 
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.json import JSONable
+from mrcs_core.data.meta_enum import ABCMetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -29,7 +30,7 @@ class Conv(object):
 
 
 @unique
-class Gauge(IntEnum, metaclass=MetaEnum):
+class Gauge(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     supported model scales
     """
@@ -52,6 +53,12 @@ class Gauge(IntEnum, metaclass=MetaEnum):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def as_json(self, **kwargs):
+        return self.name
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __str__(self, *args, **kwargs):
         return f'{self.name}{{{self.value}}}'
 
@@ -60,7 +67,7 @@ class Gauge(IntEnum, metaclass=MetaEnum):
 
 
 @unique
-class Scale(IntEnum, metaclass=MetaEnum):
+class Scale(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     supported model scales
     """
@@ -80,6 +87,12 @@ class Scale(IntEnum, metaclass=MetaEnum):
 
     def mph(self, ms: float) -> float:
         return round(ms * Conv.METRES_TO_MILES * 60 * 60 * self.value, 1)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        return self.name
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -93,10 +93,10 @@ class SpeedRun(JSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['scale'] = self.scale.name
+        jdict['scale'] = self.scale
 
         jdict['distance'] = self.distance
-        jdict['direction'] = self.direction.name
+        jdict['direction'] = self.direction
         jdict['set'] = self.set_speed
         jdict['ars'] = self.average_reported_speed
         jdict['elapsed'] = self.elapsed_time

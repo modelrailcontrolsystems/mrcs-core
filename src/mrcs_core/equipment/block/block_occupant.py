@@ -64,7 +64,7 @@ class BlockOccupant(JSONable):
         jdict = OrderedDict()
 
         jdict['addr'] = self.mpu_address
-        jdict['face'] = self.face.name
+        jdict['face'] = self.face
 
         return jdict
 

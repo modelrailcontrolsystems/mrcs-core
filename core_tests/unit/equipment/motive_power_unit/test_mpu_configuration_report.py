@@ -74,8 +74,9 @@ class TestMPUConfigurationReport(unittest.TestCase):
         obj1 = MPUConfigurationReport(mpu_address, functions, is_busy=is_busy, stepping=stepping,
                                       speed_setting=speed_setting,
                                       reverse=reverse, double_traction=double_traction, smart_search=smart_search)
-        self.assertEqual('MPUConfigurationReport:{mpu_address:3, functions:+-+, is_busy:False, stepping:STEPS_28, '
-                         'speed_setting:12, reverse:True, double_traction:False, smart_search:True}', str(obj1))
+        self.assertEqual('MPUConfigurationReport:{mpu_address:3, functions:+-+, is_busy:False, '
+                         'stepping:STEPS_28{2}, speed_setting:12, reverse:True, double_traction:False, '
+                         'smart_search:True}', str(obj1))
 
 
     def test_mpu_configuration_report_json(self):

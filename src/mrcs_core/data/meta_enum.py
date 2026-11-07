@@ -6,6 +6,7 @@ Created on 22 Nov 2025
 https://stackoverflow.com/questions/63335753/how-to-check-if-string-exists-in-enum-of-strings
 """
 
+from abc import ABCMeta
 from enum import EnumMeta
 
 
@@ -27,3 +28,11 @@ class MetaEnum(EnumMeta):
 
     def keys(cls):
         return cls.__members__.keys()
+
+
+# --------------------------------------------------------------------------------------------------------------------
+
+class ABCMetaEnum(MetaEnum, ABCMeta):
+    """
+    a MetaEnum that can be combined with ABC-based mixins such as JSONable
+    """

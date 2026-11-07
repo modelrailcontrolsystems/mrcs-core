@@ -69,8 +69,8 @@ class ManufacturerCV(CV):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.cv_address.name  # TODO: stop using .name and implement as_json() instead
-        jdict['mfr'] = self.manufacturer.name
+        jdict['addr'] = self.cv_address
+        jdict['mfr'] = self.manufacturer
 
         return jdict
 

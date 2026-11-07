@@ -36,7 +36,7 @@ class JSONify(json.JSONEncoder):
         if isinstance(obj, dict):
             return {key: cls.as_jdict(value, **kwargs) for key, value in obj.items()}
 
-        if isinstance(obj, list):
+        if isinstance(obj, (list, tuple)):
             return tuple(cls.as_jdict(value, **kwargs) for value in obj)
 
         return obj
@@ -49,7 +49,8 @@ class JSONify(json.JSONEncoder):
 
         handler = JSONify if cls is None else cls
 
-        return json.dumps(obj, skipkeys=skipkeys, ensure_ascii=ensure_ascii, check_circular=check_circular,
+        return json.dumps(JSONify.as_jdict(obj, **kwargs), skipkeys=skipkeys, ensure_ascii=ensure_ascii,
+                          check_circular=check_circular,
                           allow_nan=allow_nan, cls=handler, indent=indent, separators=separators,
                           default=default, sort_keys=sort_keys, **kwargs)
 

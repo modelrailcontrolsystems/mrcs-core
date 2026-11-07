@@ -15,13 +15,14 @@ https://gitlab.com/z21-fpm/z21_python
 
 from enum import IntEnum, unique
 
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.json import JSONable
+from mrcs_core.data.meta_enum import ABCMetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class MPUDirection(IntEnum, metaclass=MetaEnum):
+class MPUDirection(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     An enumeration of all the possible MPU directions
     """
@@ -38,6 +39,12 @@ class MPUDirection(IntEnum, metaclass=MetaEnum):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def as_json(self, **kwargs):
+        return self.name
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __str__(self, *args, **kwargs):
         return f'{self.name}{{{self.value}}}'
 
@@ -45,7 +52,7 @@ class MPUDirection(IntEnum, metaclass=MetaEnum):
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class ThrottleSteps(IntEnum, metaclass=MetaEnum):
+class ThrottleSteps(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     An enumeration of all the possible DCC throttle step resolutions
     """
@@ -78,6 +85,12 @@ class ThrottleSteps(IntEnum, metaclass=MetaEnum):
                 return 28
             case self.STEPS_128:
                 return 128
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        return self.name
 
 
     # ----------------------------------------------------------------------------------------------------------------

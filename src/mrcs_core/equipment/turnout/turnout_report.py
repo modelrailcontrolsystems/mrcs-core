@@ -68,7 +68,7 @@ class TurnoutReport(JSONable):
         jdict['type'] = self.type_name()
 
         jdict['addr'] = self.turnout_address
-        jdict['position'] = self.position.name
+        jdict['position'] = self.position
 
         return jdict
 

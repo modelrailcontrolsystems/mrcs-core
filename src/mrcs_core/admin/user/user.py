@@ -24,13 +24,13 @@ from typing import Any
 from mrcs_core.data.datum import Datum
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONable
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.meta_enum import ABCMetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class UserRole(StrEnum, metaclass=MetaEnum):
+class UserRole(JSONable, StrEnum, metaclass=ABCMetaEnum):
     """
     An enumeration of all the possible user roles
     """
@@ -39,6 +39,18 @@ class UserRole(StrEnum, metaclass=MetaEnum):
     DESIGNER = 'DESIGNER'
     OPERATOR = 'OPERATOR'
     OBSERVER = 'OBSERVER'
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        return self.name
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return self.name
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -117,7 +129,7 @@ class User(JSONable):
 
         jdict['uid'] = self.uid
         jdict['email'] = self.email
-        jdict['role'] = self.role.name
+        jdict['role'] = self.role
         jdict['must_set_password'] = self.must_set_password
         jdict['given_name'] = self.given_name
         jdict['family_name'] = self.family_name
