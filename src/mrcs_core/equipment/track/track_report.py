@@ -56,7 +56,7 @@ class TrackReport(JSONable):
         jdict = OrderedDict()
 
         jdict['type'] = self.type_name()
-        jdict['mode'] = self.mode.name
+        jdict['mode'] = self.mode
 
         return jdict
 

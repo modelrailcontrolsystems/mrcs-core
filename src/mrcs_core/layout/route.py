@@ -70,7 +70,7 @@ class Route(JSONable):
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
-        jdict['direction'] = self.direction.name
+        jdict['direction'] = self.direction
         jdict['length'] = self.length
         jdict['conf'] = self.configuration
         jdict['segments'] = self.segments

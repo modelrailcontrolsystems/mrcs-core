@@ -92,7 +92,7 @@ class MPUConfigurationReport(JSONable):
         jdict['addr'] = self.mpu_address
         jdict['functions'] = self.functions
         jdict['busy'] = self.is_busy
-        jdict['stepping'] = None if self.stepping is None else self.stepping.name
+        jdict['stepping'] = self.stepping
         jdict['speed'] = self.speed_setting
         jdict['reverse'] = self.reverse
         jdict['consist'] = self.double_traction
@@ -160,8 +160,6 @@ class MPUConfigurationReport(JSONable):
 
     # noinspection PyUnresolvedReferences
     def __str__(self, *args, **kwargs):
-        stepping = None if self.stepping is None else self.stepping.name
-
         return (f'{self.__class__.__name__}:{{mpu_address:{self.mpu_address}, functions:{self.functions.as_json()}, '
-                f'is_busy:{self.is_busy}, stepping:{stepping}, speed_setting:{self.speed_setting}, '
+                f'is_busy:{self.is_busy}, stepping:{self.stepping}, speed_setting:{self.speed_setting}, '
                 f'reverse:{self.reverse}, double_traction:{self.double_traction}, smart_search:{self.smart_search}}}')

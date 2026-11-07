@@ -86,7 +86,7 @@ class MPUStatus(JSONable):
         jdict['functions'] = self.functions
         jdict['speed_setting'] = self.speed_setting
         jdict['speed'] = self.speed
-        jdict['direction'] = self.direction.name
+        jdict['direction'] = self.direction
 
         return jdict
 

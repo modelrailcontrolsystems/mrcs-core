@@ -11,13 +11,14 @@ https://www.z21.eu/en/products/z21
 
 from enum import IntEnum, unique
 
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.json import JSONable
+from mrcs_core.data.meta_enum import ABCMetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class BlockHeading(IntEnum, metaclass=MetaEnum):
+class BlockHeading(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     An enumeration of all the block occupant directions
     """
@@ -40,6 +41,12 @@ class BlockHeading(IntEnum, metaclass=MetaEnum):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def as_json(self, **kwargs):
+        return self.name
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __str__(self, *args, **kwargs):
         return f'{self.name}{{{self.value}}}'
 
@@ -47,7 +54,7 @@ class BlockHeading(IntEnum, metaclass=MetaEnum):
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class BlockOccupantFace(IntEnum, metaclass=MetaEnum):
+class BlockOccupantFace(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     An enumeration of all the block occupant directions
     """
@@ -59,6 +66,12 @@ class BlockOccupantFace(IntEnum, metaclass=MetaEnum):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def as_json(self, **kwargs):
+        return self.name
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def __str__(self, *args, **kwargs):
         return f'{self.name}{{0x{self.value:02x}}}'
 
@@ -66,7 +79,7 @@ class BlockOccupantFace(IntEnum, metaclass=MetaEnum):
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class BlockVoltage(IntEnum, metaclass=MetaEnum):
+class BlockVoltage(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     An enumeration of all the LAN_CAN_DETECTOR occupancy status values
     """
@@ -80,6 +93,12 @@ class BlockVoltage(IntEnum, metaclass=MetaEnum):
     OCCUPIED_OVERLOAD_1 = 0x1201
     OCCUPIED_OVERLOAD_2 = 0x1202
     OCCUPIED_OVERLOAD_3 = 0x1203
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        return self.name
 
 
     # ----------------------------------------------------------------------------------------------------------------

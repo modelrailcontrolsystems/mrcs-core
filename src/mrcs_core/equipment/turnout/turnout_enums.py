@@ -15,13 +15,14 @@ https://gitlab.com/z21-fpm/z21_python
 
 from enum import IntEnum, unique
 
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.json import JSONable
+from mrcs_core.data.meta_enum import ABCMetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class TurnoutPosition(IntEnum, metaclass=MetaEnum):
+class TurnoutPosition(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     An enumeration of all the turnout positions
     """
@@ -41,6 +42,12 @@ class TurnoutPosition(IntEnum, metaclass=MetaEnum):
 
     def is_valid(self) -> bool:
         return self == TurnoutPosition.P0 or self == TurnoutPosition.P1
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        return self.name
 
 
     # ----------------------------------------------------------------------------------------------------------------

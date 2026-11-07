@@ -71,7 +71,7 @@ class MPUAspect(JSONable):
         jdict['label'] = self.label
         jdict['addr'] = self.mpu_address
         jdict['speed'] = self.speed
-        jdict['heading'] = self.heading.name
+        jdict['heading'] = self.heading
         jdict['location'] = self.location
 
         return jdict

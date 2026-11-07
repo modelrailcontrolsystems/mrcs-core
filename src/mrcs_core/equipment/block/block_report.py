@@ -116,7 +116,7 @@ class BlockVoltageReport(BlockReport):
         jdict['type'] = self.type_name()
 
         jdict['id'] = self.block_id
-        jdict['voltage'] = self.voltage.name
+        jdict['voltage'] = self.voltage
 
         return jdict
 

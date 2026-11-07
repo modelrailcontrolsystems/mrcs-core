@@ -11,13 +11,14 @@ https://www.nmra.org/sites/default/files/appendix_a_s-9_2_2.pdf
 
 from enum import IntEnum, unique
 
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.json import JSONable
+from mrcs_core.data.meta_enum import ABCMetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class Manufacturer(IntEnum, metaclass=MetaEnum):
+class Manufacturer(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     an enumeration of all the possible decoder manufacturers
     """
@@ -184,6 +185,12 @@ class Manufacturer(IntEnum, metaclass=MetaEnum):
     WP_RAILSHOPS = 163
     ZIMO_ELEKTRONIK = 145
     ZTC = 132
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        return self.name
 
 
     # ----------------------------------------------------------------------------------------------------------------

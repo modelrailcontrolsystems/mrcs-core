@@ -74,10 +74,10 @@ class CSV(object):
         else:
             context = nullcontext(sys.stdout)
 
-        if not data:
-            return
-
         try:
+            if not data:
+                return
+
             with context as channel:
                 fieldnames = data[0].keys()
                 writer = csv.DictWriter(channel, fieldnames=fieldnames, quoting=cls.__QUOTING)

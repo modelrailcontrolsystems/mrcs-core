@@ -133,7 +133,7 @@ class MPU(JSONable):
         jdict['number'] = self.number
         jdict['manufacturer'] = self.manufacturer
 
-        jdict['scale'] = self.scale.name
+        jdict['scale'] = self.scale
         jdict['length'] = self.length
         jdict['cvs'] = self.cvs
 

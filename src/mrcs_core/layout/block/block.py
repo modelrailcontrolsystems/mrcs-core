@@ -102,7 +102,7 @@ class Block(JSONable):
 
         jdict['label'] = self.label
         jdict['addr'] = self.address
-        jdict['operation'] = self.operation.name
+        jdict['operation'] = self.operation
         jdict['segments'] = self.segments
 
         return jdict

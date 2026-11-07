@@ -8,13 +8,14 @@ An enumeration of all the possible Block operation modes
 
 from enum import StrEnum, unique
 
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.json import JSONable
+from mrcs_core.data.meta_enum import ABCMetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class BlockOperation(StrEnum, metaclass=MetaEnum):
+class BlockOperation(JSONable, StrEnum, metaclass=ABCMetaEnum):
     """
     An enumeration of all the possible Block operation modes
     """
@@ -34,3 +35,15 @@ class BlockOperation(StrEnum, metaclass=MetaEnum):
 
     def may_operate_down(self):
         return self != BlockOperation.UP_ONLY
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        return self.name
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def __str__(self, *args, **kwargs):
+        return self.name

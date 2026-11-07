@@ -8,13 +8,14 @@ Common configuration variable (CV) supported addresses
 
 from enum import IntEnum, unique
 
-from mrcs_core.data.meta_enum import MetaEnum
+from mrcs_core.data.json import JSONable
+from mrcs_core.data.meta_enum import ABCMetaEnum
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 @unique
-class CVAddress(IntEnum, metaclass=MetaEnum):
+class CVAddress(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
     Common configuration variable (CV) supported addresses
     """
@@ -32,6 +33,12 @@ class CVAddress(IntEnum, metaclass=MetaEnum):
     RAILCOM = 28  # structured, (131)
     CONFIGURATION = 29  # structured, (12)
     SOUND_VOLUME = 63  # 0 - 192 (192)
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def as_json(self, **kwargs):
+        return self.name
 
 
     # ----------------------------------------------------------------------------------------------------------------

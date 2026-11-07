@@ -91,7 +91,7 @@ class Layout(LayoutNavigator, MultiPersistentJSONable):
 
         jdict['label'] = self.label
         jdict['description'] = self.description
-        jdict['gauge'] = self.gauge.name
+        jdict['gauge'] = self.gauge
 
         jdict['blocks'] = self.blocks
         jdict['stations'] = self.stations

@@ -114,8 +114,8 @@ class BlockStatus(JSONable):
 
         jdict['label'] = self.label
         jdict['addr'] = self.address
-        jdict['heading'] = self.heading.name
-        jdict['voltage'] = self.voltage.name
+        jdict['heading'] = self.heading
+        jdict['voltage'] = self.voltage
         jdict['occupants'] = self.occupants
 
         return jdict
