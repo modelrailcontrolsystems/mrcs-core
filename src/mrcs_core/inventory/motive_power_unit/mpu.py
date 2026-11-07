@@ -32,6 +32,7 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
+from mrcs_core.data.scale import Scale
 from mrcs_core.equipment.motive_power_unit.mpu_enums import MPUDirection
 from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
 from mrcs_core.equipment.motive_power_unit.mpu_status import MPUStatus
@@ -59,6 +60,7 @@ class MPU(JSONable):
             number = jdict.get('number')
             manufacturer = jdict.get('manufacturer')
 
+            scale = Scale[jdict.get('scale')]  # may raise KeyError
             length = int(jdict.get('length'))
 
             cvs = OrderedDict()
@@ -72,13 +74,13 @@ class MPU(JSONable):
         except (TypeError, ValueError):
             raise ValueError(jdict)
 
-        return cls(label, address, operator, mpu_class, number, manufacturer, length, cvs)
+        return cls(label, address, operator, mpu_class, number, manufacturer, scale, length, cvs)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, label: str, address: int, operator: str, mpu_class: str, number: str, manufacturer: str,
-                 length: int, cvs: OrderedDict[CVAddress, CV]):
+                 scale: Scale, length: int, cvs: OrderedDict[CVAddress, CV]):
         self.__label = label
         self.__address = address
 
@@ -87,6 +89,7 @@ class MPU(JSONable):
         self.__number = number
         self.__manufacturer = manufacturer
 
+        self.__scale = scale
         self.__length = length
         self.__cvs = cvs
 
@@ -95,8 +98,8 @@ class MPU(JSONable):
         try:
             return (self.label == other.label and self.address == other.address and self.operator == other.operator and
                     self.mpu_class == other.mpu_class and self.number == other.number and
-                    self.manufacturer == other.manufacturer and self.length == other.length and
-                    self.cvs == other.cvs)
+                    self.manufacturer == other.manufacturer and self.scale == other.scale and
+                    self.length == other.length and self.cvs == other.cvs)
         except (AttributeError, TypeError):
             return False
 
@@ -130,6 +133,7 @@ class MPU(JSONable):
         jdict['number'] = self.number
         jdict['manufacturer'] = self.manufacturer
 
+        jdict['scale'] = self.scale.name
         jdict['length'] = self.length
         jdict['cvs'] = self.cvs
 
@@ -173,6 +177,11 @@ class MPU(JSONable):
         return self.__length
 
 
+    @property
+    def scale(self):
+        return self.__scale
+
+
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
@@ -199,4 +208,4 @@ class MPU(JSONable):
 
         return (f'MPU:{{label:{self.label}, address:{self.address}, operator:{self.operator}, '
                 f'mpu_class:{self.mpu_class}, number:{self.number}, manufacturer:{self.manufacturer}, '
-                f'length:{self.length}, cvs:{cvs}}}')
+                f'scale:{self.scale}, length:{self.length}, cvs:{cvs}}}')

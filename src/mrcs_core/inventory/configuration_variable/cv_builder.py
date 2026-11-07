@@ -11,6 +11,7 @@ from mrcs_core.inventory.configuration_variable.configuration_cv import Configur
 from mrcs_core.inventory.configuration_variable.consist_cv import ConsistCV
 from mrcs_core.inventory.configuration_variable.cv import CV
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
+from mrcs_core.inventory.configuration_variable.manufacturer_cv import ManufacturerCV
 from mrcs_core.inventory.configuration_variable.numeric_cv import NumericCV
 from mrcs_core.inventory.configuration_variable.railcom_cv import RailcomCV
 
@@ -39,6 +40,9 @@ class CVBuilder(object):
         if cv_address == CVAddress.RAILCOM:
             return RailcomCV.construct_from_report(report)
 
+        if cv_address == CVAddress.MANUFACTURER_ID:
+            return ManufacturerCV.construct_from_report(report)
+
         return NumericCV.construct_from_report(report)
 
 
@@ -51,6 +55,9 @@ class CVBuilder(object):
 
         if type_name == ConsistCV.type_name():
             return ConsistCV.construct_from_jdict(jdict)
+
+        if type_name == ManufacturerCV.type_name():
+            return ManufacturerCV.construct_from_jdict(jdict)
 
         if type_name == NumericCV.type_name():
             return NumericCV.construct_from_jdict(jdict)

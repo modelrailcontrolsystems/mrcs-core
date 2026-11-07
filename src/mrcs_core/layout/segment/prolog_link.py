@@ -104,8 +104,10 @@ class PrologLinkConstraint(object):
         if fmt == ConstraintFormat.RIGHT:
             return f'add_conf({conf}, ConfsMid, ConfsOut).'
 
-        raise ValueError(format)
+        raise ValueError(fmt)
 
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
         return f'PrologLinkConstraint:{{location:{self.location}, position:{self.position}, length:{self.length}}}'

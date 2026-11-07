@@ -9,6 +9,7 @@
       "class": "59",
       "number": "59201",
       "manufacturer": "Revolution Trains",
+      "scale": "N",
       "length": 145,
       "cvs": [
         {
@@ -30,6 +31,7 @@
       "class": "66",
       "number": "66701",
       "manufacturer": "Hornby",
+      "scale": "OO",
       "length": 135,
       "cvs": []
     }

@@ -18,6 +18,7 @@ from pathlib import Path
 from mrcs_core.data.csv import CSV
 from mrcs_core.data.iso_datetime import ISODatetime
 from mrcs_core.data.json import JSONify
+from mrcs_core.data.scale import Scale
 from mrcs_core.equipment.block.block_enums import BlockHeading
 from mrcs_core.operations.speed.speed_run import SpeedRun
 from mrcs_core.operations.speed.speed_trial import SpeedTrial
@@ -62,19 +63,19 @@ class TestSpeedTrial(unittest.TestCase):
     @classmethod
     def __sample_run_1(cls):
         now = ISODatetime.construct_from_jdict('2026-10-25T08:55:38.234Z')
-        return SpeedRun(500, BlockHeading.UP, 5, 12.125, 17.123, now)
+        return SpeedRun(Scale.N, 500, BlockHeading.UP, 5, 12.125, 17.123, now)
 
 
     @classmethod
     def __sample_run_2(cls):
         now = ISODatetime.construct_from_jdict('2026-10-25T08:56:38.234Z')
-        return SpeedRun(500, BlockHeading.UP, 15, 17.125, 10.123, now)
+        return SpeedRun(Scale.N, 500, BlockHeading.UP, 15, 17.125, 10.123, now)
 
 
     @classmethod
     def __sample_run_3(cls):
         now = ISODatetime.construct_from_jdict('2026-10-25T08:56:38.234Z')
-        return SpeedRun(500, BlockHeading.UP, 25, 27.125, 5.123, now)
+        return SpeedRun(Scale.N, 500, BlockHeading.UP, 25, 27.125, 5.123, now)
 
 
     @classmethod
@@ -86,33 +87,41 @@ class TestSpeedTrial(unittest.TestCase):
     # ----------------------------------------------------------------------------------------------------------------
 
     def test_construct(self):
+        self.maxDiff = None
         obj1 = self.__sample_trial_1()
-        self.assertEqual('SpeedTrial:{name:TEST00_BS05, mpu_label:TEST00, block_label:BS05, runs:[SpeedRun:'
-                         '{distance:500, direction:UP{1}, set_speed:5, average_reported_speed:12.125, '
-                         'elapsed_time:17.123, actual_ms_speed:0.029, actual_mph_speed:9.6, '
+        self.assertEqual('SpeedTrial:{name:TEST00_BS05, mpu_label:TEST00, block_label:BS05, runs:['
+                         'SpeedRun:{scale:N{148}, distance:500, direction:UP{1}, set_speed:5, '
+                         'average_reported_speed:12.125, elapsed_time:17.123, model_ms_speed:0.029, '
+                         'real_kph_speed:15.5, real_mph_speed:9.6, '
                          'test_time:ISODatetime:{2026-10-25T08:55:38.234+00:00}}, '
-                         'SpeedRun:{distance:500, direction:UP{1}, set_speed:15, average_reported_speed:17.125, '
-                         'elapsed_time:10.123, actual_ms_speed:0.049, actual_mph_speed:16.2, '
+                         'SpeedRun:{scale:N{148}, distance:500, direction:UP{1}, set_speed:15, '
+                         'average_reported_speed:17.125, elapsed_time:10.123, model_ms_speed:0.049, '
+                         'real_kph_speed:26.1, real_mph_speed:16.2, '
                          'test_time:ISODatetime:{2026-10-25T08:56:38.234+00:00}}]}', str(obj1))
 
 
     def test_add_run(self):
+        self.maxDiff = None
         obj1 = SpeedTrial('TEST00', 'BS05')
         obj1.add_run(self.__sample_run_3())
-        self.assertEqual('SpeedTrial:{name:TEST00_BS05, mpu_label:TEST00, block_label:BS05, runs:[SpeedRun:'
-                         '{distance:500, direction:UP{1}, set_speed:25, average_reported_speed:27.125, '
-                         'elapsed_time:5.123, actual_ms_speed:0.098, actual_mph_speed:32.4, '
+        self.assertEqual('SpeedTrial:{name:TEST00_BS05, mpu_label:TEST00, block_label:BS05, '
+                         'runs:[SpeedRun:{scale:N{148}, distance:500, direction:UP{1}, set_speed:25, '
+                         'average_reported_speed:27.125, elapsed_time:5.123, model_ms_speed:0.098, '
+                         'real_kph_speed:52.2, real_mph_speed:32.4, '
                          'test_time:ISODatetime:{2026-10-25T08:56:38.234+00:00}}]}', str(obj1))
 
 
     def test_json(self):
+        self.maxDiff = None
         obj1 = self.__sample_trial_1()
         jstr = JSONify.dumps(obj1)
-        self.assertEqual('{"mpu_label": "TEST00", "block_label": "BS05", "runs": [{"distance": 500, '
-                         '"direction": "UP", "set": 5, "ars": 12.125, "elapsed": 17.123, "ms_speed": 0.029, '
-                         '"mph_speed": 9.6, "test_time": "2026-10-25T08:55:38.234+00:00"}, {"distance": 500, '
-                         '"direction": "UP", "set": 15, "ars": 17.125, "elapsed": 10.123, "ms_speed": 0.049, '
-                         '"mph_speed": 16.2, "test_time": "2026-10-25T08:56:38.234+00:00"}]}', jstr)
+        self.assertEqual('{"mpu_label": "TEST00", "block_label": "BS05", "runs": [{"scale": "N", '
+                         '"distance": 500, "direction": "UP", "set": 5, "ars": 12.125, "elapsed": 17.123, '
+                         '"model_ms_speed": 0.029, "real_kph_speed": 15.5, "real_mph_speed": 9.6, '
+                         '"test_time": "2026-10-25T08:55:38.234+00:00"}, {"scale": "N", '
+                         '"distance": 500, "direction": "UP", "set": 15, "ars": 17.125, "elapsed": 10.123, '
+                         '"model_ms_speed": 0.049, "real_kph_speed": 26.1, "real_mph_speed": 16.2, '
+                         '"test_time": "2026-10-25T08:56:38.234+00:00"}]}', jstr)
 
 
     def test_json_eq(self):
@@ -130,11 +139,13 @@ class TestSpeedTrial(unittest.TestCase):
 
 
     def test_csv(self):
+        self.maxDiff = None
         abs_ref_filename = self.__test_ref_filename()
         abs_new_filename = self.__test_abs_filename()
         obj1 = self.__sample_trial_1()
         jdict = JSONify.as_jdict(obj1.runs)
-        CSV.write(jdict, filename=abs_new_filename)
+        # print(f'jdict{jdict}')
+        CSV.write(jdict, filename=abs_new_filename)  # , filename=abs_new_filename
 
         f = open(abs_ref_filename)
         ref = f.readlines()

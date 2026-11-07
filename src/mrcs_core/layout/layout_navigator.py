@@ -118,26 +118,6 @@ class LayoutNavigator(ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    # def platform_route(self, config: TurnoutConfiguration, heading: BlockHeading, start: PlatformLocation,
-    #                    end: PlatformLocation) -> Route:
-    #     start_platform = self.platform(start)
-    #     if start_platform is None:
-    #         raise ValueError(f'Start platform not found:{start.dot_path}.')
-    #
-    #     end_platform = self.platform(end)
-    #     if end_platform is None:
-    #         raise ValueError(f'End platform not found:{end.dot_path}.')
-    #
-    #     # TODO: length calculation depends on station offset, station length and heading
-    #
-    #     # start_segment = self.segment(start_station.origin)
-    #     # end_segment = self.segment(end_station.origin)
-    #
-    #     return self.segment_route(config, heading, start_platform.origin, end_platform.origin)
-
-
-    # ----------------------------------------------------------------------------------------------------------------
-
     def block_abstract(self) -> BlockAbstract:
         block_statuses = [block.status() for block in self.blocks]
 
@@ -277,4 +257,4 @@ class LayoutNavigator(ABC):
             for platform in station.platforms:
                 locations.add(PlatformLocation(station.label, platform.label))
 
-        return list(locations)
+        return sorted(list(locations))
