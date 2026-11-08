@@ -22,7 +22,8 @@ class TestCVAddress(unittest.TestCase):
         obj1 = CVAddress.keys()
         self.assertEqual(['SHORT_ADDRESS', 'START_VOLTAGE', 'ACCELERATION', 'DECELERATION', 'MAX_SPEED',
                           'MID_SPEED', 'MANUFACTURER_VERSION', 'MANUFACTURER_ID', 'MOTOR_PWM_FREQUENCY',
-                          'CONSIST_ADDRESS', 'RAILCOM', 'CONFIGURATION', 'SOUND_VOLUME'], list(obj1))
+                          'CONSIST_ADDRESS', 'RAILCOM', 'CONFIGURATION', 'SOUND_VOLUME',
+                          'ESU_CONTROL_VOLTAGE', 'ZIMO_SPEED_CALIBRATION'], list(obj1))
 
 
     def test_cv_address_find(self):

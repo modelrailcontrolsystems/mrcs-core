@@ -27,12 +27,15 @@ class CVAddress(JSONable, IntEnum, metaclass=ABCMetaEnum):
     MAX_SPEED = 5  # 0 - 255 (255)
     MID_SPEED = 6  # 0 - 255 (88)
     MANUFACTURER_VERSION = 7
-    MANUFACTURER_ID = 8  # Revolution: 151, write to factory reset
+    MANUFACTURER_ID = 8  # Revolution: write to factory reset
     MOTOR_PWM_FREQUENCY = 9  # 10 - 50 (40)
     CONSIST_ADDRESS = 19  # structured, 0 or 128 - disabled (0)
     RAILCOM = 28  # structured, (131)
     CONFIGURATION = 29  # structured, (12)
     SOUND_VOLUME = 63  # 0 - 192 (192)
+
+    ESU_CONTROL_VOLTAGE = 53  # 0 - 255 (0)
+    ZIMO_SPEED_CALIBRATION = 136  # 0 - 255 (0)
 
 
     # ----------------------------------------------------------------------------------------------------------------
