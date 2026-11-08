@@ -36,7 +36,7 @@ class TestManufacturerCV(unittest.TestCase):
 
     def test_manufacturer_cv_is_not_writeable(self):
         obj1 = ManufacturerCV(CVAddress.MANUFACTURER_ID, Manufacturer.ZIMO_ELEKTRONIK)
-        self.assertFalse(obj1.is_writeable())
+        self.assertFalse(obj1.is_writeable(None))
 
 
     # ----------------------------------------------------------------------------------------------------------------

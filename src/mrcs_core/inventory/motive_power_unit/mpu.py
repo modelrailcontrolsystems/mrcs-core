@@ -39,6 +39,8 @@ from mrcs_core.equipment.motive_power_unit.mpu_status import MPUStatus
 from mrcs_core.inventory.configuration_variable.cv import CV
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
 from mrcs_core.inventory.configuration_variable.cv_builder import CVBuilder
+from mrcs_core.inventory.configuration_variable.manufacturer_cv import ManufacturerCV
+from mrcs_core.inventory.motive_power_unit.manufacturer import Manufacturer
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -118,6 +120,18 @@ class MPU(JSONable):
 
     def mpu_status(self) -> MPUStatus:
         return MPUStatus(self.label, self.address, MPUFunctions([]), None, None, MPUDirection.UNKNOWN)
+
+
+    def decoder(self) -> Manufacturer | None:
+        cv = self.cv(CVAddress.MANUFACTURER_ID)
+
+        if cv is None:
+            return None
+
+        if not isinstance(cv, ManufacturerCV):
+            raise ValueError(f'mpu_decoder: the MANUFACTURER_ID CV is not a ManufacturerCV: {cv}')
+
+        return cv.manufacturer
 
 
     # ----------------------------------------------------------------------------------------------------------------
