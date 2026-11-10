@@ -27,6 +27,26 @@ class TestConv(unittest.TestCase):
         self.assertAlmostEqual(1.0, 1609.344 * Conv.METRES_TO_MILES, places=6)
 
 
+    # ----------------------------------------------------------------------------------------------------------------
+
+    def test_ms(self):
+        self.assertEqual(10.0, Conv.ms(36.0))
+
+
+    def test_ms_rounded(self):
+        self.assertEqual(27.778, Conv.ms(100.0))
+
+
+    def test_ms_zero(self):
+        self.assertEqual(0.0, Conv.ms(0.0))
+
+
+    def test_ms_roundtrip(self):
+        for kph in [0.0, 5.0, 36.0, 100.0, 125.5, 200.0]:
+            ms = Conv.ms(kph)
+            self.assertAlmostEqual(kph, ms * 3.6, places=2)
+
+
 # --------------------------------------------------------------------------------------------------------------------
 
 class TestGauge(unittest.TestCase):
