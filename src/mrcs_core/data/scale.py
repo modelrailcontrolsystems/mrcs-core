@@ -26,6 +26,11 @@ class Conv(object):
     METRES_TO_MILES = 0.000621371
 
 
+    @classmethod
+    def ms(cls, kph: float) -> float:
+        return round(kph / 3.6, 3)
+
+
 # --------------------------------------------------------------------------------------------------------------------
 
 

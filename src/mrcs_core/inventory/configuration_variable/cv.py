@@ -27,12 +27,12 @@ class CV(JSONable, ABC):
         Manufacturer.ELECTRONIC_SOLUTIONS_ULM_GMBH: [CVAddress.ESU_CONTROL_VOLTAGE]
     }
 
-    __WRITEABLE_BLACKLIST = (
+    __WRITEABLE_BLACKLIST = [
         CVAddress.MANUFACTURER_VERSION,
         CVAddress.MANUFACTURER_ID,
         CVAddress.ZIMO_SPEED_CALIBRATION,
         CVAddress.ESU_CONTROL_VOLTAGE,
-    )
+    ]
 
 
     @classmethod
@@ -47,7 +47,7 @@ class CV(JSONable, ABC):
 
 
     @classmethod
-    def writeable_blacklist(cls):
+    def writeable_blacklist(cls) -> list[CVAddress]:
         return cls.__WRITEABLE_BLACKLIST
 
 
@@ -65,7 +65,7 @@ class CV(JSONable, ABC):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def is_writeable(self, decoder: Manufacturer | None):
+    def is_writeable(self, decoder: Manufacturer | None) -> bool:
         if self.cv_address in self.writeable_whitelist(decoder):
             return True
 
