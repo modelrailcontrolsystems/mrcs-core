@@ -97,7 +97,7 @@ class JSONable(ABC):
 
 
     @classmethod
-    def type_name(cls):
+    def type_name(cls) -> str:
         return cls.__name__
 
 
