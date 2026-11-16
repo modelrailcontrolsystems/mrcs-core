@@ -22,6 +22,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
     An enumeration of all the possible equipment types
     """
 
+    ALR = 'ALR'  # infrastructure: alert broadcaster
     API = 'API'  # infrastructure: MRCS Web API
     CLK = 'CLK'  # infrastructure: clock: cron, crontab, etc.
     CRT = 'CRT'  # infrastructure: control router
@@ -54,7 +55,7 @@ class EquipmentType(StrEnum, metaclass=MetaEnum):
 @unique
 class CLU(IntEnum, metaclass=MetaEnum):
     """
-    An enumeration of all the CLU serial numbers
+    An enumeration of all the command-line utility (CLU) serial numbers
     """
 
     SUBSCRIBER = 1  # infrastructure: mrcs_control_subscriber CLU
@@ -74,7 +75,7 @@ class CLU(IntEnum, metaclass=MetaEnum):
 @unique
 class CLK(IntEnum, metaclass=MetaEnum):
     """
-    An enumeration of all the CLK serial numbers
+    An enumeration of all the clock (CLK) serial numbers
     """
 
     CRON = 1  # infrastructure: CronNode
@@ -94,7 +95,7 @@ class CLK(IntEnum, metaclass=MetaEnum):
 @unique
 class CRT(IntEnum, metaclass=MetaEnum):
     """
-    An enumeration of all the CRT serial numbers, associated with different data topics
+    An enumeration of all the control router (CRT) serial numbers, each associated with different data topics
     """
 
     ROUTER = 1
