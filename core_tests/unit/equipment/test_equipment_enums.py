@@ -19,7 +19,7 @@ from mrcs_core.equipment.equipment_enums import CLK, CLU, CRT, EquipmentType
 class TestEquipmentType(unittest.TestCase):
 
     def test_keys(self):
-        self.assertEqual(['API', 'CLK', 'CRT', 'REC', 'CLU', 'TST',
+        self.assertEqual(['ALR', 'API', 'CLK', 'CRT', 'REC', 'CLU', 'TST',
                           'DCP', 'LGP', 'LVL', 'MPU', 'SCH', 'SIG', 'SPD', 'TEL', 'TRK', 'TRS',
                           'BOS', 'LID', 'VIS'], list(EquipmentType.keys()))
 
@@ -73,16 +73,17 @@ class TestEquipmentType(unittest.TestCase):
 class TestCLU(unittest.TestCase):
 
     def test_keys(self):
-        self.assertEqual(['SUBSCRIBER', 'COMMANDER', 'LAYOUT_MANAGER', 'INVENTORY_MANAGER'], list(CLU.keys()))
+        self.assertEqual(['ALERT', 'COMMANDER', 'INVENTORY_MANAGER', 'LAYOUT_MANAGER', 'SUBSCRIBER'], list(CLU.keys()))
 
 
     def test_items(self):
         # declaration order, not value order
-        self.assertEqual([CLU.SUBSCRIBER, CLU.COMMANDER, CLU.LAYOUT_MANAGER, CLU.INVENTORY_MANAGER], CLU.items())
+        self.assertEqual([CLU.ALERT, CLU.COMMANDER, CLU.INVENTORY_MANAGER, CLU.LAYOUT_MANAGER, CLU.SUBSCRIBER],
+                         CLU.items())
 
 
     def test_values(self):
-        self.assertEqual([1, 2, 4, 3], [member.value for member in CLU])
+        self.assertEqual([1, 2, 3, 4, 5], [member.value for member in CLU])
 
 
     def test_construct(self):
@@ -99,7 +100,7 @@ class TestCLU(unittest.TestCase):
 
 
     def test_str(self):
-        self.assertEqual('SUBSCRIBER{1}', str(CLU.SUBSCRIBER))
+        self.assertEqual('SUBSCRIBER{5}', str(CLU.SUBSCRIBER))
         self.assertEqual('LAYOUT_MANAGER{4}', str(CLU.LAYOUT_MANAGER))
 
 

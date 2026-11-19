@@ -58,10 +58,11 @@ class CLU(IntEnum, metaclass=MetaEnum):
     An enumeration of all the command-line utility (CLU) serial numbers
     """
 
-    SUBSCRIBER = 1  # infrastructure: mrcs_control_subscriber CLU
+    ALERT = 1  # infrastructure: mrcs_control_subscriber CLU
     COMMANDER = 2  # infrastructure: mrcs_control_command CLU
-    LAYOUT_MANAGER = 4  # infrastructure: mrcs_control_layout CLU
     INVENTORY_MANAGER = 3  # infrastructure: mrcs_control_inventory CLU
+    LAYOUT_MANAGER = 4  # infrastructure: mrcs_control_layout CLU
+    SUBSCRIBER = 5  # infrastructure: mrcs_control_subscriber CLU
 
 
     # ----------------------------------------------------------------------------------------------------------------
