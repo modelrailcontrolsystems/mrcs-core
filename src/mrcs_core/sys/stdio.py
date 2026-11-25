@@ -5,7 +5,7 @@ Created on 27 May 2017
 
 A stdio abstraction
 
-WARNING: macOS (darwin) users must install the gnureadline package
+WARNING: macOS (darwin) users may need to install the gnureadline package
 
 https://stackoverflow.com/questions/11130156/suppress-stdout-stderr-print-from-python-functions
 """
@@ -25,8 +25,9 @@ class StdIO(object):
     classdocs
     """
 
+
     @staticmethod
-    def prompt(request, default=None):
+    def prompt(request, default=None) -> str:
         try:
             termios.tcflush(sys.stdin, termios.TCIOFLUSH)  # flush stdin
         except termios.error:
@@ -39,7 +40,20 @@ class StdIO(object):
 
 
     @staticmethod
-    def password(request):
+    def confirm(request) -> bool:
+        try:
+            termios.tcflush(sys.stdin, termios.TCIOFLUSH)  # flush stdin
+        except termios.error:
+            pass
+
+        prompt_str = f'{request} (y/n): '
+        line = input(prompt_str).strip()
+
+        return line.strip() == 'y'
+
+
+    @staticmethod
+    def password(request) -> str:
         try:
             termios.tcflush(sys.stdin, termios.TCIOFLUSH)  # flush stdin
         except termios.error:
