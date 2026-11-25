@@ -30,6 +30,7 @@ class OtherNode(StrEnum):
 
 
 class SampleStateMachine(StateMachine[SampleNode]):
+
     @classmethod
     def transitions(cls) -> dict[SampleNode, set[SampleNode]]:
         return {
@@ -52,6 +53,7 @@ class SampleStateMachine(StateMachine[SampleNode]):
 # --------------------------------------------------------------------------------------------------------------------
 
 class TestStateMachine(unittest.TestCase):
+
     # some tests deliberately misuse the API - cast(Any, ...) stops the type checker rejecting them
 
 
@@ -62,11 +64,13 @@ class TestStateMachine(unittest.TestCase):
 
     def test_construct_not_enum(self):
         with self.assertRaises(StateMachineException):
+            # noinspection PyUnnecessaryCast
             SampleStateMachine(cast(Any, 'STANDBY'))
 
 
     def test_construct_abstract(self):
         with self.assertRaises(TypeError):
+            # noinspection PyUnnecessaryCast
             cast(Any, StateMachine)(SampleNode.STANDBY)
 
 
@@ -159,10 +163,12 @@ class TestStateMachine(unittest.TestCase):
     # ----------------------------------------------------------------------------------------------------------------
 
     def test_is_permitted_transition_unknown_node(self):
+        # noinspection PyUnnecessaryCast
         self.assertFalse(SampleStateMachine.is_permitted_transition(cast(Any, OtherNode.OTHER), SampleNode.RUNNING))
 
 
     def test_go_from_unknown_node(self):
+        # noinspection PyUnnecessaryCast
         obj1 = SampleStateMachine(cast(Any, OtherNode.OTHER))
 
         with self.assertRaises(StateMachineException):

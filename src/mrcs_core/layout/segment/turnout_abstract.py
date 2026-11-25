@@ -9,7 +9,7 @@ The intended use of the TurnoutAbstract is to populate an empty turnout database
 TurnoutStatus objects which have identity, but no information about the configuration of each turnout.
 """
 
-from typing import Any, List, Self
+from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.turnout.turnout_status import TurnoutStatus
@@ -31,7 +31,7 @@ class TurnoutAbstract(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, items: List[TurnoutStatus]):
+    def __init__(self, items: list[TurnoutStatus]):
         super().__init__()
         self.__items = items
 

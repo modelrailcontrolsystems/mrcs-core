@@ -8,7 +8,7 @@ Motive power unit (MPU) function state
 "+-+-----"
 """
 
-from typing import Any, List
+from typing import Any
 
 from mrcs_core.data.json import JSONable
 
@@ -28,7 +28,7 @@ class MPUFunctions(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, funcs: List[bool]):
+    def __init__(self, funcs: list[bool]):
         self._funcs = funcs
 
 
