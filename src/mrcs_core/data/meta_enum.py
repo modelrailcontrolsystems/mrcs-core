@@ -8,13 +8,14 @@ https://stackoverflow.com/questions/63335753/how-to-check-if-string-exists-in-en
 
 from abc import ABCMeta
 from enum import EnumMeta
+from typing import Any
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 class MetaEnum(EnumMeta):
 
-    def __contains__(cls, value):
+    def __contains__(cls: type[Any], value: object) -> bool:
         try:
             cls(value)
         except ValueError:

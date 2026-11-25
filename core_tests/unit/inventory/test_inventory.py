@@ -16,6 +16,7 @@ from pathlib import Path
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.data.scale import Scale
+from mrcs_core.inventory.configuration_variable.cv import CV
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
 from mrcs_core.inventory.configuration_variable.numeric_cv import NumericCV
 from mrcs_core.inventory.inventory import Inventory
@@ -39,7 +40,7 @@ class TestInventory(unittest.TestCase):
     def __sample_mpu_1(cls):
         cv1 = NumericCV(CVAddress.ACCELERATION, 5)
         cv2 = NumericCV(CVAddress.DECELERATION, 9)
-        cvs = OrderedDict({cv1.cv_address: cv1, cv2.cv_address: cv2})
+        cvs: OrderedDict[CVAddress, CV] = OrderedDict({cv1.cv_address: cv1, cv2.cv_address: cv2})
         return MPU('DB59', 5, 'DB Schenker', '59', '59201',
                    'Revolution Trains', Scale.N, 145, cvs)
 

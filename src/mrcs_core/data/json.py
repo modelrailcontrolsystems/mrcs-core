@@ -139,11 +139,6 @@ class JSONable(ABC):
         pass
 
 
-    @abstractmethod
-    def __str__(self, *args, **kwargs):
-        pass
-
-
 # --------------------------------------------------------------------------------------------------------------------
 
 class JSONReport(JSONable, ABC):
@@ -174,7 +169,7 @@ class JSONReport(JSONable, ABC):
         os.remove(filename)
 
 
-    # noinspection PyUnusedLocal,unused-parameter
+    # noinspection unused-parameter
     @classmethod
     @abstractmethod
     def construct_from_jdict(cls, jdict: Any) -> Self:
@@ -218,8 +213,8 @@ class JSONCatalogueEntry(JSONReport, ABC):
 
     @classmethod
     def list(cls):
-        return tuple(cls.__filename_to_name(item) for item in sorted(os.listdir(cls.catalogue_location()))
-                     if item.endswith('.json'))
+        filenames = os.listdir(cls.catalogue_location())
+        return tuple(cls.__filename_to_name(item) for item in sorted(filenames) if item.endswith('.json'))
 
 
     @classmethod

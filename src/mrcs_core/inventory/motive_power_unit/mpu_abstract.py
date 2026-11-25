@@ -9,7 +9,7 @@ The intended use of the MPUAbstract is to populate an empty MPU database table. 
 MPUStatus objects which have identity, but no information about the physical state of each MPU.
 """
 
-from typing import Any, List, Self
+from typing import Any, Self
 
 from mrcs_core.data.json import JSONable
 from mrcs_core.equipment.motive_power_unit.mpu_status import MPUStatus
@@ -31,7 +31,7 @@ class MPUAbstract(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, items: List[MPUStatus]):
+    def __init__(self, items: list[MPUStatus]):
         super().__init__()
         self.__items = items
 
