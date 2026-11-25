@@ -6,6 +6,8 @@ Created on 1 Nov 2026
 Simple linear regression
 """
 
+from collections.abc import Sequence
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -17,7 +19,7 @@ class LinearRegression(object):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, data: list[tuple[float, float]]):
+    def __init__(self, data: Sequence[tuple[float, float]]):
         self.__data = data
 
 
