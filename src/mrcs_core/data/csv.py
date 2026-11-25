@@ -21,7 +21,7 @@ https://dev.to/documendous/why-you-should-end-your-source-files-with-a-new-line-
 import csv
 import sys
 from contextlib import nullcontext
-from typing import Literal
+from typing import Any, Literal
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -32,61 +32,34 @@ class CSV(object):
     """
 
     __ENCODING = 'utf-8'
-    __QUOTING: Literal[4] = csv.QUOTE_STRINGS
+    __QUOTING: Literal[4] = csv.QUOTE_STRINGS        # Literal[4] is QUOTE_STRINGS - keeps PyCharm and mypy happy
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def read(cls, filename: str | None = None) -> list[dict]:
-        csv_filename = filename
-        csv_file = None
-        data = []
+    def read(cls, filename: str | None = None) -> list[dict[str, str | float | None]]:
+        data: list[dict[str, str | float | None]] = []
 
-        if csv_filename:
-            csv_file = open(csv_filename, encoding=cls.__ENCODING)
-            context = csv_file
-        else:
-            context = nullcontext(sys.stdin)
+        with open(filename, encoding=cls.__ENCODING) if filename else nullcontext(sys.stdin) as channel:
+            for row in csv.DictReader(channel, quoting=cls.__QUOTING):
+                data.append(row)
 
-        try:
-            with context as channel:
-                reader = csv.DictReader(channel, quoting=cls.__QUOTING)
-                for row in reader:
-                    data.append(row)
-
-            return data
-
-        finally:
-            if csv_file:
-                csv_file.close()
+        return data
 
 
     @classmethod
-    def write(cls, data: list[dict], filename: str | None = None, append: bool = False) -> None:
-        csv_filename = filename
-        csv_file = None
+    def write(cls, data: list[dict[str, Any]], filename: str | None = None, append: bool = False) -> None:
+        mode = 'a' if append else 'w'
 
-        if csv_filename:
-            mode = 'a' if append else 'w'
-            csv_file = open(csv_filename, mode=mode, newline='', encoding=cls.__ENCODING)
-            context = csv_file
-        else:
-            context = nullcontext(sys.stdout)
-
-        try:
+        with (open(filename, mode=mode, newline='', encoding=cls.__ENCODING) if filename
+              else nullcontext(sys.stdout)) as channel:
             if not data:
                 return
 
-            with context as channel:
-                fieldnames = data[0].keys()
-                writer = csv.DictWriter(channel, fieldnames=fieldnames, quoting=cls.__QUOTING)
-                if not append:
-                    writer.writeheader()
+            writer = csv.DictWriter(channel, fieldnames=data[0].keys(), quoting=cls.__QUOTING)
+            if not append:
+                writer.writeheader()
 
-                for datum in data:
-                    writer.writerow(datum)
-
-        finally:
-            if csv_file:
-                csv_file.close()
+            for datum in data:
+                writer.writerow(datum)

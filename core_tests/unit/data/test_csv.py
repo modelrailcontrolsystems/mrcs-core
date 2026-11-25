@@ -32,10 +32,7 @@ class TestCSV(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        try:
-            os.mkdir(cls.__test_dir())
-        except FileExistsError:
-            pass
+        os.makedirs(cls.__test_dir(), exist_ok=True)
 
 
     @classmethod
