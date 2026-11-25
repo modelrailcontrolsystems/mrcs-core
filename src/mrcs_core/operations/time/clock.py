@@ -97,7 +97,7 @@ class Clock(PersistentJSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    # noinspection PyUnresolvedReferences
+    # noinspection PyTypeChecker
     def now(self):
         if self.model_start is None:
             return ClockISODatetime.now()
@@ -133,7 +133,7 @@ class Clock(PersistentJSONable):
         self.__is_running = False
 
 
-    # noinspection PyTypeChecker,PyUnresolvedReferences
+    # noinspection PyTypeChecker
     def resume(self):
         if not self.exists(Host):
             raise RuntimeError('resume - no clock configuration exists')
