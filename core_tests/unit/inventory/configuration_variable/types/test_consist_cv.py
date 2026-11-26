@@ -3,7 +3,7 @@ Created on 10 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v unit/inventory/configuration_variable/test_cv_address.py
+python -m unittest -v unit/inventory/configuration_variable/test_address.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -14,8 +14,8 @@ import unittest
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
-from mrcs_core.inventory.configuration_variable.consist_cv import ConsistCV
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
+from mrcs_core.inventory.configuration_variable.types.consist_cv import ConsistCV
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -24,13 +24,13 @@ class TestConsistCV(unittest.TestCase):
 
     def test_consist_cv_construct(self):
         obj1 = ConsistCV(CVAddress.CONSIST_ADDRESS, True, 27)
-        self.assertEqual('ConsistCV{cv_address:CONSIST_ADDRESS{19}, reverse:True, consist_address:27}', str(obj1))
+        self.assertEqual('ConsistCV{address:CONSIST_ADDRESS{19}, reverse:True, consist_address:27}', str(obj1))
 
 
     def test_consist_cv_construct_from_report(self):
         obj1 = CVReport(19, 0x9b)
         obj2 = ConsistCV.construct_from_report(obj1)
-        self.assertEqual('ConsistCV{cv_address:CONSIST_ADDRESS{19}, reverse:True, consist_address:27}', str(obj2))
+        self.assertEqual('ConsistCV{address:CONSIST_ADDRESS{19}, reverse:True, consist_address:27}', str(obj2))
 
 
     def test_consist_cv_construct_from_report_fail(self):

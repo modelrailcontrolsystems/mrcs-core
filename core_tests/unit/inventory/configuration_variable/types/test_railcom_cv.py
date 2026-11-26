@@ -15,7 +15,7 @@ import unittest
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
-from mrcs_core.inventory.configuration_variable.railcom_cv import RailcomCV
+from mrcs_core.inventory.configuration_variable.types.railcom_cv import RailcomCV
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,14 +25,14 @@ class TestRailcomCV(unittest.TestCase):
     def test_railcom_cv_construct(self):
         obj1 = RailcomCV(CVAddress.RAILCOM, True, True, False, False,
                          False, True)
-        self.assertEqual('RailcomCV{cv_address:RAILCOM{28}, ch1_broadcast:True, ch2_broadcast:True, '
+        self.assertEqual('RailcomCV{address:RAILCOM{28}, ch1_broadcast:True, ch2_broadcast:True, '
                          'auto_ch1:False, enable_addr_3l:False, current_limit:False, railcom_login:True}', str(obj1))
 
 
     def test_railcom_cv_construct_from_report(self):
         obj1 = CVReport(28, 0x83)
         obj2 = RailcomCV.construct_from_report(obj1)
-        self.assertEqual('RailcomCV{cv_address:RAILCOM{28}, ch1_broadcast:True, ch2_broadcast:True, '
+        self.assertEqual('RailcomCV{address:RAILCOM{28}, ch1_broadcast:True, ch2_broadcast:True, '
                          'auto_ch1:False, enable_addr_3l:False, current_limit:False, railcom_login:True}', str(obj2))
 
 

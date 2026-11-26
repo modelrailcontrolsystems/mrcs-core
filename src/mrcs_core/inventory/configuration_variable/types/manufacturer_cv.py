@@ -3,12 +3,12 @@ Created on 10 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-Configuration variable for numeric values
+Configuration variable type for MANUFACTURER_ID
 
 {
-    "type": "NumericCV",
-    "addr": "ACCELERATION",
-    "value": 5
+    "type": "ManufacturerCV",
+    "addr": "MANUFACTURER_ID",
+    "mfr": "ZIMO"
 }
 """
 
@@ -16,48 +16,48 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
-from mrcs_core.inventory.configuration_variable.cv import CV
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
+from mrcs_core.inventory.configuration_variable.types.cv import CV
+from mrcs_core.inventory.manufacturer.manufacturer import Manufacturer
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
-class NumericCV(CV):
+class ManufacturerCV(CV):
     """
-    Configuration variable for numeric values
+    configuration variable type for MANUFACTURER_ID
     """
 
 
     @classmethod
     def construct_from_report(cls, report: CVReport) -> Self:
-        cv_address = CVAddress(report.cv_address)  # may raise KeyError
-
-        return cls(cv_address, report.value)
+        address = CVAddress(report.address)  # may raise KeyError
+        manufacturer = Manufacturer(report.value)  # may raise KeyError
+        return cls(address, manufacturer)
 
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
         try:
-            # may raise KeyError
-            cv_address = CVAddress[jdict.get('addr')]
-            value = int(jdict.get('value'))
+            address = CVAddress[jdict.get('addr')]  # may raise KeyError
+            manufacturer = Manufacturer[jdict.get('mfr')]  # may raise KeyError
 
         except (TypeError, ValueError):
             raise ValueError(jdict)
 
-        return cls(cv_address, value)
+        return cls(address, manufacturer)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, cv_address: CVAddress, value: int):
-        super().__init__(cv_address)
-        self.__value = value
+    def __init__(self, address: CVAddress, manufacturer: Manufacturer):
+        super().__init__(address)
+        self.__manufacturer = manufacturer
 
 
     def __eq__(self, other: Any):
         try:
-            return self.cv_address == other.cv_address and self.value == other.value
+            return self.address == other.address and self.manufacturer == other.manufacturer
         except (AttributeError, TypeError):
             return False
 
@@ -69,8 +69,8 @@ class NumericCV(CV):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.cv_address
-        jdict['value'] = self.value
+        jdict['addr'] = self.address
+        jdict['mfr'] = self.manufacturer
 
         return jdict
 
@@ -78,11 +78,16 @@ class NumericCV(CV):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
+    def manufacturer(self) -> Manufacturer:
+        return self.__manufacturer
+
+
+    @property
     def value(self) -> int:
-        return self.__value
+        return self.manufacturer.value
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'NumericCV{{cv_address:{self.cv_address}, value:{self.value}}}'
+        return f'ManufacturerCV{{address:{self.address}, manufacturer:{self.manufacturer}}}'

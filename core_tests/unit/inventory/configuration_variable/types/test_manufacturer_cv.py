@@ -15,8 +15,8 @@ import unittest
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
-from mrcs_core.inventory.configuration_variable.manufacturer_cv import ManufacturerCV
-from mrcs_core.inventory.motive_power_unit.manufacturer import Manufacturer
+from mrcs_core.inventory.configuration_variable.types.manufacturer_cv import ManufacturerCV
+from mrcs_core.inventory.manufacturer.manufacturer import Manufacturer
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ class TestManufacturerCV(unittest.TestCase):
 
     def test_manufacturer_cv_construct(self):
         obj1 = ManufacturerCV(CVAddress.MANUFACTURER_ID, Manufacturer.ZIMO_ELEKTRONIK)
-        self.assertEqual('ManufacturerCV{cv_address:MANUFACTURER_ID{8}, manufacturer:ZIMO_ELEKTRONIK{145}}',
+        self.assertEqual('ManufacturerCV{address:MANUFACTURER_ID{8}, manufacturer:ZIMO_ELEKTRONIK{145}}',
                          str(obj1))
 
 
@@ -36,7 +36,7 @@ class TestManufacturerCV(unittest.TestCase):
 
     def test_manufacturer_cv_is_not_writeable(self):
         obj1 = ManufacturerCV(CVAddress.MANUFACTURER_ID, Manufacturer.ZIMO_ELEKTRONIK)
-        self.assertFalse(obj1.is_writeable(None))
+        self.assertFalse(obj1.may_be_written_to(None))
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ class TestManufacturerCV(unittest.TestCase):
     def test_manufacturer_cv_construct_from_report(self):
         obj1 = CVReport(8, 145)
         obj2 = ManufacturerCV.construct_from_report(obj1)
-        self.assertEqual('ManufacturerCV{cv_address:MANUFACTURER_ID{8}, manufacturer:ZIMO_ELEKTRONIK{145}}',
+        self.assertEqual('ManufacturerCV{address:MANUFACTURER_ID{8}, manufacturer:ZIMO_ELEKTRONIK{145}}',
                          str(obj2))
 
 

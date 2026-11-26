@@ -16,9 +16,9 @@ from pathlib import Path
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.data.scale import Scale
-from mrcs_core.inventory.configuration_variable.cv import CV
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
-from mrcs_core.inventory.configuration_variable.numeric_cv import NumericCV
+from mrcs_core.inventory.configuration_variable.types.cv import CV
+from mrcs_core.inventory.configuration_variable.types.numeric_cv import NumericCV
 from mrcs_core.inventory.inventory import Inventory
 from mrcs_core.inventory.motive_power_unit.mpu import MPU
 
@@ -40,7 +40,7 @@ class TestInventory(unittest.TestCase):
     def __sample_mpu_1(cls):
         cv1 = NumericCV(CVAddress.ACCELERATION, 5)
         cv2 = NumericCV(CVAddress.DECELERATION, 9)
-        cvs: OrderedDict[CVAddress, CV] = OrderedDict({cv1.cv_address: cv1, cv2.cv_address: cv2})
+        cvs: OrderedDict[CVAddress, CV] = OrderedDict({cv1.address: cv1, cv2.address: cv2})
         return MPU('DB59', 5, 'DB Schenker', '59', '59201',
                    'Revolution Trains', Scale.N, 145, cvs)
 
@@ -152,8 +152,8 @@ class TestInventory(unittest.TestCase):
 
         expected = ('Inventory:{name:test_001, label:INV001, description:Test inventory 001, mpus:[MPU:{label:DB59, '
                     'address:5, operator:DB Schenker, mpu_class:59, number:59201, manufacturer:Revolution Trains, '
-                    'scale:N{148}, length:145, cvs:[NumericCV{cv_address:ACCELERATION{3}, value:5}, '
-                    'NumericCV{cv_address:DECELERATION{4}, value:9}]}, MPU:{label:GBRF66, address:6, '
+                    'scale:N{148}, length:145, cvs:[NumericCV{address:ACCELERATION{3}, value:5}, '
+                    'NumericCV{address:DECELERATION{4}, value:9}]}, MPU:{label:GBRF66, address:6, '
                     'operator:GB Railfreight, mpu_class:66, number:66701, manufacturer:Hornby, scale:OO{76}, '
                     'length:135, cvs:[]}]}')
         self.assertEqual(expected, str(inventory))
