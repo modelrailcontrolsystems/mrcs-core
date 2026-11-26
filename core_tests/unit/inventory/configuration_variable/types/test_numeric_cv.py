@@ -3,7 +3,7 @@ Created on 10 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v unit/inventory/configuration_variable/test_numeric_cv_address.py
+python -m unittest -v unit/inventory/configuration_variable/test_numeric_address.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -15,7 +15,7 @@ import unittest
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
-from mrcs_core.inventory.configuration_variable.numeric_cv import NumericCV
+from mrcs_core.inventory.configuration_variable.types.numeric_cv import NumericCV
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -24,13 +24,13 @@ class TestNumericCV(unittest.TestCase):
 
     def test_numeric_cv_construct(self):
         obj1 = NumericCV(CVAddress.ACCELERATION, 5)
-        self.assertEqual('NumericCV{cv_address:ACCELERATION{3}, value:5}', str(obj1))
+        self.assertEqual('NumericCV{address:ACCELERATION{3}, value:5}', str(obj1))
 
 
     def test_numeric_cv_construct_from_report(self):
         obj1 = CVReport(3, 5)
         obj2 = NumericCV.construct_from_report(obj1)
-        self.assertEqual('NumericCV{cv_address:ACCELERATION{3}, value:5}', str(obj2))
+        self.assertEqual('NumericCV{address:ACCELERATION{3}, value:5}', str(obj2))
 
 
     def test_numeric_cv_report_roundtrip(self):

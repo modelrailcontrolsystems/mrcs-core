@@ -15,9 +15,9 @@ from typing import OrderedDict
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.data.scale import Scale
-from mrcs_core.inventory.configuration_variable.cv import CV
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
-from mrcs_core.inventory.configuration_variable.numeric_cv import NumericCV
+from mrcs_core.inventory.configuration_variable.types.cv import CV
+from mrcs_core.inventory.configuration_variable.types.numeric_cv import NumericCV
 from mrcs_core.inventory.motive_power_unit.mpu import MPU
 
 
@@ -29,7 +29,7 @@ class TestMPU(unittest.TestCase):
     def __sample_mpu(address: int):
         cv1 = NumericCV(CVAddress.ACCELERATION, 5)
         cv2 = NumericCV(CVAddress.DECELERATION, 9)
-        cvs: OrderedDict[CVAddress, CV] = OrderedDict({cv1.cv_address: cv1, cv2.cv_address: cv2})
+        cvs: OrderedDict[CVAddress, CV] = OrderedDict({cv1.address: cv1, cv2.address: cv2})
         return MPU('DB59', address, 'DB Schenker', '59', '59201',
                    'Revolution Trains', Scale.N, 145, cvs)
 
@@ -38,8 +38,8 @@ class TestMPU(unittest.TestCase):
         obj1 = self.__sample_mpu(5)
         self.assertEqual('MPU:{label:DB59, address:5, operator:DB Schenker, mpu_class:59, number:59201, '
                          'manufacturer:Revolution Trains, scale:N{148}, length:145, '
-                         'cvs:[NumericCV{cv_address:ACCELERATION{3}, value:5}, '
-                         'NumericCV{cv_address:DECELERATION{4}, value:9}]}', str(obj1))
+                         'cvs:[NumericCV{address:ACCELERATION{3}, value:5}, '
+                         'NumericCV{address:DECELERATION{4}, value:9}]}', str(obj1))
 
 
     def test_mpu_eq(self):
@@ -57,7 +57,7 @@ class TestMPU(unittest.TestCase):
     def test_mpu_cv(self):
         obj1 = self.__sample_mpu(5)
         obj2 = obj1.cv(CVAddress.DECELERATION)
-        self.assertEqual('NumericCV{cv_address:DECELERATION{4}, value:9}', str(obj2))
+        self.assertEqual('NumericCV{address:DECELERATION{4}, value:9}', str(obj2))
 
 
     def test_mpu_json(self):

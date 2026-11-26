@@ -3,7 +3,7 @@ Created on 7 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-Configuration variable for RAILCOM
+Configuration variable type for RAILCOM
 
 {
     "type": "RailcomCV",
@@ -21,23 +21,23 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
-from mrcs_core.inventory.configuration_variable.cv import CV, CVAddress
+from mrcs_core.inventory.configuration_variable.types.cv import CV, CVAddress
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 class RailcomCV(CV):
     """
-    Configuration variable for RAILCOM
+    configuration variable type for RAILCOM
     """
 
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
         try:
-            cv_address = CVAddress[jdict.get('addr')]  # may raise KeyError
+            address = CVAddress[jdict.get('addr')]  # may raise KeyError
 
-            if cv_address != CVAddress.RAILCOM:
+            if address != CVAddress.RAILCOM:
                 raise ValueError(jdict)
 
             ch1_broadcast = bool(jdict.get('ch1_broadcast'))
@@ -50,14 +50,14 @@ class RailcomCV(CV):
         except (TypeError, ValueError):
             raise ValueError(jdict)
 
-        return cls(cv_address, ch1_broadcast, ch2_broadcast, auto_ch1, enable_addr_3l, current_limit, railcom_login)
+        return cls(address, ch1_broadcast, ch2_broadcast, auto_ch1, enable_addr_3l, current_limit, railcom_login)
 
 
     @classmethod
     def construct_from_report(cls, report: CVReport) -> Self:
-        cv_address = CVAddress(report.cv_address)  # may raise KeyError
+        address = CVAddress(report.address)  # may raise KeyError
 
-        if cv_address != CVAddress.RAILCOM:
+        if address != CVAddress.RAILCOM:
             raise ValueError(report)
 
         ch1_broadcast = bool(report.value & 0x01)
@@ -67,14 +67,14 @@ class RailcomCV(CV):
         current_limit = bool(report.value & 0x40)
         railcom_login = bool(report.value & 0x80)
 
-        return cls(cv_address, ch1_broadcast, ch2_broadcast, auto_ch1, enable_addr_3l, current_limit, railcom_login)
+        return cls(address, ch1_broadcast, ch2_broadcast, auto_ch1, enable_addr_3l, current_limit, railcom_login)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, cv_address: CVAddress, ch1_broadcast: bool, ch2_broadcast: bool, auto_ch1: bool,
+    def __init__(self, address: CVAddress, ch1_broadcast: bool, ch2_broadcast: bool, auto_ch1: bool,
                  enable_addr_3l: bool, current_limit: bool, railcom_login: bool):
-        super().__init__(cv_address)
+        super().__init__(address)
 
         self.__ch1_broadcast = ch1_broadcast
         self.__ch2_broadcast = ch2_broadcast
@@ -86,7 +86,7 @@ class RailcomCV(CV):
 
     def __eq__(self, other: Any):
         try:
-            return (self.cv_address == other.cv_address and self.ch1_broadcast == other.ch1_broadcast and
+            return (self.address == other.address and self.ch1_broadcast == other.ch1_broadcast and
                     self.ch2_broadcast == other.ch2_broadcast and self.auto_ch1 == other.auto_ch1 and
                     self.enable_addr_3l == other.enable_addr_3l and self.current_limit == other.current_limit and
                     self.railcom_login == other.railcom_login)
@@ -101,7 +101,7 @@ class RailcomCV(CV):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.cv_address
+        jdict['addr'] = self.address
 
         jdict['ch1_broadcast'] = self.ch1_broadcast
         jdict['ch2_broadcast'] = self.ch2_broadcast
@@ -168,6 +168,6 @@ class RailcomCV(CV):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'RailcomCV{{cv_address:{self.cv_address}, ch1_broadcast:{self.ch1_broadcast}, '
+        return (f'RailcomCV{{address:{self.address}, ch1_broadcast:{self.ch1_broadcast}, '
                 f'ch2_broadcast:{self.ch2_broadcast}, auto_ch1:{self.auto_ch1}, enable_addr_3l:{self.enable_addr_3l}, '
                 f'current_limit:{self.current_limit}, railcom_login:{self.railcom_login}}}')

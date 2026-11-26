@@ -7,13 +7,14 @@ Factory methods for all inventory CV types
 """
 
 from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
-from mrcs_core.inventory.configuration_variable.configuration_cv import ConfigurationCV
-from mrcs_core.inventory.configuration_variable.consist_cv import ConsistCV
-from mrcs_core.inventory.configuration_variable.cv import CV
+from mrcs_core.inventory.configuration_variable import CVMetadata
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
-from mrcs_core.inventory.configuration_variable.manufacturer_cv import ManufacturerCV
-from mrcs_core.inventory.configuration_variable.numeric_cv import NumericCV
-from mrcs_core.inventory.configuration_variable.railcom_cv import RailcomCV
+from mrcs_core.inventory.configuration_variable.types.configuration_cv import ConfigurationCV
+from mrcs_core.inventory.configuration_variable.types.consist_cv import ConsistCV
+from mrcs_core.inventory.configuration_variable.types.cv import CV
+from mrcs_core.inventory.configuration_variable.types.manufacturer_cv import ManufacturerCV
+from mrcs_core.inventory.configuration_variable.types.numeric_cv import NumericCV
+from mrcs_core.inventory.configuration_variable.types.railcom_cv import RailcomCV
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -27,23 +28,13 @@ class CVBuilder(object):
     @classmethod
     def construct_from_report(cls, report: CVReport) -> CV:
         try:
-            cv_address = CVAddress(report.cv_address)
+            address = CVAddress(report.address)
         except ValueError:
             raise TypeError(report)
 
-        if cv_address == CVAddress.CONFIGURATION:
-            return ConfigurationCV.construct_from_report(report)
+        cv_meta = CVMetadata.find(address)  # May raise ValueError
 
-        if cv_address == CVAddress.CONSIST_ADDRESS:
-            return ConsistCV.construct_from_report(report)
-
-        if cv_address == CVAddress.RAILCOM:
-            return RailcomCV.construct_from_report(report)
-
-        if cv_address == CVAddress.MANUFACTURER_ID:
-            return ManufacturerCV.construct_from_report(report)
-
-        return NumericCV.construct_from_report(report)
+        return cv_meta.cv_type.construct_from_report(report)
 
 
     @classmethod

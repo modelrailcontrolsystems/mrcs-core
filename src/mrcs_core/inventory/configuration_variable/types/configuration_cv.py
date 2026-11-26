@@ -3,7 +3,7 @@ Created on 10 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-Configuration variable for RAILCOM
+Configuration variable type for CONFIGURATION
 
 {
     "type": "ConfigurationCV",
@@ -22,23 +22,24 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
-from mrcs_core.inventory.configuration_variable.cv import CV, CVAddress
+from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
+from mrcs_core.inventory.configuration_variable.types.cv import CV
 
 
 # --------------------------------------------------------------------------------------------------------------------
 
 class ConfigurationCV(CV):
     """
-    Configuration variable for CONFIGURATION
+    configuration variable type for CONFIGURATION
     """
 
 
     @classmethod
     def construct_from_jdict(cls, jdict) -> Self:
         try:
-            cv_address = CVAddress[jdict.get('addr')]  # may raise KeyError
+            address = CVAddress[jdict.get('addr')]  # may raise KeyError
 
-            if cv_address != CVAddress.CONFIGURATION:
+            if address != CVAddress.CONFIGURATION:
                 raise ValueError(jdict)
 
             reverse = bool(jdict.get('reverse'))
@@ -52,15 +53,15 @@ class ConfigurationCV(CV):
         except (TypeError, ValueError):
             raise ValueError(jdict)
 
-        return cls(cv_address, reverse, speed_128, analog_enabled, railcom_enabled, speed_curve, long_address,
+        return cls(address, reverse, speed_128, analog_enabled, railcom_enabled, speed_curve, long_address,
                    accessory_decoder)
 
 
     @classmethod
     def construct_from_report(cls, report: CVReport) -> Self:
-        cv_address = CVAddress(report.cv_address)  # may raise KeyError
+        address = CVAddress(report.address)  # may raise KeyError
 
-        if cv_address != CVAddress.CONFIGURATION:
+        if address != CVAddress.CONFIGURATION:
             raise ValueError(report)
 
         reverse = bool(report.value & 0x01)
@@ -71,15 +72,15 @@ class ConfigurationCV(CV):
         long_address = bool(report.value & 0x20)
         accessory_decoder = bool(report.value & 0x80)
 
-        return cls(cv_address, reverse, speed_128, analog_enabled, railcom_enabled, speed_curve, long_address,
+        return cls(address, reverse, speed_128, analog_enabled, railcom_enabled, speed_curve, long_address,
                    accessory_decoder)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, cv_address: CVAddress, reverse: bool, speed_128: bool, analog_enabled: bool,
+    def __init__(self, address: CVAddress, reverse: bool, speed_128: bool, analog_enabled: bool,
                  railcom_enabled: bool, speed_curve: bool, long_address: bool, accessory_decoder: bool):
-        super().__init__(cv_address)
+        super().__init__(address)
 
         self.__reverse = reverse
         self.__speed_128 = speed_128
@@ -92,7 +93,7 @@ class ConfigurationCV(CV):
 
     def __eq__(self, other: Any):
         try:
-            return (self.cv_address == other.cv_address and self.reverse == other.reverse and
+            return (self.address == other.address and self.reverse == other.reverse and
                     self.speed_128 == other.speed_128 and self.analog_enabled == other.analog_enabled and
                     self.railcom_enabled == other.railcom_enabled and self.speed_curve == other.speed_curve and
                     self.long_address == other.long_address and self.accessory_decoder == other.accessory_decoder)
@@ -107,7 +108,7 @@ class ConfigurationCV(CV):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.cv_address
+        jdict['addr'] = self.address
 
         jdict['reverse'] = self.reverse
         jdict['speed_128'] = self.speed_128
@@ -182,7 +183,7 @@ class ConfigurationCV(CV):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return (f'ConfigurationCV{{cv_address:{self.cv_address}, reverse:{self.reverse}, speed_128:{self.speed_128}, '
+        return (f'ConfigurationCV{{address:{self.address}, reverse:{self.reverse}, speed_128:{self.speed_128}, '
                 f'analog_enabled:{self.analog_enabled}, railcom_enabled:{self.railcom_enabled}, '
                 f'speed_curve:{self.speed_curve}, long_address:{self.long_address}, '
                 f'accessory_decoder:{self.accessory_decoder}}}')

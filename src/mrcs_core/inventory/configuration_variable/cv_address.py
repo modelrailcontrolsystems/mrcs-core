@@ -32,10 +32,12 @@ class CVAddress(JSONable, IntEnum, metaclass=ABCMetaEnum):
     CONSIST_ADDRESS = 19  # structured, 0 or 128 - disabled (0)
     RAILCOM = 28  # structured, (131)
     CONFIGURATION = 29  # structured, (12)
-    SOUND_VOLUME = 63  # 0 - 192 (192)
 
     ESU_CONTROL_VOLTAGE = 53  # 0 - 255 (0)
+    ESU_MASTER_VOLUME = 63  # 0 – 192 (80)
+
     ZIMO_SPEED_CALIBRATION = 136  # 0 - 255 (0)
+    ZIMO_MASTER_VOLUME = 266  # 0 - 255 (65)
 
 
     # ----------------------------------------------------------------------------------------------------------------

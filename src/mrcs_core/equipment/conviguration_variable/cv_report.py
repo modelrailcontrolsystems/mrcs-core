@@ -33,28 +33,28 @@ class CVReport(JSONable):
         if type_name != cls.type_name():
             raise TypeError(f'required type:{cls.type_name()} got:{type_name}')
 
-        cv_address = int(jdict.get('addr'))
+        address = int(jdict.get('addr'))
         value = int(jdict.get('value'))
 
-        return cls(cv_address, value)
+        return cls(address, value)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    def __init__(self, cv_address: int, value: int):
-        self.__cv_address = cv_address
+    def __init__(self, address: int, value: int):
+        self.__address = address
         self.__value = value
 
 
     def __eq__(self, other: Any):
         try:
-            return self.cv_address == other.cv_address and self.value == other.value
+            return self.address == other.address and self.value == other.value
         except (AttributeError, TypeError):
             return False
 
 
     def __lt__(self, other: Any):
-        return self.cv_address < other.cv_address
+        return self.address < other.address
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ class CVReport(JSONable):
 
         jdict['type'] = self.type_name()
 
-        jdict['addr'] = self.cv_address
+        jdict['addr'] = self.address
         jdict['value'] = self.value
 
         return jdict
@@ -73,8 +73,8 @@ class CVReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def cv_address(self):
-        return self.__cv_address
+    def address(self):
+        return self.__address
 
 
     @property
@@ -85,4 +85,4 @@ class CVReport(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def __str__(self, *args, **kwargs):
-        return f'CVReport:{{cv_address:{self.cv_address}, value:{self.value}}}'
+        return f'CVReport:{{address:{self.address}, value:{self.value}}}'

@@ -36,11 +36,11 @@ from mrcs_core.data.scale import Scale
 from mrcs_core.equipment.motive_power_unit.mpu_enums import MPUDirection
 from mrcs_core.equipment.motive_power_unit.mpu_functions import MPUFunctions
 from mrcs_core.equipment.motive_power_unit.mpu_status import MPUStatus
-from mrcs_core.inventory.configuration_variable.cv import CV
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
 from mrcs_core.inventory.configuration_variable.cv_builder import CVBuilder
-from mrcs_core.inventory.configuration_variable.manufacturer_cv import ManufacturerCV
-from mrcs_core.inventory.motive_power_unit.manufacturer import Manufacturer
+from mrcs_core.inventory.configuration_variable.types.cv import CV
+from mrcs_core.inventory.configuration_variable.types.manufacturer_cv import ManufacturerCV
+from mrcs_core.inventory.manufacturer.manufacturer import Manufacturer
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -68,10 +68,10 @@ class MPU(JSONable):
             cvs = OrderedDict()
             for cv_jdict in jdict.get('cvs', []):
                 cv = CVBuilder.construct_from_jdict(cv_jdict)
-                if cv.cv_address in cvs:
-                    raise ValueError(f'duplicate cv address: {cv.cv_address.name}')
+                if cv.address in cvs:
+                    raise ValueError(f'duplicate cv address: {cv.address.name}')
 
-                cvs[cv.cv_address] = cv
+                cvs[cv.address] = cv
 
         except (TypeError, ValueError):
             raise ValueError(jdict)
@@ -212,7 +212,7 @@ class MPU(JSONable):
 
     def set_cvs(self, *cvs: CV):
         for cv in cvs:
-            self.__cvs[cv.cv_address] = cv
+            self.__cvs[cv.address] = cv
 
 
     # ----------------------------------------------------------------------------------------------------------------

@@ -3,7 +3,7 @@ Created on 10 Oct 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-python -m unittest -v unit/inventory/configuration_variable/test_cv_address.py
+python -m unittest -v unit/inventory/configuration_variable/test_address.py
 
 https://realpython.com/python-testing/
 https://www.jetbrains.com/help/pycharm/creating-tests.html
@@ -14,8 +14,8 @@ import unittest
 
 from mrcs_core.data.json import JSONify
 from mrcs_core.equipment.conviguration_variable.cv_report import CVReport
-from mrcs_core.inventory.configuration_variable.configuration_cv import ConfigurationCV
 from mrcs_core.inventory.configuration_variable.cv_address import CVAddress
+from mrcs_core.inventory.configuration_variable.types.configuration_cv import ConfigurationCV
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ class TestConfigurationCV(unittest.TestCase):
     def test_configuration_cv_construct(self):
         obj1 = ConfigurationCV(CVAddress.CONFIGURATION, False, True, False, True,
                                False, False, False)
-        self.assertEqual('ConfigurationCV{cv_address:CONFIGURATION{29}, reverse:False, speed_128:True, '
+        self.assertEqual('ConfigurationCV{address:CONFIGURATION{29}, reverse:False, speed_128:True, '
                          'analog_enabled:False, railcom_enabled:True, speed_curve:False, long_address:False, '
                          'accessory_decoder:False}', str(obj1))
 
@@ -34,7 +34,7 @@ class TestConfigurationCV(unittest.TestCase):
         self.maxDiff = None
         obj1 = CVReport(29, 0x06)
         obj2 = ConfigurationCV.construct_from_report(obj1)
-        self.assertEqual('ConfigurationCV{cv_address:CONFIGURATION{29}, reverse:False, speed_128:True, '
+        self.assertEqual('ConfigurationCV{address:CONFIGURATION{29}, reverse:False, speed_128:True, '
                          'analog_enabled:True, railcom_enabled:False, speed_curve:False, long_address:False, '
                          'accessory_decoder:False}', str(obj2))
 

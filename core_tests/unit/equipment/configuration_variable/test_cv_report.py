@@ -22,7 +22,7 @@ class TestCVReport(unittest.TestCase):
 
     def test_cv_report_str(self):
         obj1 = CVReport(1, 2)
-        self.assertEqual('CVReport:{cv_address:1, value:2}', str(obj1))
+        self.assertEqual('CVReport:{address:1, value:2}', str(obj1))
 
 
     def test_cv_report_lt(self):

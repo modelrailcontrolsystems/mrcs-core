@@ -3,7 +3,7 @@ Created on 7 Nov 2026
 
 @author: Bruno Beloff (bbeloff@me.com)
 
-An enumeration of all the possible decoder manufacturers
+An enumeration of all the known decoder manufacturers
 
 https://www.decoderdb.com/database/nmra-list
 https://www.nmra.org/sites/default/files/appendix_a_s-9_2_2.pdf
@@ -20,8 +20,10 @@ from mrcs_core.data.meta_enum import ABCMetaEnum
 @unique
 class Manufacturer(JSONable, IntEnum, metaclass=ABCMetaEnum):
     """
-    an enumeration of all the possible decoder manufacturers
+    an enumeration of all the known decoder manufacturers
     """
+
+    ALL = 0
 
     ADVANCE_IC_ENGINEERING = 17
     AMW = 19
