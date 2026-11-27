@@ -36,6 +36,9 @@ class CVAddress(JSONable, IntEnum, metaclass=ABCMetaEnum):
     ESU_CONTROL_VOLTAGE = 53  # 0 - 255 (0)
     ESU_MASTER_VOLUME = 63  # 0 – 192 (80)
 
+    ZIMO_PID_REGULATION = 56  # 1 - 199 (199)
+    ZIMO_BACK_EMF_LOAD = 58  # 0 - 255 (255)
+    ZIMO_PWM_FREQUENCY = 112  # 0 - 255 (0)
     ZIMO_SPEED_CALIBRATION = 136  # 0 - 255 (0)
     ZIMO_MASTER_VOLUME = 266  # 0 - 255 (65)
 

@@ -23,7 +23,8 @@ class TestCVAddress(unittest.TestCase):
         self.assertEqual(['SHORT_ADDRESS', 'START_VOLTAGE', 'ACCELERATION', 'DECELERATION', 'MAX_SPEED',
                           'MID_SPEED', 'MANUFACTURER_VERSION', 'MANUFACTURER_ID', 'MOTOR_PWM_FREQUENCY',
                           'CONSIST_ADDRESS', 'RAILCOM', 'CONFIGURATION', 'ESU_CONTROL_VOLTAGE', 'ESU_MASTER_VOLUME',
-                          'ZIMO_SPEED_CALIBRATION', 'ZIMO_MASTER_VOLUME'], list(obj1))
+                          'ZIMO_PID_REGULATION', 'ZIMO_BACK_EMF_LOAD', 'ZIMO_PWM_FREQUENCY', 'ZIMO_SPEED_CALIBRATION',
+                          'ZIMO_MASTER_VOLUME'], list(obj1))
 
 
     def test_address_find(self):
