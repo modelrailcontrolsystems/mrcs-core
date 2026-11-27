@@ -48,6 +48,12 @@ class CVMetadata(object):
             CVAddress.ESU_MASTER_VOLUME: cls(NumericCV, Manufacturer.ELECTRONIC_SOLUTIONS_ULM_GMBH,
                                              Manufacturer.ELECTRONIC_SOLUTIONS_ULM_GMBH),
 
+            CVAddress.ZIMO_PID_REGULATION: cls(NumericCV, Manufacturer.ZIMO_ELEKTRONIK,
+                                               Manufacturer.ZIMO_ELEKTRONIK),
+            CVAddress.ZIMO_BACK_EMF_LOAD: cls(NumericCV, Manufacturer.ZIMO_ELEKTRONIK,
+                                              Manufacturer.ZIMO_ELEKTRONIK),
+            CVAddress.ZIMO_PWM_FREQUENCY: cls(NumericCV, Manufacturer.ZIMO_ELEKTRONIK,
+                                              Manufacturer.ZIMO_ELEKTRONIK),
             CVAddress.ZIMO_SPEED_CALIBRATION: cls(NumericCV, Manufacturer.ZIMO_ELEKTRONIK,
                                                   Manufacturer.ZIMO_ELEKTRONIK),
             CVAddress.ZIMO_MASTER_VOLUME: cls(NumericCV, Manufacturer.ZIMO_ELEKTRONIK,
