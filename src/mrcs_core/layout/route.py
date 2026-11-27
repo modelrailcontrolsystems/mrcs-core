@@ -67,6 +67,12 @@ class Route(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
+    def block_labels(self) -> list[str]:
+        return list({segment.block_label for segment in self.segments})
+
+
+    # ----------------------------------------------------------------------------------------------------------------
+
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 
