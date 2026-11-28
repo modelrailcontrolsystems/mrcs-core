@@ -52,7 +52,7 @@ class TestInventoryNavigator(unittest.TestCase):
     @staticmethod
     def __mpu(label, address):
         return MPU(label, address, 'Operator', '00', '00000', 'Vendor',
-                   Scale.N, 100, OrderedDict())
+                   Scale.N, 100, None, OrderedDict())
 
 
     @staticmethod
@@ -62,7 +62,8 @@ class TestInventoryNavigator(unittest.TestCase):
 
     @staticmethod
     def __status(label, address):
-        return MPUStatus(label, address, MPUFunctions([]), None, None, MPUDirection.UNKNOWN)
+        return MPUStatus(label, address, MPUFunctions([]), None, None, None,
+                         MPUDirection.UNKNOWN)
 
 
     # validate -------------------------------------------------------------------------------------------------------

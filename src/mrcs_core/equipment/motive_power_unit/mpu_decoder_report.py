@@ -81,7 +81,6 @@ class MPUDecoderReport(JSONable):
 
     # ----------------------------------------------------------------------------------------------------------------
 
-    # noinspection PyUnresolvedReferences
     def as_json(self, **kwargs):
         jdict = OrderedDict()
 

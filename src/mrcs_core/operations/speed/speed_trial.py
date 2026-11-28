@@ -10,6 +10,8 @@ from collections import OrderedDict
 from typing import Any, Self
 
 from mrcs_core.data.json import MultiPersistentJSONable
+from mrcs_core.data.linear_regression import LinearRegression
+from mrcs_core.inventory.motive_power_unit.speed_normalisation import SpeedNormalisation
 from mrcs_core.operations.speed.speed_run import SpeedRun
 
 
@@ -75,6 +77,15 @@ class SpeedTrial(MultiPersistentJSONable):
 
     def add_run(self, run: SpeedRun) -> None:
         self.__runs.append(run)
+
+
+    def normalisation(self):
+        points = [(run.average_reported_speed, run.real_kph_speed) for run in self.runs]
+
+        lr = LinearRegression(points)
+        slope, intercept = lr.fit()
+
+        return SpeedNormalisation(round(slope, 3), round(intercept, 3))
 
 
     # ----------------------------------------------------------------------------------------------------------------
