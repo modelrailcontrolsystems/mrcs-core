@@ -12,7 +12,12 @@ A DCC motive power unit (MPU), as listed in an inventory
     "class": "59",
     "number": "59201",
     "manufacturer": "Revolution Trains",
+    "scale": "N",
     "length": 145,
+    "normalisation": {
+        "slope": 0.492,
+        "offset": 1.418
+    },
     "cvs": [
         {
             "type": "NumericCV",
@@ -41,6 +46,7 @@ from mrcs_core.inventory.configuration_variable.cv_builder import CVBuilder
 from mrcs_core.inventory.configuration_variable.types.cv import CV
 from mrcs_core.inventory.configuration_variable.types.manufacturer_cv import ManufacturerCV
 from mrcs_core.inventory.manufacturer.manufacturer import Manufacturer
+from mrcs_core.inventory.motive_power_unit.speed_normalisation import SpeedNormalisation
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -64,6 +70,7 @@ class MPU(JSONable):
 
             scale = Scale[jdict.get('scale')]  # may raise KeyError
             length = int(jdict.get('length'))
+            normalisation = SpeedNormalisation.construct_from_jdict(jdict.get('normalisation'))
 
             cvs = OrderedDict()
             for cv_jdict in jdict.get('cvs', []):
@@ -76,13 +83,13 @@ class MPU(JSONable):
         except (TypeError, ValueError):
             raise ValueError(jdict)
 
-        return cls(label, address, operator, mpu_class, number, manufacturer, scale, length, cvs)
+        return cls(label, address, operator, mpu_class, number, manufacturer, scale, length, normalisation, cvs)
 
 
     # ----------------------------------------------------------------------------------------------------------------
 
     def __init__(self, label: str, address: int, operator: str, mpu_class: str, number: str, manufacturer: str,
-                 scale: Scale, length: int, cvs: OrderedDict[CVAddress, CV]):
+                 scale: Scale, length: int, normalisation: SpeedNormalisation | None, cvs: OrderedDict[CVAddress, CV]):
         self.__label = label
         self.__address = address
 
@@ -93,6 +100,8 @@ class MPU(JSONable):
 
         self.__scale = scale
         self.__length = length
+        self.__normalisation = normalisation
+
         self.__cvs = cvs
 
 
@@ -101,7 +110,8 @@ class MPU(JSONable):
             return (self.label == other.label and self.address == other.address and self.operator == other.operator and
                     self.mpu_class == other.mpu_class and self.number == other.number and
                     self.manufacturer == other.manufacturer and self.scale == other.scale and
-                    self.length == other.length and self.cvs == other.cvs)
+                    self.length == other.length and self.normalisation == other.normalisation and
+                    self.cvs == other.cvs)
         except (AttributeError, TypeError):
             return False
 
@@ -119,7 +129,8 @@ class MPU(JSONable):
     # ----------------------------------------------------------------------------------------------------------------
 
     def mpu_status(self) -> MPUStatus:
-        return MPUStatus(self.label, self.address, MPUFunctions([]), None, None, MPUDirection.UNKNOWN)
+        return MPUStatus(self.label, self.address, MPUFunctions([]), None, None, None,
+                         MPUDirection.UNKNOWN)
 
 
     def decoder(self) -> Manufacturer | None:
@@ -132,6 +143,14 @@ class MPU(JSONable):
             raise ValueError(f'mpu_decoder: the MANUFACTURER_ID CV is not a ManufacturerCV: {cv}')
 
         return cv.manufacturer
+
+
+    def actual_speed(self, reported_speed: int) -> float | None:
+        if self.normalisation is None:
+            return None
+
+        # noinspection unresolved-references
+        return self.normalisation.actual_speed(reported_speed)
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -149,6 +168,8 @@ class MPU(JSONable):
 
         jdict['scale'] = self.scale
         jdict['length'] = self.length
+        jdict['normalisation'] = self.normalisation
+
         jdict['cvs'] = self.cvs
 
         return jdict
@@ -187,13 +208,18 @@ class MPU(JSONable):
 
 
     @property
+    def scale(self):
+        return self.__scale
+
+
+    @property
     def length(self):
         return self.__length
 
 
     @property
-    def scale(self):
-        return self.__scale
+    def normalisation(self):
+        return self.__normalisation
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -222,4 +248,5 @@ class MPU(JSONable):
 
         return (f'MPU:{{label:{self.label}, address:{self.address}, operator:{self.operator}, '
                 f'mpu_class:{self.mpu_class}, number:{self.number}, manufacturer:{self.manufacturer}, '
-                f'scale:{self.scale}, length:{self.length}, cvs:{cvs}}}')
+                f'scale:{self.scale}, length:{self.length}, normalisation:{self.normalisation}, '
+                f'cvs:{cvs}}}')

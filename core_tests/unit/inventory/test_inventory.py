@@ -21,6 +21,7 @@ from mrcs_core.inventory.configuration_variable.types.cv import CV
 from mrcs_core.inventory.configuration_variable.types.numeric_cv import NumericCV
 from mrcs_core.inventory.inventory import Inventory
 from mrcs_core.inventory.motive_power_unit.mpu import MPU
+from mrcs_core.inventory.motive_power_unit.speed_normalisation import SpeedNormalisation
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -38,17 +39,19 @@ class TestInventory(unittest.TestCase):
 
     @classmethod
     def __sample_mpu_1(cls):
+        normalisation = SpeedNormalisation(0.492, 1.418)
         cv1 = NumericCV(CVAddress.ACCELERATION, 5)
         cv2 = NumericCV(CVAddress.DECELERATION, 9)
         cvs: OrderedDict[CVAddress, CV] = OrderedDict({cv1.address: cv1, cv2.address: cv2})
         return MPU('DB59', 5, 'DB Schenker', '59', '59201',
-                   'Revolution Trains', Scale.N, 145, cvs)
+                   'Revolution Trains', Scale.N, 145, normalisation, cvs)
 
 
     @classmethod
     def __sample_mpu_2(cls):
+        normalisation = SpeedNormalisation(0.492, 1.418)
         return MPU('GBRF66', 6, 'GB Railfreight', '66', '66701',
-                   'Hornby', Scale.OO, 135, OrderedDict())
+                   'Hornby', Scale.OO, 135, normalisation, OrderedDict())
 
 
     # Persistence location -------------------------------------------------------------------------------------------
@@ -152,10 +155,11 @@ class TestInventory(unittest.TestCase):
 
         expected = ('Inventory:{name:test_001, label:INV001, description:Test inventory 001, mpus:[MPU:{label:DB59, '
                     'address:5, operator:DB Schenker, mpu_class:59, number:59201, manufacturer:Revolution Trains, '
-                    'scale:N{148}, length:145, cvs:[NumericCV{address:ACCELERATION{3}, value:5}, '
-                    'NumericCV{address:DECELERATION{4}, value:9}]}, MPU:{label:GBRF66, address:6, '
-                    'operator:GB Railfreight, mpu_class:66, number:66701, manufacturer:Hornby, scale:OO{76}, '
-                    'length:135, cvs:[]}]}')
+                    'scale:N{148}, length:145, normalisation:SpeedNormalisation:{slope:0.492, offset:1.418}, '
+                    'cvs:[NumericCV{address:ACCELERATION{3}, value:5}, NumericCV{address:DECELERATION{4}, value:9}]}, '
+                    'MPU:{label:GBRF66, address:6, operator:GB Railfreight, mpu_class:66, number:66701, '
+                    'manufacturer:Hornby, scale:OO{76}, length:135, normalisation:SpeedNormalisation:{slope:0.492, '
+                    'offset:1.418}, cvs:[]}]}')
         self.assertEqual(expected, str(inventory))
 
 

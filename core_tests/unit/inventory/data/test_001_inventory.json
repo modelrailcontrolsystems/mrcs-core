@@ -11,6 +11,10 @@
       "manufacturer": "Revolution Trains",
       "scale": "N",
       "length": 145,
+      "normalisation": {
+        "slope": 0.492,
+        "offset": 1.418
+      },
       "cvs": [
         {
           "type": "NumericCV",
@@ -33,6 +37,10 @@
       "manufacturer": "Hornby",
       "scale": "OO",
       "length": 135,
+      "normalisation": {
+        "slope": 0.492,
+        "offset": 1.418
+      },
       "cvs": []
     }
   ]

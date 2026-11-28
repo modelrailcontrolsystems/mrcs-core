@@ -63,12 +63,20 @@ class InventoryNavigator(ABC):
     # ----------------------------------------------------------------------------------------------------------------
 
     @property
-    def mpus(self):
+    def mpus(self) -> tuple[MPU]:
         return tuple(self.__mpus.values())
 
 
-    def mpu(self, label: str):
+    def mpu(self, label: str) -> MPU | None:
         try:
             return self.__mpus[label]
         except KeyError:
             return None
+
+
+    def mpu_by_address(self, address: int) -> MPU | None:
+        for mpu in self.__mpus.values():
+            if mpu.address == address:
+                return mpu
+
+        return None
